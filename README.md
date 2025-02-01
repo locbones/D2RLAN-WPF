@@ -257,7 +257,7 @@ Special thanks to the following people or groups for their help along this proje
     - More logging info added to output logs to indicate options used, function chain status, etc<br>
     - Fixed an issue where Customizations UI Display would not update correctly after reloading it<br>
     - Improved the Auto Backup functionality and logging data<br>
-    - Added a new log file for D2RHUD hooking progress (save issue troubleshooting)
+    - Added a new log file for D2RHUD hooking progress (save issue troubleshooting)<br>
     - Shared Stash Backups will now appear in the Restoral dropdown box<br>
     - Added the ability to restore shared stash files individually instead of grouped with character<br>
     - Cold color has been lightened to make it more readable (when using the Advanced Monster Stats Display option)<br>
