@@ -22,7 +22,7 @@ Mod Authors can customize D2RLAN to their mod by editing their modinfo.json file
 Mod Players can download, update and customize mods in a few button clicks.<br>
 Some features require additional author support to function correctly, and will be indicated with a **+**<br>
 
-<img src="https://static.wixstatic.com/media/698f72_11a7eaa882f24e969c85b0ef680746ab~mv2.png" alt="D2RLAN Home View" width="820">
+<img src="https://static.wixstatic.com/media/698f72_5d0916a305544662bb4e0a741ba5edd7~mv2.png" alt="D2RLAN Home View" width="820">
 Publicly ready download can be found at http://d2rmodding.com/D2RLaunch
 
 
@@ -34,7 +34,7 @@ Publicly ready download can be found at http://d2rmodding.com/D2RLaunch
 - **Mod Launcher:** Quickly switch and control startup settings for installed mods
 - **+News Display:** Read the recent mod news from author with real-time updating
 - **Audio/Text Languages:** Change in-game text or audio languages individually
-- **TCP/IP Patcher:** Enables previously removed TCP/IP functionality for Multi-Player functionality
+- **TCP/IP Patcher:** Enables previously removed TCP/IP feature to allow Multi-Player functionality
 - **Game Browser/Advertiser:** Includes 'Beacon', an app that allows players to view and advertise active LAN games
 - **Fast Load Option:** Fast Load option which extracts ALL game files for slightly improved loading times
 - **Queue-Skipping:** Disables BNET access while app open to skip the queue-check process and extra protection
@@ -94,7 +94,7 @@ The process to setup the launcher should be simple and straight forward, but her
 This will acquire the setup package needed to download **Version 2.4** D2R Files.<br>
 This specific version of D2R is required to use TCP/IP functionality and D2RLAN.<br>
 Depending on your network speed, current traffic, etc...this download may take anywhere from minutes to hours.<br>
-- **Step 5:** With game download complete, Click the *Download New Mod* button and select your desired mod from the dropdown box.<br>.<br>
+- **Step 5:** Click the *Download New Mod* button and select your desired mod from the dropdown box.<br>
 - **Step 5:** View the *QoL Options* and other settings to customize things to your liking.<br>
 - **Step 6:** Press the *Play Mod* button to start the mod with your chosen configuration and enjoy!
 
@@ -210,8 +210,8 @@ In order to fully utilize this app, or receive staff support, some requirements 
 - **Windows OS:** This is the only supported Operating System for the launcher, although emulation layers may also work for it (WINE, Lutris, etc)<br>
 - **Battle.Net Purchased:** This program is only intended for and actively tries to be restricted to, legally purchased D2R copies. If you want to support modding, then purchase the game!<br>
 - **Code Base:** This program was designed using C# and WPF. I am a novice coder, so expect inconsistencies, inefficiencies and general issues.<br>
-- **D2RHUD.dll:** This file is used to enable hotkey controls and advanced monster stats display options [(Source)](https://github.com/locbones/D2RHud)<br>
-- **CASCLib.NET.dll:** This file is used to enable file extraction from your internal game storage [(Source)](https://github.com/ladislav-zezula/CascLib)<br>
+- **D2RHUD.dll:** This file is used to enable hotkey controls and advanced monster stats display options [(Source)](https://github.com/locbones/D2RHUD-2.4)<br>
+It is also used for various 'hooks', such as Save/Chat functionality while using TCP/IP
 
 # Developer Notes
 This app was made because I am passionate about helping everyone get the most out of their D2R experience.<br>
@@ -219,13 +219,14 @@ I put much effort into making it easy, open and powerful, while balancing it wit
 So thanks for everyones patience and support during this free-time side project of mine; some final words on it:
 
 **To The Players:**<br>
-Enjoy the many new QoL features, mod controls and hassle-free modding that comes with using D2RLAN.<br>
+Enjoy the many new QoL features, TCP/IP functionality, mod controls and hassle-free modding that comes with using D2RLAN.<br>
 I know sometimes the worst part about modding, can be dealing with all the frustration and confusion around them.<br>
 I also know that everyone likes to play just a little bit differently, and noone can say no to some added QoL.<br>
 So I hope this app helps fill in a large gap of what may have been missing from your mod experience.
 
 **To The Authors**<br>
 Enjoy what I hope is a very simple, code-less method to control the launchers various systems to your liking.<br>
+(Please keep in mind you will need to use the **Version 2.4** file package when making your mod compatible with TCP/IP).<br>
 I know sometimes it can be frustrating dealing with so many files, troubleshooting with your community, etc.<br>
 I also know that many of the same features get requested by players or wish were included by default.<br>
 So I hope this app helps provide some of that to your player-base; letting them enjoy your mod even longer.
@@ -246,4 +247,4 @@ Special thanks to the following people or groups for their help along this proje
 - [Ethan-Braddy](https://github.com/Ethan-Braddy) for helping convert this project from WinForms to WPF, improving stability/performance<br>
 - [Dschu012](https://github.com/dschu012) for being there to answer my dumb questions and D2RHUD's base implementation<br>
 - [D2RModding Community](https://www.discord.gg/pqUWcDcjWF) for being patient, supportive and assisting with bug-reports or improvements<br>
-
+- Killshot for helping with D2RHUD function hooks and debug assistance <br>
