@@ -17,6 +17,7 @@
 # About D2RLAN
 This app is designed to be a code-less, open, all-in-one solution for D2R mod management.<br>
 It is designed to be used with **Multi-Player** mods that utilize **Version 2.4** of D2R's filebase.<br>
+It has been forked from [D2RLaunch](https://github.com/locbones/D2RLaunch-WPF), it's **Single-Player** sister.<br>
 It has many features designed to be used by both mod authors and players to enhance their overall experience.<br>
 Mod Authors can customize D2RLAN to their mod by editing their modinfo.json file.<br>
 Mod Players can download, update and customize mods in a few button clicks.<br>
@@ -161,7 +162,7 @@ When updating the file, you must use the **File Properties > File Information > 
 - **Dropbox** - Replace the **&dl=0** at the end of your dropbox provided url with **&dl=1**
 
 The First time you upload modinfo.json, you will need to use a dummy config link, because you havnt uploaded it yet<br>
-I recommend adding your mod to the [Mod Database](https://docs.google.com/spreadsheets/d/1RMqexbqTzxOyjk7tWbLhRYJk9RkzPGJ9cKHSLtsuGII/edit#gid=0), which allows players to easily view and install your mod.<br>
+I recommend adding your mod to the [Mod Database](https://docs.google.com/spreadsheets/d/1ICm2wxCTrQrgRxPJshj1WPA10-slATymYLm7WYkmkis/edit?gid=0#gid=0), which allows players to easily view and install your mod.<br>
 *As long as you follow the above linking rules, then the links provided in your modinfo.json file will never need to be updated between mod or config changes!*<br>
 
 ## Step 3: Enabling Optional Features
@@ -206,7 +207,6 @@ Keep in mind that you are *pushing* data to the web, and the launcher is automat
 # Program Requirements/Specifications
 In order to fully utilize this app, or receive staff support, some requirements must be met.
 - **.NET Desktop Runtime 7.0:** This program is included in the D2RLAN download, but can also be found via the [Microsoft](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) website. It is needed to run the program itself.<br>
-- **C++ Redistributable 2015-2022:** This program is included in the D2RLAN download, but can also be found via the [Microsoft](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022) website. It is needed to perform CASC Extraction of internal game storage.
 - **Windows OS:** This is the only supported Operating System for the launcher, although emulation layers may also work for it (WINE, Lutris, etc)<br>
 - **Battle.Net Purchased:** This program is only intended for and actively tries to be restricted to, legally purchased D2R copies. If you want to support modding, then purchase the game!<br>
 - **Code Base:** This program was designed using C# and WPF. I am a novice coder, so expect inconsistencies, inefficiencies and general issues.<br>
@@ -248,3 +248,10 @@ Special thanks to the following people or groups for their help along this proje
 - [Dschu012](https://github.com/dschu012) for being there to answer my dumb questions and D2RHUD's base implementation<br>
 - [D2RModding Community](https://www.discord.gg/pqUWcDcjWF) for being patient, supportive and assisting with bug-reports or improvements<br>
 - Killshot for helping with D2RHUD function hooks and debug assistance <br>
+
+<details>
+  <summary>
+# Changelogs
+</summary>
+Testing
+</details>
