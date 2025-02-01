@@ -1,0 +1,62 @@
+{
+    "dependencies": {
+        "particles": [
+            {
+                "path": "data/hd/vfx/particles/overlays/assassin/fade/vfx_assassin_fade.particles"
+            }
+        ],
+        "models": [],
+        "skeletons": [],
+        "animations": [],
+        "textures": [
+            {
+                "path": "data/hd/vfx/textures/distortion/T_FX_cloudy_distortion.texture"
+            }
+        ],
+        "physics": [],
+        "json": [],
+        "variantdata": [],
+        "objecteffects": [],
+        "other": []
+    },
+    "type": "OverlayDefinition",
+    "name": "fade",
+    "entities": [
+        {
+            "type": "Entity",
+            "name": "entity_root",
+            "id": 688125222,
+            "components": [
+                {
+                    "type": "VfxDefinitionComponent",
+                    "name": "component_vfx",
+                    "filename": "data/hd/vfx/particles/overlays/assassin/fade/vfx_assassin_fade.particles",
+                    "hardKillOnDestroy": true
+                }
+            ]
+        },
+        {
+            "type": "Entity",
+            "name": "entity_root",
+            "id": 2666374947,
+            "components": [
+                {
+                    "type": "VfxDefinitionComponent",
+                    "name": "component_vfx",
+                    "filename": "data/D2RLAN/Buff Icons/Particles/fade.particles",
+                    "hardKillOnDestroy": false
+                },
+                {
+					"type": "TransformDefinitionComponent",
+					"name": "entity_root_TransformDefinition",
+					"position": {
+						"x": 155.0,
+						"y": 100.15,
+						"z": 148.0
+					},
+					"inheritOnlyPosition": true
+				}
+            ]
+        }
+    ]
+}

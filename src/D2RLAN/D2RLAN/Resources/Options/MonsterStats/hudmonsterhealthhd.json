@@ -1,0 +1,74 @@
+{
+    "type": "MonsterHealthPanel", "name": "HUDMonsterHealth",
+    "fields": {
+        "anchor": { "x": 0.5 },
+        "rect": { "x":-500, "y": 101, "width": 999, "height": 33 }
+      },
+    "children": [
+          {
+            "type": "GrowableImageWidget", "name": "UniqueMonsterBackground",
+            "rect": { "x": -500, "y": -26 },
+            "fields": {
+                "filename": "../../../D2RLAN/Monster Stats/MonHPBar_UniFull"
+              }
+          },
+          {
+            "type": "GrowableImageWidget", "name": "NormalMonsterBackground",
+            "fields": {
+                "filename": "../../../D2RLAN/Monster Stats/MonHPBar_NormFull"
+              }
+          },
+          {
+            "type": "HealthBarWidget", "name": "Health",
+            "fields": {
+                "fitToParent": true,
+                "anchor": { "x": 0.0075, "y": -0.2 },
+                "normalColor": { "r": 0.31, "g": 0.0, "b": 0.0 },
+                "warningColor": { "r": 0.31, "g": 0.0, "b": 0.0 },
+                "criticalColor": { "r": 0.31, "g": 0.0, "b": 0.0 },
+                "transparency": 1,
+                "warningHealthPercent": 66,
+                "criticalHealthPercent": 33,
+                "drawWhenEmpty": true
+              },
+            "children": [
+                {
+                  "type": "TextBoxWidget", "name": "Name",
+                  "fields": {
+                      "anchor": { "x": 0.5, "y": -1.1 },
+                      "style": {
+                          "fontFace": "Exocet",
+                          "pointSize": "$LargeFontSize",
+                          "alignment": { "h": "center", "v": "center" },
+                          "options": { "pipeCharacterBehavior": "handle" },
+                          "spacing": { "kerning": 1.25 }
+                          }
+                      }
+                  }
+              ]
+          },
+          {
+            "type": "TextBoxWidget", "name": "Unique",
+            "fields": {
+                "rect": { "x": 500, "y": 115 },
+                "style": {
+                    "pointSize": "$MediumFontSize",
+                    "alignment": { "h": "center" },
+                    "options": { "pipeCharacterBehavior": "handle" }
+                  }
+              }
+          },
+          {
+            "type": "TextBoxWidget", "name": "Additional",
+            "fields": {
+                "rect": { "x": 500, "y": 150 },
+                "style": {
+                    "pointSize": "$MediumFontSize",
+                    "alignment": { "h": "center" },
+                    "options": { "pipeCharacterBehavior": "handle" }
+                  }
+              }
+          }
+      ]
+  }
+  

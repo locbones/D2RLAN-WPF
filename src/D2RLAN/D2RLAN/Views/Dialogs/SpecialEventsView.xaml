@@ -1,0 +1,174 @@
+﻿<Window
+    x:Class="D2RLAN.Views.Dialogs.SpecialEventsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cm="http://caliburnmicro.com"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dialogs="clr-namespace:D2RLAN.ViewModels.Dialogs"
+    xmlns:local="clr-namespace:D2RLAN.Views.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+    Width="550"
+    Height="670"
+    d:DataContext="{d:DesignInstance Type=dialogs:SpecialEventsViewModel,
+                                     IsDesignTimeCreatable=True}"
+    mc:Ignorable="d" SizeToContent="Height">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- Row 0 -->
+            <RowDefinition Height="Auto" />
+            <!-- Row 1 -->
+            <RowDefinition Height="Auto" />
+            <!-- Row 2 -->
+            <RowDefinition Height="Auto" />
+            <!-- Row 3 -->
+            <RowDefinition Height="25" />
+            <!-- Row 4 -->
+            <RowDefinition Height="25" />
+            <!-- Row 5 -->
+            <RowDefinition Height="Auto" />
+            <!-- Row 6 -->
+            <RowDefinition Height="25"/>
+            <!-- Row 7 -->
+            <RowDefinition Height="25" />
+            <!-- Row 8 -->
+            <RowDefinition Height="Auto" />
+            <!-- Row 9 -->
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+
+        <!-- First Border with Label and Red Dashes -->
+        <Border Grid.Row="1" Margin="0,0,0,0" Padding="0">
+            <StackPanel Orientation="Vertical">
+
+                <!-- Label -->
+                <Label Content="{Binding EventNameText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource EventNameStyle}" />
+
+                <!-- Red dashes border -->
+                <Border BorderThickness="0,3,0,0">
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="Firebrick" />
+                    </Border.BorderBrush>
+                    <!-- Adjust the size and shape of the border here -->
+                    <Rectangle Width="50" Height="3" />
+                </Border>
+
+            </StackPanel>
+        </Border>
+
+        <!-- Image in Row 2 -->
+        <Image Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="530" Height="240" Source="{Binding EventImage, UpdateSourceTrigger=PropertyChanged}" Stretch="Fill" Margin="0,5,0,5" />
+
+        <!-- Second Border with Red Dashes and Label -->
+        <Border Grid.Row="3" Margin="0,0,0,0" Padding="0">
+            <StackPanel Orientation="Vertical">
+
+                <!-- Red dashes border -->
+                <Border BorderThickness="0,3,0,0">
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="Firebrick" />
+                    </Border.BorderBrush>
+                    <Rectangle Width="50" Height="3" />
+                </Border>
+                <Label Content="" Height="0" />
+
+            </StackPanel>
+        </Border>
+
+
+        <Label Grid.Row="4" Grid.Column="0" Margin="5,5,0,5" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" Height="25" Width="517">
+            <Label.Content>
+                <TextBlock>
+                    <TextBlock.Inlines>
+                        <Run Text="Type: " Style="{StaticResource EventHeaderStyleT}"/>
+                        <Run Text="{Binding EventTypeText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
+            </Label.Content>
+        </Label>
+
+        <Label Grid.Row="5" Grid.Column="0" Margin="5,5,0,5" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" Height="25" Width="517">
+            <Label.Content>
+                <TextBlock>
+                    <TextBlock.Inlines>
+                        <Run Text="Location(s): " Style="{StaticResource EventHeaderStyleT}"/>
+                        <Run Text="{Binding EventLocText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
+            </Label.Content>
+        </Label>
+
+        <!-- First Border with Label and Red Dashes -->
+        <Border Grid.Row="6" Margin="0,0,0,0" Padding="0">
+            <StackPanel Orientation="Vertical">
+
+                <!-- Label -->
+                <Label Grid.Row="6" Grid.Column="0" Margin="5,0,0,5" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" Height="25" Width="517">
+                    <Label.Content>
+                        <TextBlock>
+                            <TextBlock.Inlines>
+                                <Run Text="Event Time: " Style="{StaticResource EventHeaderStyleT}"/>
+                                <Run Text="{Binding EventDur1Text, UpdateSourceTrigger=PropertyChanged}"/>
+                                <Run Text="  ->  "/>
+                                <Run Text="{Binding EventDur2Text, UpdateSourceTrigger=PropertyChanged}"/>
+                            </TextBlock.Inlines>
+                        </TextBlock>
+                    </Label.Content>
+                </Label>
+
+                <!-- Red dashes border -->
+                <Border BorderThickness="0,3,0,0">
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="Firebrick" />
+                    </Border.BorderBrush>
+                    <!-- Adjust the size and shape of the border here -->
+                    <Rectangle Width="50" Height="3" />
+                </Border>
+
+            </StackPanel>
+        </Border>
+
+
+
+
+
+
+
+
+        <Label Grid.Row="7" Grid.Column="0" Margin="-10,10,0,5" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="135" Height="25" Content="Max mLvl" Foreground="ForestGreen"/>
+        <Label Grid.Row="7" Grid.Column="0" Margin="115,10,0,5" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="135" Height="25" Content="Boosted mLvl" Foreground="ForestGreen"/>
+        <Label Grid.Row="7" Grid.Column="0" Margin="-10,10,145,5" HorizontalAlignment="Right" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="135" Height="25" Content="Player Count" Foreground="ForestGreen"/>
+        <Label Grid.Row="7" Grid.Column="0" Margin="-10,10,0,5" HorizontalAlignment="Right" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="135" Height="25" Content="Exp Modifier" Foreground="ForestGreen"/>
+
+        <Label Grid.Row="8" Grid.Column="0" Margin="-10,-5,0,5" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="135" Height="25" Content="{Binding EventMLvlText, UpdateSourceTrigger=PropertyChanged}"/>
+        <Label Grid.Row="8" Grid.Column="0" Margin="115,-5,0,5" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="135" Height="25" Content="{Binding EventPLvlText, UpdateSourceTrigger=PropertyChanged}"/>
+        <Label Grid.Row="8" Grid.Column="0" Margin="-10,-5,145,5" HorizontalAlignment="Right" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="135" Height="25" Content="{Binding EventPDiffText, UpdateSourceTrigger=PropertyChanged}"/>
+        <Label Grid.Row="8" Grid.Column="0" Margin="-10,-5,0,5" HorizontalAlignment="Right" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="135" Height="25" Content="{Binding EventPExpText, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <Rectangle Grid.Row="9" HorizontalAlignment="Center" Height="200" Margin="0,0,0,15" Stroke="BurlyWood" VerticalAlignment="Top" Width="500"/>
+        <TextBlock HorizontalAlignment="Center"
+           Grid.Row="9"
+           VerticalAlignment="Center"
+           TextWrapping="Wrap"
+           TextAlignment="Center"
+           Width="490"
+           Height="190">
+    <Run Text="{Binding EventDesc1Text, UpdateSourceTrigger=PropertyChanged}" Foreground="CornflowerBlue"/>
+    <Run Text="{Binding EventDesc2Text, UpdateSourceTrigger=PropertyChanged}" Foreground="WhiteSmoke" />
+    <Run Text="{Binding EventDesc3Text, UpdateSourceTrigger=PropertyChanged}" Foreground="CornflowerBlue" />
+    <Run Text="{Binding EventDesc4Text, UpdateSourceTrigger=PropertyChanged}" Foreground="WhiteSmoke" />
+    <Run Text="Event Link: " Foreground="CornflowerBlue" />
+    <Span>
+        <Hyperlink NavigateUri="{Binding EventLinkText}" RequestNavigate="Hyperlink_RequestNavigate">
+            <Run Text="{Binding EventLinkText, UpdateSourceTrigger=PropertyChanged}" Foreground="WhiteSmoke" />
+        </Hyperlink>
+    </Span>
+        </TextBlock>
+        <Button Content="Join the Event!" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="10" Background="#FF02580B" Padding="3,3,3,3" FontSize="16" Width="175" Height="33" Margin="0,0,0,12" cm:Message.Attach="[Event Click] = [Action OnJoinEvent];"/>
+
+    </Grid>
+
+</Window>

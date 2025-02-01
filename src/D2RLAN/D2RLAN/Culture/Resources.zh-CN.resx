@@ -1,0 +1,656 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActX" xml:space="preserve">
+    <value>行为</value>
+    <comment>Act X</comment>
+  </data>
+  <data name="All Monsters Always Drop" xml:space="preserve">
+    <value>所有怪物必掉落物品</value>
+    <comment>All Monsters Always Drop</comment>
+  </data>
+  <data name="AppLang" xml:space="preserve">
+    <value>应用程序语言</value>
+    <comment>App Language</comment>
+  </data>
+  <data name="AudioLang" xml:space="preserve">
+    <value>音频语言：</value>
+    <comment>Audio Language:</comment>
+  </data>
+  <data name="AuthorFiles" xml:space="preserve">
+    <value>需要 MOD 有对应的可供修改的文件</value>
+    <comment>Author Extra Files Needed</comment>
+  </data>
+  <data name="AutoBackup" xml:space="preserve">
+    <value>自动备份存档</value>
+    <comment>Auto-Backup Characters</comment>
+  </data>
+  <data name="AutoBackupBtn1" xml:space="preserve">
+    <value>备份</value>
+    <comment>Backup</comment>
+  </data>
+  <data name="AutoBackupBtn2" xml:space="preserve">
+    <value>恢复</value>
+    <comment>Restore</comment>
+  </data>
+  <data name="AutoBackupSuccess1" xml:space="preserve">
+    <value>存档已备份成功！</value>
+    <comment>Most recent played character and stash backed up successfully!</comment>
+  </data>
+  <data name="AutoBackupSuccess2" xml:space="preserve">
+    <value>存档已恢复成功！</value>
+    <comment>Most recently played character restored successfully!</comment>
+  </data>
+  <data name="Background" xml:space="preserve">
+    <value>背景</value>
+    <comment>Background</comment>
+  </data>
+  <data name="Backup every 1 hour" xml:space="preserve">
+    <value>每 1 小时备份一次</value>
+    <comment>Backup every 1 hour</comment>
+  </data>
+  <data name="Backup every 15 min" xml:space="preserve">
+    <value>每 15 分钟备份一次</value>
+    <comment>Backup every 15 min</comment>
+  </data>
+  <data name="Backup every 30 min" xml:space="preserve">
+    <value>每 30 分钟备份一次</value>
+    <comment>Backup every 30 min</comment>
+  </data>
+  <data name="Backup every 5 min" xml:space="preserve">
+    <value>每 5 分钟备份一次</value>
+    <comment>Backup every 5 min</comment>
+  </data>
+  <data name="By Itemtype" xml:space="preserve">
+    <value>按类型排序</value>
+    <comment>By ItemType</comment>
+  </data>
+  <data name="By Name" xml:space="preserve">
+    <value>按名称排序</value>
+    <comment>By Name</comment>
+  </data>
+  <data name="By Req. Level" xml:space="preserve">
+    <value>按需求等级排序</value>
+    <comment>By Req. Level</comment>
+  </data>
+  <data name="Champions" xml:space="preserve">
+    <value>精英怪：</value>
+    <comment>Champion Packs:</comment>
+  </data>
+  <data name="Community" xml:space="preserve">
+    <value>社区</value>
+    <comment>Community</comment>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>创建一个新 MOD</value>
+    <comment>Create A Mod</comment>
+  </data>
+  <data name="CreateModDesc" xml:space="preserve">
+    <value>这将允许您仅使用启动器选项创建一个空白 MOD。\n如果您想要自己优化原版体验的 MOD，请使用此功能。\n\n您还想创建自己的 MOD 吗？</value>
+    <comment>This will allow you to create a blank mod using only launcher options.\nUse if you'd like a Vanilla experience with additional QoL options.\n\nWould you still like to create your own mod?</comment>
+  </data>
+  <data name="Customizations" xml:space="preserve">
+    <value>自定义MOD</value>
+    <comment>Customizations</comment>
+  </data>
+  <data name="CustomizeDesc" xml:space="preserve">
+    <value>这将允许您根据自己的喜好更改每个难度的游戏设置</value>
+    <comment>This will allow you to change in-game settings to your preference for each difficulty</comment>
+  </data>
+  <data name="CustomizeTitle" xml:space="preserve">
+    <value>多倍怪</value>
+    <comment>Monster Customizations</comment>
+  </data>
+  <data name="D2RWebsite" xml:space="preserve">
+    <value>Website</value>
+    <comment>Website</comment>
+  </data>
+  <data name="D2RYoutube" xml:space="preserve">
+    <value>YouTube</value>
+    <comment>Youtube</comment>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>默认</value>
+    <comment>Default</comment>
+  </data>
+  <data name="Density" xml:space="preserve">
+    <value>平均怪物密度：</value>
+    <comment>Average Density:</comment>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>关闭</value>
+    <comment>Disabled</comment>
+  </data>
+  <data name="Discord" xml:space="preserve">
+    <value>Discord</value>
+    <comment>Discord</comment>
+  </data>
+  <data name="Dize" xml:space="preserve">
+    <value>Dize</value>
+    <comment>Dize</comment>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>下载新 MOD</value>
+    <comment>Download New Mod</comment>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>启用</value>
+    <comment>Enabled</comment>
+  </data>
+  <data name="Enabled (Mini)" xml:space="preserve">
+    <value>启用（迷你）</value>
+    <comment>Enabled (Mini)</comment>
+  </data>
+  <data name="Enabled (No Orbs)" xml:space="preserve">
+    <value>启用(不显示聚气球)</value>
+    <comment>Enabled (No Orbs)</comment>
+  </data>
+  <data name="Experience" xml:space="preserve">
+    <value>经验值：</value>
+    <comment>Exp Rate:</comment>
+  </data>
+  <data name="FontBtn" xml:space="preserve">
+    <value>应用字体</value>
+    <comment>Use Font</comment>
+  </data>
+  <data name="FontDesc" xml:space="preserve">
+    <value>这将允许您更改使用的游戏内字体。所有掉落过滤器图标都会包含在每个字体中。请根据需求添加字体。</value>
+    <comment>This will allow you to change the in-game font used. All loot filter icons are included in each font. Fonts will be added by request.</comment>
+  </data>
+  <data name="FontTitle" xml:space="preserve">
+    <value>更改字体</value>
+    <comment>Change Font</comment>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>怪物数：</value>
+    <comment>Group Sizes:</comment>
+  </data>
+  <data name="HDR" xml:space="preserve">
+    <value>HDR 修复</value>
+    <comment>HDR Fix:</comment>
+  </data>
+  <data name="Hell" xml:space="preserve">
+    <value>地狱</value>
+    <comment>Hell</comment>
+  </data>
+  <data name="HelmetDisplay" xml:space="preserve">
+    <value>是否隐藏头盔</value>
+    <comment>Helmet Display</comment>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>主页</value>
+    <comment>Home</comment>
+  </data>
+  <data name="HUD" xml:space="preserve">
+    <value>血蓝球样式</value>
+    <comment>HUD Design</comment>
+  </data>
+  <data name="InstallLink" xml:space="preserve">
+    <value>从 zip 压缩包里下载安装 mod：</value>
+    <comment>Install a mod from a .zip download link:</comment>
+  </data>
+  <data name="InstallMod" xml:space="preserve">
+    <value>安装 MOD</value>
+    <comment>Install Mod</comment>
+  </data>
+  <data name="InstallModDB" xml:space="preserve">
+    <value>从 D2RModding 数据库安装 mod：</value>
+    <comment>Install a mod from the D2RModding database:</comment>
+  </data>
+  <data name="InstallProgressD2R" xml:space="preserve">
+    <value>正在安装 MOD...</value>
+    <comment>Installing your mod into D2R...</comment>
+  </data>
+  <data name="InstallProgressGHSize" xml:space="preserve">
+    <value>下载已开始，但网络不通畅，无法返回文件大小！</value>
+    <comment>Download has started, but web failed to report file size!</comment>
+  </data>
+  <data name="InstallProgressSuccess" xml:space="preserve">
+    <value>MOD 安装成功！</value>
+    <comment>Mod installed successfully!</comment>
+  </data>
+  <data name="Item + Rune Icons" xml:space="preserve">
+    <value>显示所有物品图标</value>
+    <comment>Item + Rune Icons</comment>
+  </data>
+  <data name="Item Icons Only" xml:space="preserve">
+    <value>仅非符文图标</value>
+    <comment>Item Icons Only</comment>
+  </data>
+  <data name="ItemIcons" xml:space="preserve">
+    <value>物品图标显示</value>
+    <comment>Item Display</comment>
+  </data>
+  <data name="Itemlevels" xml:space="preserve">
+    <value>显示物品等级</value>
+    <comment>Show Item Levels</comment>
+  </data>
+  <data name="LauncherUpdateRdy" xml:space="preserve">
+    <value>D2RLAN 有可用更新！</value>
+    <comment>Launcher Update Available!</comment>
+  </data>
+  <data name="LaunchFiles" xml:space="preserve">
+    <value>D2R啟動用戶數據</value>
+    <comment>D2RLAN User Data</comment>
+  </data>
+  <data name="Maps" xml:space="preserve">
+    <value>更换地图：</value>
+    <comment>Maps</comment>
+  </data>
+  <data name="MapsInfo" xml:space="preserve">
+    <value>这些选项可以强制使用特定的地图，可以固定到最"完美"地图了。详细说明如下：\n\nTower: 高塔地牢，刷女伯爵，小站和高塔地牢入口旁\n\nCatacombs：地下墓穴，刷安达利尔/安姐，第 3 层和第 4 层距离不到 3 个屏幕。\n\nAncient Tunnels：古代通道，冰法mf，小站和古代通道入口旁\n\nLower Kurast：库拉斯特下层，翻箱子，超级箱子就在小站旁边\n\nDurance of Hate：憎恨囚牢，刷墨菲斯托/劳模，小站在憎恨囚牢三层入口旁\n\nHellforge：地狱熔炉，敲石头，小站在地狱熔炉旁\n\nWorldstone Keep：世界之石要塞，刷五小队/巴尔，第 3 层入口和第 4 层几乎紧挨在一起\n\nI'm a Cheater：几乎所有的入口都近得离谱，在小站旁都有完美的 LK 模式。几乎就是在作弊。\n\n\n注意：Lower Kurast 和 I'm a Cheater 选项仅适用于 MOD Vanilla++。</value>
+    <comment>These options let you force specific map layouts so you can roll that 'perfect' map anytime you want. Details explained below:\n\nTower: The tower entrance is on the same screen as your waypoint.\n\nCatacombs: Levels 3 and 4 are less than 3 screens away\n\nAncient Tunnels: Entrance is 1 screen away from your waypoint\n\nLower Kurast: Very favorable super chest pattern near your waypoint\n\nDurance of Hate: Level 3 entrance is one teleport away from waypoint.\n\nHellforge: Forge is at closest spawn to your waypoint\n\nWorldstone Keep: Level 3 and 4 are right next to each other\n\nI'm a Cheater: Almost all entrances are absurdly close with a perfect LK pattern by the waypoint. You're basically just cheating now.\n\n\nNOTE: Lower Kurast and I'm a Cheater options are only available on Vanilla++.</comment>
+  </data>
+  <data name="MapsSetup" xml:space="preserve">
+    <value>警告：这些选项只是为了获得一两次有趣的体验，但会有作弊的感觉。\n如果你想继续使用，请阅读以下说明：\n\n步骤1：用你选择的地图布局开始游戏\n步骤2：当你的角色完全载入游戏后，退出游戏\n步骤3：退出游戏后，你应该会看到启动器上的地图布局下拉菜单变回了默认值。这是正常现象；重新开始游戏。\n\n如果您在更改地图布局后没有退出游戏......地图布局不会做任何更改还是会固定为你最初设置的布局。\n这并不需要每局游戏都这样做；只有当你用正常方法改变地图布局时才需要这样做；比如改变难度。</value>
+    <comment>WARNING: These options are meant for a fun experience or two, but will feel like cheating. Use at your own risk.\nIf you would like to proceed, please read these instructions:\n\nStep 1: Start the game with your selected layout\nStep 2: Once loaded into the game with your character fully, EXIT the game.\nStep 3: After exiting the game, you should see your layout dropdown on launcher changed back to Default. This is normal; Start the game again.\n\nIf you do not exit the game after changing your map layout...you will be stuck with a small drop pool of deterministic outcomes.\nThis does not need to be done every game; only if you change map layouts the normal ways; such as changing difficulty.</comment>
+  </data>
+  <data name="MercID" xml:space="preserve">
+    <value>佣兵醒目标识</value>
+    <comment>Merc Identifier</comment>
+  </data>
+  <data name="Merged" xml:space="preserve">
+    <value>合并</value>
+    <comment>Merged</comment>
+  </data>
+  <data name="ModChoice" xml:space="preserve">
+    <value>选择 MOD</value>
+    <comment>Mod Choice:</comment>
+  </data>
+  <data name="ModFiles" xml:space="preserve">
+    <value>打开 MOD 目录</value>
+    <comment>Mod Files</comment>
+  </data>
+  <data name="ModOptions" xml:space="preserve">
+    <value>实用功能</value>
+    <comment>QoL Options</comment>
+  </data>
+  <data name="ModUpdateAuthor" xml:space="preserve">
+    <value>MOD 作者尚未添加对自动更新的支持！</value>
+    <comment>Mod Author hasn't added support for auto-updates yet!</comment>
+  </data>
+  <data name="ModUpdateCurrent" xml:space="preserve">
+    <value>MOD 文件是最新的...无需更新！</value>
+    <comment>Mod files are current...no update needed!</comment>
+  </data>
+  <data name="ModUpdateRdy" xml:space="preserve">
+    <value>Mod 更新可用！\n\n您想在更新之前备份此 Mod 吗？</value>
+    <comment>Mod Update Available!\n\nWould you like to make a backup of your mod folder before updating?</comment>
+  </data>
+  <data name="MonsterStatsDisplay" xml:space="preserve">
+    <value>显示怪物属性</value>
+    <comment>Monster Stats Display</comment>
+  </data>
+  <data name="MyFiles" xml:space="preserve">
+    <value>常用目录</value>
+    <comment>My Files</comment>
+  </data>
+  <data name="Nightmare" xml:space="preserve">
+    <value>恶梦</value>
+    <comment>Nightmare</comment>
+  </data>
+  <data name="No Background" xml:space="preserve">
+    <value>无背景</value>
+    <comment>No Background</comment>
+  </data>
+  <data name="No Icons" xml:space="preserve">
+    <value>关闭</value>
+    <comment>No Icons</comment>
+  </data>
+  <data name="NoDiscord" xml:space="preserve">
+    <value>没有找到 Discord！(交流反馈平台)</value>
+    <comment>No Discord Found!</comment>
+  </data>
+  <data name="NoDrop" xml:space="preserve">
+    <value>怪物物品掉落：</value>
+    <comment>Monster Item Drops:</comment>
+  </data>
+  <data name="NoPatreon" xml:space="preserve">
+    <value>没有找到 Patreon！(赞助 MOD 作者网址)！</value>
+    <comment>No Patreon Found!</comment>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>普通</value>
+    <comment>Normal</comment>
+  </data>
+  <data name="NoWiki" xml:space="preserve">
+    <value>没有找到维基百科！(MOD 的说明)</value>
+    <comment>No Wiki Found!</comment>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>选项</value>
+    <comment>Options</comment>
+  </data>
+  <data name="PathError1" xml:space="preserve">
+    <value>找不到游戏安装位置！</value>
+    <comment>Game Install Location not found!</comment>
+  </data>
+  <data name="PathError2a" xml:space="preserve">
+    <value>如果 MOD 加载遇到问题，请到 Discord 联系 Bonesy</value>
+    <comment>If you experience mod loading issues, please contact Bonesy in Discord</comment>
+  </data>
+  <data name="PathError2b" xml:space="preserve">
+    <value>找到多个游戏安装位置！</value>
+    <comment>Multiple Install Locations found!</comment>
+  </data>
+  <data name="Patreon" xml:space="preserve">
+    <value>Patreon</value>
+    <comment>Patreon</comment>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>开始游戏</value>
+    <comment>Play Mod</comment>
+  </data>
+  <data name="Regen" xml:space="preserve">
+    <value>刷新地图</value>
+    <comment>Map Regen</comment>
+  </data>
+  <data name="ReMoDDeD" xml:space="preserve">
+    <value>ReMoDDeD</value>
+    <comment>ReMoDDeD</comment>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>重命名角色</value>
+    <comment>Rename Character</comment>
+  </data>
+  <data name="Respec" xml:space="preserve">
+    <value>无限洗点</value>
+    <comment>Respec</comment>
+  </data>
+  <data name="Rune Icons Only" xml:space="preserve">
+    <value>仅符文图标</value>
+    <comment>Rune Icons Only</comment>
+  </data>
+  <data name="RuneDisplay" xml:space="preserve">
+    <value>符文掉落特效</value>
+    <comment>Rune Display</comment>
+  </data>
+  <data name="RuneDisplay1" xml:space="preserve">
+    <value>符文展示</value>
+    <comment>Rune Display</comment>
+  </data>
+  <data name="RWSort" xml:space="preserve">
+    <value>符文之语排序</value>
+    <comment>Runeword Sorting</comment>
+  </data>
+  <data name="SaveFiles" xml:space="preserve">
+    <value>打开存档目录</value>
+    <comment>Save Files</comment>
+  </data>
+  <data name="ShortLevels" xml:space="preserve">
+    <value>减少地下场景层数</value>
+    <comment>Shortened Levels</comment>
+  </data>
+  <data name="ShortLevelsDesc" xml:space="preserve">
+    <value>这将减少类似高塔地牢等地下场景的层数，减少跑酷时间，Vanilla++ MOD的功能</value>
+    <comment>This will allow you to use Vanilla++ shortened levels or revert to default</comment>
+  </data>
+  <data name="SinIcons" xml:space="preserve">
+    <value>刺客聚气图标</value>
+    <comment>Assassin Charge Icons</comment>
+  </data>
+  <data name="SkillIconPack" xml:space="preserve">
+    <value>Skill Icon Pack</value>
+    <comment>Skill Icon Pack</comment>
+  </data>
+  <data name="SpawnChance" xml:space="preserve">
+    <value>平均生成怪物几率：</value>
+    <comment>Average Spawn Chance:</comment>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>默认</value>
+    <comment>Standard</comment>
+  </data>
+  <data name="Stash" xml:space="preserve">
+    <value>修复储藏库</value>
+    <comment>Fix Stash</comment>
+  </data>
+  <data name="StashApply" xml:space="preserve">
+    <value>应用</value>
+    <comment>Apply</comment>
+  </data>
+  <data name="StashCancel" xml:space="preserve">
+    <value>取消</value>
+    <comment>Cancel</comment>
+  </data>
+  <data name="StashLabel" xml:space="preserve">
+    <value>请在下面自定义标签名称：</value>
+    <comment>Please edit your tab names below:</comment>
+  </data>
+  <data name="StashTabs" xml:space="preserve">
+    <value>个性化储藏库标签</value>
+    <comment>Personalized Stash Tabs</comment>
+  </data>
+  <data name="StashTabsBtn" xml:space="preserve">
+    <value>设置</value>
+    <comment>Settings</comment>
+  </data>
+  <data name="StashTabsSuccess" xml:space="preserve">
+    <value>已成功更新储藏库标签名称！</value>
+    <comment>Stash Tab Names have been updated successfully!</comment>
+  </data>
+  <data name="StashUnlockHard" xml:space="preserve">
+    <value>专家模式箱子已解锁！\n您现在在游戏中拥有 7 页箱子了</value>
+    <comment>Hardcore Stash unlocked!\nYou now have 7 shared tabs in-game</comment>
+  </data>
+  <data name="StashUnlockSoft" xml:space="preserve">
+    <value>普通模式箱子已解锁！\n您现在在游戏中拥有 7 页箱子了</value>
+    <comment>Softcore Stash unlocked!\nYou now have 7 shared tabs in-game</comment>
+  </data>
+  <data name="StashUnlockSoftDone" xml:space="preserve">
+    <value>普通模式箱子已解锁！</value>
+    <comment>Softcore Stash already unlocked!</comment>
+  </data>
+  <data name="StashUnlockSoftHard" xml:space="preserve">
+    <value>专家模式箱子已解锁！</value>
+    <comment>Hardcore Stash already unlocked!</comment>
+  </data>
+  <data name="SuperTK" xml:space="preserve">
+    <value>超级心灵传动</value>
+    <comment>Super Telekinesis</comment>
+  </data>
+  <data name="Superuniques Always Drop" xml:space="preserve">
+    <value>精英怪必掉落物品</value>
+    <comment>Superuniques Always Drop</comment>
+  </data>
+  <data name="TextLang" xml:space="preserve">
+    <value>文本语言：</value>
+    <comment>Text Language:</comment>
+  </data>
+  <data name="UI" xml:space="preserve">
+    <value>用户界面主题：</value>
+    <comment>UI Theme:</comment>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>检查 MOD 更新</value>
+    <comment>Check for Mod Updates</comment>
+  </data>
+  <data name="UpdateBackup" xml:space="preserve">
+    <value>正在备份 MOD 文件...</value>
+    <comment>Backing up mod files...</comment>
+  </data>
+  <data name="UpdateBackupError" xml:space="preserve">
+    <value>MOD 尚未下载，无需备份！</value>
+    <comment>Mod not downloaded yet; nothing to backup!</comment>
+  </data>
+  <data name="UpdateBegin" xml:space="preserve">
+    <value>开始更新中...</value>
+    <comment>Beginning update process...</comment>
+  </data>
+  <data name="UpdateProgress1" xml:space="preserve">
+    <value>正在提取 MOD 文件...</value>
+    <comment>Extracting Mod Files...</comment>
+  </data>
+  <data name="UpdateProgressDone" xml:space="preserve">
+    <value>更新完成！可以开始游戏了</value>
+    <comment>Update Complete! Ready to Play!</comment>
+  </data>
+  <data name="UpdateProgressGH" xml:space="preserve">
+    <value>检测到 Github 链接，正在执行其他文件夹管理操作</value>
+    <comment>Github link detected, performing additional folder management operations</comment>
+  </data>
+  <data name="UpdateProgressGHSize" xml:space="preserve">
+    <value>无法确定文件大小</value>
+    <comment>Unable to determine file size</comment>
+  </data>
+  <data name="UpdatesOff" xml:space="preserve">
+    <value>不支持自动更新</value>
+    <comment>Auto Updates Not Supported</comment>
+  </data>
+  <data name="Vault" xml:space="preserve">
+    <value>储藏库</value>
+    <comment>The Vault</comment>
+  </data>
+  <data name="VaultFiles" xml:space="preserve">
+    <value>Vault 配置数据</value>
+    <comment>Vault Config Files</comment>
+  </data>
+  <data name="VaultUpdateRdy" xml:space="preserve">
+    <value>储藏库有可用更新！</value>
+    <comment>Vault Update Available!</comment>
+  </data>
+  <data name="Version1" xml:space="preserve">
+    <value>您的版本：</value>
+    <comment>Your Version:</comment>
+  </data>
+  <data name="Version2" xml:space="preserve">
+    <value>当前版本：</value>
+    <comment>Current Version:</comment>
+  </data>
+  <data name="VersionRdy" xml:space="preserve">
+    <value>MOD 更新可用！</value>
+    <comment>Mod Update Available!</comment>
+  </data>
+  <data name="Warning1" xml:space="preserve">
+    <value>- 使用 .zip 压缩包直接下载链接</value>
+    <comment>- Use direct download link of .zip file</comment>
+  </data>
+  <data name="Warning2" xml:space="preserve">
+    <value>- zip 内的文件夹结构应为：MOD名称/Mod名称.mpq</value>
+    <comment>- Folder structure inside zip should be: ModName/ModName.mpq</comment>
+  </data>
+  <data name="Warning3" xml:space="preserve">
+    <value>- 也可以手动解压到 D2R 安装目录下的 mods 文件夹</value>
+    <comment>- Can also extract manually to main D2R Folder/Mods</comment>
+  </data>
+  <data name="Wiki" xml:space="preserve">
+    <value>Wiki</value>
+    <comment>Wiki</comment>
+  </data>
+</root>

@@ -1,0 +1,652 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActX" xml:space="preserve">
+    <value>Atto</value>
+    <comment>Act X</comment>
+  </data>
+  <data name="All Monsters Always Drop" xml:space="preserve">
+    <value>Tutti i mostri cadono sempre</value>
+    <comment>All Monsters Always Drop</comment>
+  </data>
+  <data name="AppLang" xml:space="preserve">
+    <value>Lingua dell'app:</value>
+    <comment>App Language:</comment>
+  </data>
+  <data name="AudioLang" xml:space="preserve">
+    <value>Lingua dell'audio:</value>
+    <comment>Audio Language:</comment>
+  </data>
+  <data name="AuthorFiles" xml:space="preserve">
+    <value>Sono necessari file aggiuntivi dell'autore</value>
+    <comment>Author Extra Files Needed</comment>
+  </data>
+  <data name="AutoBackup" xml:space="preserve">
+    <value>Caratteri di backup automatico</value>
+    <comment>Auto-Backup Characters</comment>
+  </data>
+  <data name="AutoBackupBtn1" xml:space="preserve">
+    <value>Backup</value>
+    <comment>Backup</comment>
+  </data>
+  <data name="AutoBackupBtn2" xml:space="preserve">
+    <value>Ristabilire</value>
+    <comment>Restore</comment>
+  </data>
+  <data name="AutoBackupSuccess1" xml:space="preserve">
+    <value>Backup del personaggio interpretato e della scorta più recenti con successo!</value>
+    <comment>Most recent played character and stash backed up successfully!</comment>
+  </data>
+  <data name="AutoBackupSuccess2" xml:space="preserve">
+    <value>Il personaggio interpretato più recentemente è stato ripristinato con successo!</value>
+    <comment>Most recently played character restored successfully!</comment>
+  </data>
+  <data name="Background" xml:space="preserve">
+    <value>Sfondo</value>
+    <comment>Background</comment>
+  </data>
+  <data name="Backup every 1 hour" xml:space="preserve">
+    <value>Backup ogni 1 ora</value>
+    <comment>Backup every 1 hour</comment>
+  </data>
+  <data name="Backup every 15 min" xml:space="preserve">
+    <value>Backup ogni 15 minuti</value>
+    <comment>Backup every 15 min</comment>
+  </data>
+  <data name="Backup every 30 min" xml:space="preserve">
+    <value>Backup ogni 30 minuti</value>
+    <comment>Backup every 30 min</comment>
+  </data>
+  <data name="Backup every 5 min" xml:space="preserve">
+    <value>Backup ogni 5 minuti</value>
+    <comment>Backup every 5 min</comment>
+  </data>
+  <data name="By Itemtype" xml:space="preserve">
+    <value>Per tipo di articolo</value>
+    <comment>By ItemType</comment>
+  </data>
+  <data name="By Name" xml:space="preserve">
+    <value>Per nome</value>
+    <comment>By Name</comment>
+  </data>
+  <data name="By Req. Level" xml:space="preserve">
+    <value>Per req.</value>
+    <comment>By Req. Level</comment>
+  </data>
+  <data name="Champions" xml:space="preserve">
+    <value>Pacchetti campioni:</value>
+    <comment>Champion Packs:</comment>
+  </data>
+  <data name="Community" xml:space="preserve">
+    <value>Comunità</value>
+    <comment>Community</comment>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Crea una mod</value>
+    <comment>Create A Mod</comment>
+  </data>
+  <data name="CreateModDesc" xml:space="preserve">
+    <value>Ciò ti consentirà di creare una mod vuota utilizzando solo le opzioni del launcher.\nUtilizzala se desideri un'esperienza Vanilla con opzioni QoL aggiuntive.\n\nVuoi comunque creare la tua mod?</value>
+    <comment>This will allow you to create a blank mod using only launcher options.\nUse if you'd like a Vanilla experience with additional QoL options.\n\nWould you still like to create your own mod?</comment>
+  </data>
+  <data name="Customizations" xml:space="preserve">
+    <value>Personalizzazioni</value>
+    <comment>Customizations</comment>
+  </data>
+  <data name="CustomizeDesc" xml:space="preserve">
+    <value>Ciò ti consentirà di modificare le impostazioni di gioco in base alle tue preferenze per ciascuna difficoltà</value>
+    <comment>This will allow you to change in-game settings to your preference for each difficulty</comment>
+  </data>
+  <data name="CustomizeTitle" xml:space="preserve">
+    <value>Personalizzazioni dei mostri</value>
+    <comment>Monster Customizations</comment>
+  </data>
+  <data name="D2RWebsite" xml:space="preserve">
+    <value>Sito web</value>
+    <comment>Website</comment>
+  </data>
+  <data name="D2RYoutube" xml:space="preserve">
+    <value>Youtube</value>
+    <comment>Youtube</comment>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Predefinito</value>
+    <comment>Default</comment>
+  </data>
+  <data name="Density" xml:space="preserve">
+    <value>Densità media:</value>
+    <comment>Average Density:</comment>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabilitato</value>
+    <comment>Disabled</comment>
+  </data>
+  <data name="Discord" xml:space="preserve">
+    <value>Discordia</value>
+    <comment>Discord</comment>
+  </data>
+  <data name="Dize" xml:space="preserve">
+    <value>Dize</value>
+    <comment>Dize</comment>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Scarica la nuova modalità</value>
+    <comment>Download New Mod</comment>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Abilitato</value>
+    <comment>Enabled</comment>
+  </data>
+  <data name="Enabled (Mini)" xml:space="preserve">
+    <value>Abilitato (Mini)</value>
+    <comment>Enabled (Mini)</comment>
+  </data>
+  <data name="Enabled (No Orbs)" xml:space="preserve">
+    <value>Abilitato (nessuna sfera)</value>
+    <comment>Enabled (No Orbs)</comment>
+  </data>
+  <data name="Experience" xml:space="preserve">
+    <value>Tasso di scadenza:</value>
+    <comment>Exp Rate:</comment>
+  </data>
+  <data name="FontBtn" xml:space="preserve">
+    <value>Usa carattere</value>
+    <comment>Use Font</comment>
+  </data>
+  <data name="FontDesc" xml:space="preserve">
+    <value>Ciò ti consentirà di modificare il carattere utilizzato nel gioco.</value>
+    <comment>This will allow you to change the in-game font used. All loot filter icons are included in each font. Fonts will be added by request.</comment>
+  </data>
+  <data name="FontTitle" xml:space="preserve">
+    <value>Cambia carattere</value>
+    <comment>Change Font</comment>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Dimensioni del gruppo:</value>
+    <comment>Group Sizes:</comment>
+  </data>
+  <data name="HDR" xml:space="preserve">
+    <value>Correzione dell'HDR:</value>
+    <comment>HDR Fix:</comment>
+  </data>
+  <data name="Hell" xml:space="preserve">
+    <value>Inferno</value>
+    <comment>Hell</comment>
+  </data>
+  <data name="HelmetDisplay" xml:space="preserve">
+    <value>Visualizzazione del casco</value>
+    <comment>Helmet Display</comment>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Casa</value>
+    <comment>Home</comment>
+  </data>
+  <data name="HUD" xml:space="preserve">
+    <value>Progettazione dell'HUD</value>
+    <comment>HUD Design</comment>
+  </data>
+  <data name="InstallLink" xml:space="preserve">
+    <value>Installa una mod da un collegamento per il download .zip:</value>
+    <comment>Install a mod from a .zip download link:</comment>
+  </data>
+  <data name="InstallMod" xml:space="preserve">
+    <value>Installa mod</value>
+    <comment>Install Mod</comment>
+  </data>
+  <data name="InstallModDB" xml:space="preserve">
+    <value>Installa una mod dal database D2RModding:</value>
+    <comment>Install a mod from the D2RModding database:</comment>
+  </data>
+  <data name="InstallProgressD2R" xml:space="preserve">
+    <value>Installazione della mod in D2R...</value>
+    <comment>Installing your mod into D2R...</comment>
+  </data>
+  <data name="InstallProgressGHSize" xml:space="preserve">
+    <value>Il download è iniziato, ma il web non è riuscito a segnalare la dimensione del file!</value>
+    <comment>Download has started, but web failed to report file size!</comment>
+  </data>
+  <data name="InstallProgressSuccess" xml:space="preserve">
+    <value>Mod installata con successo!</value>
+    <comment>Mod installed successfully!</comment>
+  </data>
+  <data name="Item + Rune Icons" xml:space="preserve">
+    <value>Oggetto + icone runiche</value>
+    <comment>Item + Rune Icons</comment>
+  </data>
+  <data name="Item Icons Only" xml:space="preserve">
+    <value>Solo icone oggetto</value>
+    <comment>Item Icons Only</comment>
+  </data>
+  <data name="ItemIcons" xml:space="preserve">
+    <value>Visualizzazione dell'articolo</value>
+    <comment>Item Display</comment>
+  </data>
+  <data name="Itemlevels" xml:space="preserve">
+    <value>Mostra i livelli degli articoli</value>
+    <comment>Show Item Levels</comment>
+  </data>
+  <data name="LauncherUpdateRdy" xml:space="preserve">
+    <value>Aggiornamento del launcher disponibile!</value>
+    <comment>Launcher Update Available!</comment>
+  </data>
+  <data name="LaunchFiles" xml:space="preserve">
+    <value>D2RLancia i dati utente</value>
+    <comment>D2RLAN User Data</comment>
+  </data>
+  <data name="Maps" xml:space="preserve">
+    <value>Mappe</value>
+    <comment>Maps</comment>
+  </data>
+  <data name="MapsInfo" xml:space="preserve">
+    <value>Queste opzioni ti consentono di forzare layout di mappa specifici in modo da poter lanciare quella mappa "perfetta" ogni volta che vuoi.</value>
+    <comment>These options let you force specific map layouts so you can roll that 'perfect' map anytime you want. Details explained below:\n\nTower: The tower entrance is on the same screen as your waypoint.\n\nCatacombs: Levels 3 and 4 are less than 3 screens away\n\nAncient Tunnels: Entrance is 1 screen away from your waypoint\n\nLower Kurast: Very favorable super chest pattern near your waypoint\n\nDurance of Hate: Level 3 entrance is one teleport away from waypoint.\n\nHellforge: Forge is at closest spawn to your waypoint\n\nWorldstone Keep: Level 3 and 4 are right next to each other\n\nI'm a Cheater: Almost all entrances are absurdly close with a perfect LK pattern by the waypoint. You're basically just cheating now.\n\n\nNOTE: Lower Kurast and I'm a Cheater options are only available on Vanilla++.</comment>
+  </data>
+  <data name="MapsSetup" xml:space="preserve">
+    <value>ATTENZIONE: queste opzioni sono pensate per un'esperienza divertente o due, ma sembreranno un imbroglio.</value>
+    <comment>WARNING: These options are meant for a fun experience or two, but will feel like cheating. Use at your own risk.\nIf you would like to proceed, please read these instructions:\n\nStep 1: Start the game with your selected layout\nStep 2: Once loaded into the game with your character fully, EXIT the game.\nStep 3: After exiting the game, you should see your layout dropdown on launcher changed back to Default. This is normal; Start the game again.\n\nIf you do not exit the game after changing your map layout...you will be stuck with a small drop pool of deterministic outcomes.\nThis does not need to be done every game; only if you change map layouts the normal ways; such as changing difficulty.</comment>
+  </data>
+  <data name="MercID" xml:space="preserve">
+    <value>Identificatore del mercenario</value>
+    <comment>Merc Identifier</comment>
+  </data>
+  <data name="Merged" xml:space="preserve">
+    <value>Uniti</value>
+    <comment>Merged</comment>
+  </data>
+  <data name="ModChoice" xml:space="preserve">
+    <value>Scelta della modalità:</value>
+    <comment>Mod Choice:</comment>
+  </data>
+  <data name="ModFiles" xml:space="preserve">
+    <value>File di mod</value>
+    <comment>Mod Files</comment>
+  </data>
+  <data name="ModOptions" xml:space="preserve">
+    <value>Opzioni QoL</value>
+    <comment>QoL Options</comment>
+  </data>
+  <data name="ModUpdateAuthor" xml:space="preserve">
+    <value>Mod Author non ha ancora aggiunto il supporto per gli aggiornamenti automatici!</value>
+    <comment>Mod Author hasn't added support for auto-updates yet!</comment>
+  </data>
+  <data name="ModUpdateCurrent" xml:space="preserve">
+    <value>I file mod sono aggiornati...non è necessario alcun aggiornamento!</value>
+    <comment>Mod files are current...no update needed!</comment>
+  </data>
+  <data name="ModUpdateRdy" xml:space="preserve">
+    <value>Aggiornamento mod disponibile!\n\nVuoi fare un backup di questo mod prima dell'aggiornamento?</value>
+    <comment>Mod Update Available!\n\nWould you like to make a backup of your mod folder before updating?</comment>
+  </data>
+  <data name="MonsterStatsDisplay" xml:space="preserve">
+    <value>Visualizzazione delle statistiche dei mostri</value>
+    <comment>Monster Stats Display</comment>
+  </data>
+  <data name="MyFiles" xml:space="preserve">
+    <value>I miei file</value>
+    <comment>My Files</comment>
+  </data>
+  <data name="Nightmare" xml:space="preserve">
+    <value>Incubo</value>
+    <comment>Nightmare</comment>
+  </data>
+  <data name="No Background" xml:space="preserve">
+    <value>Nessuno sfondo</value>
+    <comment>No Background</comment>
+  </data>
+  <data name="No Icons" xml:space="preserve">
+    <value>Nessuna icona</value>
+    <comment>No Icons</comment>
+  </data>
+  <data name="NoDiscord" xml:space="preserve">
+    <value>Nessuna discordia trovata!</value>
+    <comment>No Discord Found!</comment>
+  </data>
+  <data name="NoDrop" xml:space="preserve">
+    <value>Drop di oggetti mostruosi:</value>
+    <comment>Monster Item Drops:</comment>
+  </data>
+  <data name="NoPatreon" xml:space="preserve">
+    <value>Nessun Patreon trovato!</value>
+    <comment>No Patreon Found!</comment>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normale</value>
+    <comment>Normal</comment>
+  </data>
+  <data name="NoWiki" xml:space="preserve">
+    <value>Nessun Wiki trovato!</value>
+    <comment>No Wiki Found!</comment>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Opzioni</value>
+    <comment>Options</comment>
+  </data>
+  <data name="PathError1" xml:space="preserve">
+    <value>Posizione di installazione del gioco non trovata!</value>
+    <comment>Game Install Location not found!</comment>
+  </data>
+  <data name="PathError2a" xml:space="preserve">
+    <value>Se riscontri problemi di caricamento delle mod, contatta Bonesy in Discord</value>
+    <comment>If you experience mod loading issues, please contact Bonesy in Discord</comment>
+  </data>
+  <data name="PathError2b" xml:space="preserve">
+    <value>Trovate più posizioni di installazione!</value>
+    <comment>Multiple Install Locations found!</comment>
+  </data>
+  <data name="Patreon" xml:space="preserve">
+    <value>Patreon</value>
+    <comment>Patreon</comment>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Gioca a Mod</value>
+    <comment>Play Mod</comment>
+  </data>
+  <data name="Regen" xml:space="preserve">
+    <value>Mappa Rigenerazione</value>
+    <comment>Map Regen</comment>
+  </data>
+  <data name="ReMoDDeD" xml:space="preserve">
+    <value>ReMoDDeD</value>
+    <comment>ReMoDDeD</comment>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>Rinomina personaggio</value>
+    <comment>Rename Character</comment>
+  </data>
+  <data name="Respec" xml:space="preserve">
+    <value>Rispec</value>
+    <comment>Respec</comment>
+  </data>
+  <data name="Rune Icons Only" xml:space="preserve">
+    <value>Solo icone runiche</value>
+    <comment>Rune Icons Only</comment>
+  </data>
+  <data name="RuneDisplay" xml:space="preserve">
+    <value>Visualizzazione delle rune</value>
+    <comment>Rune Display</comment>
+  </data>
+  <data name="RWSort" xml:space="preserve">
+    <value>Ordinamento delle parole runiche</value>
+    <comment>Runeword Sorting</comment>
+  </data>
+  <data name="SaveFiles" xml:space="preserve">
+    <value>Salva file</value>
+    <comment>Save Files</comment>
+  </data>
+  <data name="ShortLevels" xml:space="preserve">
+    <value>Livelli ridotti</value>
+    <comment>Shortened Levels</comment>
+  </data>
+  <data name="ShortLevelsDesc" xml:space="preserve">
+    <value>Ciò ti consentirà di utilizzare i livelli ridotti di Vanilla++ o di ripristinare i valori predefiniti</value>
+    <comment>This will allow you to use Vanilla++ shortened levels or revert to default</comment>
+  </data>
+  <data name="SinIcons" xml:space="preserve">
+    <value>Icone di carica dell'assassino</value>
+    <comment>Assassin Charge Icons</comment>
+  </data>
+  <data name="SkillIconPack" xml:space="preserve">
+    <value>Skill Icon Pack</value>
+    <comment>Skill Icon Pack</comment>
+  </data>
+  <data name="SpawnChance" xml:space="preserve">
+    <value>Probabilità media di spawn:</value>
+    <comment>Average Spawn Chance:</comment>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>Standard</value>
+    <comment>Standard</comment>
+  </data>
+  <data name="Stash" xml:space="preserve">
+    <value>Correggi la scorta</value>
+    <comment>Fix Stash</comment>
+  </data>
+  <data name="StashApply" xml:space="preserve">
+    <value>Fare domanda a</value>
+    <comment>Apply</comment>
+  </data>
+  <data name="StashCancel" xml:space="preserve">
+    <value>Annulla</value>
+    <comment>Cancel</comment>
+  </data>
+  <data name="StashLabel" xml:space="preserve">
+    <value>Modifica i nomi delle schede di seguito:</value>
+    <comment>Please edit your tab names below:</comment>
+  </data>
+  <data name="StashTabs" xml:space="preserve">
+    <value>Schede di scorta personalizzate</value>
+    <comment>Personalized Stash Tabs</comment>
+  </data>
+  <data name="StashTabsBtn" xml:space="preserve">
+    <value>Impostazioni</value>
+    <comment>Settings</comment>
+  </data>
+  <data name="StashTabsSuccess" xml:space="preserve">
+    <value>I nomi delle schede Stash sono stati aggiornati con successo!</value>
+    <comment>Stash Tab Names have been updated successfully!</comment>
+  </data>
+  <data name="StashUnlockHard" xml:space="preserve">
+    <value>Stash hardcore sbloccato!\nOra hai 7 schede condivise nel gioco</value>
+    <comment>Hardcore Stash unlocked!\nYou now have 7 shared tabs in-game</comment>
+  </data>
+  <data name="StashUnlockSoft" xml:space="preserve">
+    <value>Softcore Stash sbloccato!\nOra hai 7 schede condivise nel gioco</value>
+    <comment>Softcore Stash unlocked!\nYou now have 7 shared tabs in-game</comment>
+  </data>
+  <data name="StashUnlockSoftDone" xml:space="preserve">
+    <value>Softcore Stash già sbloccato!</value>
+    <comment>Softcore Stash already unlocked!</comment>
+  </data>
+  <data name="StashUnlockSoftHard" xml:space="preserve">
+    <value>Stash hardcore già sbloccato!</value>
+    <comment>Hardcore Stash already unlocked!</comment>
+  </data>
+  <data name="SuperTK" xml:space="preserve">
+    <value>Supertelecinesi</value>
+    <comment>Super Telekinesis</comment>
+  </data>
+  <data name="Superuniques Always Drop" xml:space="preserve">
+    <value>I superunici cadono sempre</value>
+    <comment>Superuniques Always Drop</comment>
+  </data>
+  <data name="TextLang" xml:space="preserve">
+    <value>Lingua del testo:</value>
+    <comment>Text Language:</comment>
+  </data>
+  <data name="UI" xml:space="preserve">
+    <value>Tema dell'interfaccia utente:</value>
+    <comment>UI Theme:</comment>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Controlla gli aggiornamenti delle mod</value>
+    <comment>Check for Mod Updates</comment>
+  </data>
+  <data name="UpdateBackup" xml:space="preserve">
+    <value>Backup dei file mod...</value>
+    <comment>Backing up mod files...</comment>
+  </data>
+  <data name="UpdateBackupError" xml:space="preserve">
+    <value>Mod non ancora scaricata;</value>
+    <comment>Mod not downloaded yet; nothing to backup!</comment>
+  </data>
+  <data name="UpdateBegin" xml:space="preserve">
+    <value>Inizio processo di aggiornamento...</value>
+    <comment>Beginning update process...</comment>
+  </data>
+  <data name="UpdateProgress1" xml:space="preserve">
+    <value>Estrazione dei file mod...</value>
+    <comment>Extracting Mod Files...</comment>
+  </data>
+  <data name="UpdateProgressDone" xml:space="preserve">
+    <value>Aggiornamento completato!</value>
+    <comment>Update Complete! Ready to Play!</comment>
+  </data>
+  <data name="UpdateProgressGH" xml:space="preserve">
+    <value>Rilevato collegamento Github, esecuzione di ulteriori operazioni di gestione delle cartelle</value>
+    <comment>Github link detected, performing additional folder management operations</comment>
+  </data>
+  <data name="UpdateProgressGHSize" xml:space="preserve">
+    <value>Il download è iniziato;</value>
+    <comment>Unable to determine file size</comment>
+  </data>
+  <data name="UpdatesOff" xml:space="preserve">
+    <value>Aggiornamenti automatici non supportati</value>
+    <comment>Auto Updates Not Supported</comment>
+  </data>
+  <data name="Vault" xml:space="preserve">
+    <value>La cassaforte</value>
+    <comment>The Vault</comment>
+  </data>
+  <data name="VaultFiles" xml:space="preserve">
+    <value>Dati di configurazione del vault</value>
+    <comment>Vault Config Files</comment>
+  </data>
+  <data name="VaultUpdateRdy" xml:space="preserve">
+    <value>Aggiornamento del Vault disponibile!</value>
+    <comment>Vault Update Available!</comment>
+  </data>
+  <data name="Version1" xml:space="preserve">
+    <value>La tua versione:</value>
+    <comment>Your Version:</comment>
+  </data>
+  <data name="Version2" xml:space="preserve">
+    <value>Versione attuale:</value>
+    <comment>Current Version:</comment>
+  </data>
+  <data name="VersionRdy" xml:space="preserve">
+    <value>Aggiornamento mod disponibile!</value>
+    <comment>Mod Update Available!</comment>
+  </data>
+  <data name="Warning1" xml:space="preserve">
+    <value>- Utilizzare il collegamento per il download diretto del file .zip</value>
+    <comment>- Use direct download link of .zip file</comment>
+  </data>
+  <data name="Warning2" xml:space="preserve">
+    <value>- La struttura delle cartelle all'interno dello zip dovrebbe essere: ModName/ModName.mpq</value>
+    <comment>- Folder structure inside zip should be: ModName/ModName.mpq</comment>
+  </data>
+  <data name="Warning3" xml:space="preserve">
+    <value>- Può anche essere estratto manualmente nella cartella/mod D2R principale</value>
+    <comment>- Can also extract manually to main D2R Folder/Mods</comment>
+  </data>
+  <data name="Wiki" xml:space="preserve">
+    <value>Wiki</value>
+    <comment>Wiki</comment>
+  </data>
+</root>

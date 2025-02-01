@@ -1,0 +1,676 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:D2RLAN.Converters"
+    xmlns:cultures="clr-namespace:D2RLAN.Culture"
+    xmlns:syncfusion="http://schemas.syncfusion.com/wpf">
+
+    <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+
+    <ObjectDataProvider
+        x:Key="Resources"
+        MethodName="GetResourceInstance"
+        ObjectType="{x:Type cultures:CultureResources}" />
+
+    <DataTemplate x:Key="ArrowHeadDownTemplate">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Width="46"
+                    Height="46"
+                    Margin="0,0,0,0"
+                    Data="M30.587915,0L31.995998,1.4199842 15.949964,17.351 0,1.4979873 1.4099131,0.078979151 15.949964,14.53102z"
+                    Fill="CornFlowerBlue"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ArrowHeadUpTemplate">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Width="46"
+                    Height="46"
+                    Margin="0,0,0,0"
+                    Data="M30.587915,0L31.995998,1.4199842 15.949964,17.351 0,1.4979873 1.4099131,0.078979151 15.949964,14.53102z"
+                    Fill="CornFlowerBlue"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="-1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+
+    </DataTemplate>
+
+    <DataTemplate x:Key="ExportIconTemplate">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Width="46"
+                    Height="46"
+                    Margin="0,0,0,0"
+                    Data="M0,22.499995L32,22.499995 27.400024,28.1 4.6000061,28.1z M4.6000061,7.9999978L12.100006,7.9999978 12.100006,14.499996 19.900024,14.499996 19.900024,7.9999978 27.400024,7.9999978 32,19.999995 0,19.999995z M16,0L22.900024,5.8000166 18.300018,5.8000166 18.300018,12.999996 13.700012,12.999996 13.700012,5.8000166 9.1000061,5.8000166z"
+                    Fill="#c7b377"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AdditionIconTemplate">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Width="46"
+                    Height="46"
+                    Margin="0,0,0,0"
+                    Data="M12.126984,0L19.872009,0 19.872009,12.128 32,12.128 32,19.872999 19.872009,19.872999 19.872009,31.999 12.126984,31.999 12.126984,19.872999 0,19.872999 0,12.128 12.126984,12.128z"
+                    Fill="#c7b377"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SubtractionIconTemplate">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Width="46"
+                    Height="46"
+                    Margin="0,0,0,0"
+                    Data="M0,0L32,0 32,5.3 0,5.3z"
+                    Fill="#c7b377"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </DataTemplate>
+    <DataTemplate x:Key="RefreshIconTemplate">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Width="46"
+                    Height="46"
+                    Margin="0,0,0,0"
+                    Data="M3.7579801,8.2645212C3.8770003,8.2675425,4.008991,8.3575398,4.1310022,8.5415303L10.969089,15.66155C11.039097,15.766561 11.080113,15.870566 11.095098,15.970572 11.189093,16.595575 10.2911,16.495569 9.6970961,16.282554L7.0620463,15.337544C6.8710339,15.270558 6.6670515,15.422566 6.713042,15.617544 7.39805,18.562561 9.4140722,21.126566 12.387109,22.354566 15.123174,23.476579 18.076223,23.217577 20.520259,21.913585 20.792266,21.768566 20.950259,21.483593 21.041263,21.188577 21.383249,20.086584 22.408288,19.286564 23.622297,19.286564 25.114324,19.286564 26.324334,20.495582 26.324334,21.988569 26.324334,23.480577 25.114324,24.690572 23.622297,24.690572 23.302285,24.690572 22.978275,24.736593 22.703277,24.899589 19.238227,26.943603 14.937166,27.415588 10.976108,25.785577 7.0550577,24.175586 4.3449943,20.868568 3.2949908,17.032558 3.2369759,16.815546 2.9829743,16.710565 2.8059695,16.846552L1.4449564,17.901579C0.94595579,18.287567 0.13292459,18.698579 0.011920457,18.07855 -0.0070616797,17.980558 -0.0040709114,17.866575 0.025928503,17.742551L3.4029944,8.6825224C3.4699812,8.4035298,3.6039858,8.2615305,3.7579801,8.2645212z M16.18917,0.00051612503C17.805223,0.015500086 19.441234,0.33050362 21.02225,0.98150707 24.945316,2.5925049 27.656354,5.8985158 28.704375,9.7355353 28.763366,9.9515387 29.016391,10.056551 29.194373,9.9205328L30.55441,8.8665434C31.054418,8.4795185 31.867418,8.0675303 31.988422,8.6875273 32.007436,8.7865263 32.003438,8.8995339 31.973438,9.0235268L29.065374,18.085569C28.943393,18.58258,28.615384,18.644561,28.335382,18.223571L21.033267,11.104528C20.962253,11.000554 20.921266,10.895543 20.905244,10.794529 20.810243,10.170534 21.709274,10.272524 22.304284,10.485537L24.93732,11.429541C25.127324,11.497534 25.331308,11.346532 25.285316,11.149542 24.602323,8.2035166 22.584287,5.6405197 19.611249,4.4115115 16.861207,3.2865075 13.890153,3.5535067 11.43812,4.8765093 11.171118,5.0205222 10.999118,5.2865144 10.891114,5.571519 10.505092,6.5925185 9.5200922,7.3205181 8.3640682,7.3205181 6.8710339,7.3205181 5.6610243,6.1105224 5.6610243,4.6185128 5.6610243,3.1255268 6.8710339,1.9155005 8.3640682,1.9155004 8.4540655,1.9155005 8.5430567,1.9215125 8.6300633,1.9305151 8.9210837,1.9605141 9.2170784,1.908512 9.4720871,1.7635224 11.511119,0.60150064 13.82814,-0.02051078 16.18917,0.00051612503z"
+                    Fill="#c7b377"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </DataTemplate>
+    <DataTemplate x:Key="DownloadIconTemplate">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Width="46"
+                    Height="46"
+                    Margin="0,0,0,0"
+                    Data="M7.1026927,8.3989833L8.9016973,9.8989823C4.6026598,10.699 2.0026196,12.199 2.0026196,13.299005 2.0026196,14.898979 7.5016848,17.299004 15.901789,17.299004 24.300916,17.299004 29.800988,14.898979 29.800988,13.299005 29.800988,12.199 27.200948,10.699 22.900874,9.8989823L24.800923,8.3989833C29.100967,9.6990007 32.001001,11.799006 32.001001,14.299005 32.001001,18.198996 24.800923,21.398001 16.001796,21.398001 7.2026693,21.398001 0.0025934007,18.198996 0.0025932575,14.299005 -0.097414011,11.799006 2.7026104,9.6990007 7.1026927,8.3989833z M13.501763,0L18.301814,0 18.301814,7.4989894 23.200896,7.4989894 15.901789,13.598993 8.6017047,7.4989894 13.501763,7.4989894z"
+                    Fill="#c7b377"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+
+    </DataTemplate>
+    <DataTemplate x:Key="PlayIconTemplate">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Width="46"
+                    Height="46"
+                    Margin="0,0,0,0"
+                    Data="M0,0L15.825011,8.0009766 31.650999,15.997986 15.825011,23.998993 0,32 0,15.997986z"
+                    Fill="#c7b377"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+
+    </DataTemplate>
+    <DataTemplate x:Key="SettingsIconTemplate">
+        <Image Source="pack://application:,,,/Resources/Icons/Icon_Options.png" />
+    </DataTemplate>
+    <DataTemplate x:Key="CharactersIconTemplate">
+        <Image Source="pack://application:,,,/Resources/Icons/Icon_Social.png" />
+    </DataTemplate>
+    <DataTemplate x:Key="SizeIconTemplate">
+        <Image Source="pack://application:,,,/Resources/Icons/Icon_Size.png" />
+    </DataTemplate>
+    <DataTemplate x:Key="TimeIconTemplate">
+        <Image Source="pack://application:,,,/Resources/Icons/Icon_Time.png" />
+    </DataTemplate>
+    <DataTemplate x:Key="SpeedIconTemplate">
+        <Image Source="pack://application:,,,/Resources/Icons/Icon_Speed.png" />
+    </DataTemplate>
+    <DataTemplate x:Key="PreviewIconTemplate">
+        <Image Source="pack://application:,,,/Resources/Icons/Icon_Preview.png" />
+    </DataTemplate>
+    <DataTemplate x:Key="QuestionMarkIconTemplate">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Width="46"
+                    Height="46"
+                    Margin="0,0,0,0"
+                    Data="M14.246002,23.394012L16.850006,23.394012 16.850006,26.235001 14.246002,26.235001z M15.785995,5.7660065C17.520004,5.7660065 18.862,6.2390137 19.809006,7.1880035 20.833008,8.2109985 21.347,9.5140076 21.347,11.090012 21.347,12.432007 20.872009,13.575012 19.927002,14.522003 19.374008,15.075012 18.624008,15.825012 17.677002,16.768005 16.970001,17.479004 16.613998,18.546005 16.613998,19.964005L14.483002,19.964005C14.483002,18.229004 14.759003,16.92601 15.311005,16.061005 15.706009,15.430008 16.456009,14.561005 17.559006,13.456009 18.190002,12.827011 18.507004,12.077011 18.507004,11.208008 18.507004,10.106003 18.229004,9.276001 17.677002,8.7230072 17.20401,8.25 16.535995,8.0140076 15.667007,8.0140076 14.956009,8.0140076 14.363998,8.25 13.893005,8.7230072 13.104004,9.5140076 12.710007,10.695999 12.710007,12.274002L9.9869995,12.274002C9.9869995,10.223007 10.658997,8.526001 11.999008,7.1880035 12.945999,6.2390137 14.208008,5.7660065 15.785995,5.7660065z M16,3.131012C8.8910065,3.131012 3.1290054,8.8930054 3.1290054,16 3.1290054,23.108002 8.8910065,28.869003 16,28.869003 23.104996,28.869003 28.867004,23.108002 28.867004,16 28.867004,8.8930054 23.104996,3.131012 16,3.131012z M16,0C24.820007,0 32,7.178009 32,16 32,24.822006 24.820007,32 16,32 7.1760025,32 0,24.822006 0,16 0,7.178009 7.1760025,0 16,0z"
+                    Fill="#c7b377"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+
+    </DataTemplate>
+
+    <Storyboard x:Key="FlashAnimation">
+        <DoubleAnimation
+            AutoReverse="True"
+            RepeatBehavior="Forever"
+            Storyboard.TargetProperty="Opacity"
+            From="1"
+            To=".2"
+            Duration="0:0:0.9" />
+    </Storyboard>
+
+    <Style
+        x:Key="RedTextBlockStyle"
+        BasedOn="{StaticResource WPFTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Foreground" Value="CornFlowerBlue" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style
+        x:Key="UpdateTextBlockStyle"
+        BasedOn="{StaticResource WPFTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Foreground" Value="Firebrick" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="NavigationItemStyle" TargetType="syncfusion:NavigationItem">
+        <Setter Property="FontFamily" Value="pack://application:,,,/Resources/Fonts/#Formal436 BT" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="CornFlowerBlue" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=IsExpanded, RelativeSource={RelativeSource Self}}" Value="True">
+                <Setter Property="ExpanderTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <ContentControl
+                                Width="16"
+                                Height="16"
+                                ContentTemplate="{StaticResource SubtractionIconTemplate}" />
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=IsExpanded, RelativeSource={RelativeSource Self}}" Value="False">
+                <Setter Property="ExpanderTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <ContentControl
+                                Width="16"
+                                Height="16"
+                                ContentTemplate="{StaticResource AdditionIconTemplate}" />
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="NavigationItemOrangeStyle" TargetType="syncfusion:NavigationItem">
+        <Setter Property="FontFamily" Value="pack://application:,,,/Resources/Fonts/#Formal436 BT" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="#db7800" />
+    </Style>
+    <Style x:Key="NavigationItemGoldStyle" TargetType="syncfusion:NavigationItem">
+
+        <Setter Property="FontFamily" Value="pack://application:,,,/Resources/Fonts/#Formal436 BT" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="#c7b377" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource Self}}" Value="False">
+                <Setter Property="Foreground" Value="Gray" />
+            </DataTrigger>
+        </Style.Triggers>
+
+    </Style>
+    <Style
+        x:Key="LabelHeaderStyle"
+        BasedOn="{StaticResource WPFLabelStyle}"
+        TargetType="Label">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="#c7b377" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="5,5,5,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style
+    x:Key="EventNameStyle"
+    BasedOn="{StaticResource WPFLabelStyle}"
+    TargetType="Label">
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="Foreground" Value="CornflowerBlue" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="5,5,5,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style
+    x:Key="EventHeaderStyle"
+    BasedOn="{StaticResource WPFLabelStyle}"
+    TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="CornFlowerBlue" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="5,5,5,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="EventHeaderStyleT" TargetType="Run">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="CornFlowerBlue" />
+    </Style>
+
+    <Style
+        x:Key="LabelNormalStyle"
+        BasedOn="{StaticResource WPFLabelStyle}"
+        TargetType="Label">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="5,5,5,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style
+        x:Key="LabelNormalGoldStyle"
+        BasedOn="{StaticResource WPFLabelStyle}"
+        TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="#c7b377" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="5,5,5,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style
+        x:Key="ComboBoxStyle"
+        BasedOn="{StaticResource WPFComboBoxStyle}"
+        TargetType="ComboBox">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="5,0,5,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style
+        x:Key="TextBlockStyle"
+        BasedOn="{StaticResource WPFTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style
+        x:Key="TextBlockStyleGold"
+        BasedOn="{StaticResource WPFTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="#c7b377" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style
+        x:Key="TextBoxStyle"
+        BasedOn="{StaticResource WPFTextBoxStyle}"
+        TargetType="TextBox">
+        <Setter Property="Margin" Value="5,5,5,0" />
+
+    </Style>
+    <Style
+        x:Key="ButtonStyle"
+        BasedOn="{StaticResource WPFButtonStyle}"
+        TargetType="Button">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Margin" Value="5" />
+    </Style>
+    <Style
+        x:Key="ToggleButtonStyle"
+        BasedOn="{StaticResource WPFToggleButtonStyle}"
+        TargetType="ToggleButton">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Margin" Value="5" />
+    </Style>
+    <Style
+        x:Key="SfButtonAdvLargeStyle"
+        BasedOn="{StaticResource SyncfusionButtonAdvStyle}"
+        TargetType="syncfusion:ButtonAdv">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="SizeMode" Value="Large" />
+    </Style>
+    <Style
+        x:Key="SfButtonAdvNormalStyle"
+        BasedOn="{StaticResource SyncfusionButtonAdvStyle}"
+        TargetType="syncfusion:ButtonAdv">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="MinHeight" Value="55" />
+        <Setter Property="SizeMode" Value="Normal" />
+        <Style.Triggers>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="ClickMode" Value="Release" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style
+        x:Key="SfLinearProgressBarStyle"
+        BasedOn="{StaticResource SyncfusionSfLinearProgressBarStyle}"
+        TargetType="syncfusion:SfLinearProgressBar">
+        <Setter Property="Height" Value="20" />
+        <Setter Property="IndicatorCornerRadius" Value="10" />
+        <Setter Property="IndicatorPadding" Value="5" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="ProgressColor" Value="#c7b377" />
+        <Setter Property="TrackColor" Value="#200708" />
+    </Style>
+    <Style
+        x:Key="SfButtonAdvSmallStyle"
+        BasedOn="{StaticResource SyncfusionButtonAdvStyle}"
+        TargetType="syncfusion:ButtonAdv">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="SizeMode" Value="Small" />
+    </Style>
+    <Style
+        x:Key="CheckBoxStyle"
+        BasedOn="{StaticResource WPFCheckBoxStyle}"
+        TargetType="CheckBox">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="#c7b377" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/Common/Common.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/Common/Brushes.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/Button.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ToggleButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/TextBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/TextBlock.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ComboBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/Label.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/CheckBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/UpDown/UpDown.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/DoubleTextBox/DoubleTextBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/GroupBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/TabControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/DateTimeEdit/DateTimeEdit.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/StatusBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfNavigationDrawer/SfNavigationDrawer.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfNavigationDrawer/PrimarySfNavigationDrawer.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/TabControlExt/TabControlExt.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ButtonAdv/ButtonAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/DropDownButtonAdv/DropDownButtonAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SplitButtonAdv/SplitButtonAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/IntegerTextBox/IntegerTextBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ToolBarAdv/ToolBarAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ToolBarAdv/ToolBarResources.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/DockingManager/DockingManager.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/RadioButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/Menu.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/Window.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ToolTip.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ChromelessWindow/ChromelessWindow.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfLinearProgressBar/SfLinearProgressBar.xaml" />
+
+
+        <!--<ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/GlyphDropdownExpander.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/GlyphEditableDropdownExpander.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/GlyphRepeatButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/GlyphButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/FlatButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/PrimaryButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/FlatPrimaryButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ListBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/DatePicker.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/Calendar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/Slider.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/RepeatButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ScrollViewer.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/GlyphToggleButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/Separator.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ProgressBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/GlyphPrimaryToggleButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ToggleButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/GridSplitter.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/Expander.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/RadioButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/GlyphTreeExpander.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/TreeView.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/FlatToggleButton.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/Hyperlink.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/StatusBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ListView.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/PasswordBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ResizeGrip.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/ToolBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/RichTextBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/DataGrid.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ColorPicker/ColorPicker.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ColorEdit/ColorEdit.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/DropDownButtonAdv/DropDownButtonAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfScheduler/SfScheduler.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfScheduler/AppointmentEditorWindow.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfScheduler/AgendaViewStyle.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfScheduler/AllDayAppointmentPanelStyle.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfScheduler/AppointmentStyle.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfScheduler/MonthViewStyle.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfScheduler/SchedulerHeaderStyle.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfScheduler/TimeSlotViewStyle.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfScheduler/ViewHeaderStyle.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ChromelessWindow/ChromelessWindow.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/PercentTextBox/PercentTextBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/CurrencyTextBox/CurrencyTextBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MaskedTextBox/MaskedTextBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ComboBoxAdv/ComboBoxAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/TimeSpanEdit/TimeSpanEdit.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/GridPrintPreviewControl/GridPrintPreviewControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfDataGrid/SfDataGrid.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfTreeGrid/SfTreeGrid.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfDataPager/SfDataPager.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/PivotGridControl/PivotGridControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/PivotGridControl/PivotGridResources.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/PivotGridControl/PivotSchemaDesigner.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/IntegerTextBox/IntegerTextBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfMaskedEdit/SfMaskedEdit.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfBadge/SfBadge.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfDomainUpDown/SfDomainUpDown.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRangeSlider/SfRangeSlider.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfTextBoxExt/SfTextBoxExt.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRating/SfRating.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/CheckListBox/CheckListBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfMultiColumnDropDownControl/SfMultiColumnDropDownControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/FontListComboBox/FontListComboBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/FontListBox/FontListBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/PinnableListBox/PinnableListBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfCircularProgressBar/SfCircularProgressBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfLinearProgressBar/SfLinearProgressBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfStepProgressBar/SfStepProgressBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/CalendarEdit/CalendarEdit.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/AutoComplete/AutoComplete.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/Clock/Clock.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfCalculator/SfCalculator.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRadialSlider/SfRadialSlider.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/BusyIndicator/BusyIndicator.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfHubTile/SfHubTile.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfPulsingTile/SfPulsingTile.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ButtonAdv/ButtonAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SplitButtonAdv/SplitButtonAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ColorPickerPalette/ColorPickerPalette.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfColorPalette/SfColorPalette.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/PropertyGrid/PropertyGrid.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfDateSelector/SfDateSelector.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfDatePicker/SfDatePicker.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfTimeSelector/SfTimeSelector.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfTimePicker/SfTimePicker.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/Gallery/Gallery.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfGridSplitter/SfGridSplitter.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfTextInputLayout/SfTextInputLayout.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/TabControlExt/TabControlExt.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/CardView/CardView.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/TabSplitter/TabSplitter.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/DocumentContainer/DocumentContainer.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/TileViewControl/TileViewControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/Ribbon/Ribbon.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/TreeViewAdv/TreeViewAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/Ribbon/Ribbon.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/Ribbon/QATCustomizationDialog.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/DockingManager/DockingManager.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfBusyIndicator/SfBusyIndicator.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/NotifyIcon/NotifyIcon.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/WizardControl/WizardControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfNavigationDrawer/SfNavigationDrawer.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfNavigationDrawer/PrimarySfNavigationDrawer.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRadialMenu/SfRadialMenu.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/HierarchyNavigator/HierarchyNavigator.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/TabNavigationControl/TabNavigationControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MenuAdv/MenuAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfAccordion/SfAccordion.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfTreeView/SfTreeView.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfTreeNavigator/SfTreeNavigator.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/TaskBar/TaskBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ToolBarAdv/ToolBarAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/ToolBarAdv/ToolBarResources.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/GroupBar/GroupBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/PdfViewerControl/PdfViewerControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/SfRichTextBoxAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/SfRichTextRibbon.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/SfRichTextBoxAdv.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/ContextMenu.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/Dialogs.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/FormatDialogs.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/MiniToolBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/SfRichTextBoxCommon.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/StyleDialogs.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfRichTextBoxAdv/TableDialogs.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/EditControl/EditControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/EditControl/EditControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfSpreadsheet/SfSpreadsheetRibbon.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfSpreadsheet/SfSpreadsheet.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfSpreadsheet/SfSpreadsheetIcons.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfSpreadsheet/SpreadsheetFilterControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfChart/SfChart.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfChart/ChartArea.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfChart/ChartAxis.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfChart/ChartToolBar.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfChart/SfChartCommon.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfChart/Resizer.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfKanban/SfKanban.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfDateTimeRangeNavigator/SfDateTimeRangeNavigator.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfChart3D/SfChart3D.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfCircularGauge/SfCircularGauge.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfLinearGauge/SfLinearGauge.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfDigitalGauge/SfDigitalGauge.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfTreeMap/SfTreeMap.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfMap/SfMap.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfSmithChart/SfSmithChart.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfSunburstChart/SfSunburstChart.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfBulletGraph/SfBulletGraph.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfAreaSparkline/SfAreaSparkline.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfLineSparkline/SfLineSparkline.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfColumnSparkline/SfColumnSparkline.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfWinLossSparkline/SfWinLossSparkline.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfImageEditor/SfImageEditor.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfHeatMap/SfHeatMap.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/PrintPreview/PrintPreview.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/PrintPreviewControl/PrintPreviewControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/Stencil/Stencil.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/SfDiagramRibbon/SfDiagramRibbon.xaml" />-->
+
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

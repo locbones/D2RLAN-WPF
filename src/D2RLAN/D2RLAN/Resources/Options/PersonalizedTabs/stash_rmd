@@ -1,0 +1,66 @@
+{
+    "basedOn": "BankOriginalLayoutHD.json",
+    "type": "BankPanel", "name": "BankExpansionLayout",
+    "children": [
+        {
+            "type": "ClickCatcherWidget", "name": "click_catcher"
+        },
+        {
+            "type": "ImageWidget", "name": "background",
+            "fields": {
+                "rect": { "y": -205 },
+                "filename": "$LVSpriteBank"
+            }
+        },
+        {
+            "type": "ImageWidget", "name": "LeftHinge"
+        },
+        {
+            "type": "TextBoxWidget", "name": "title"
+        },
+        {
+            "type": "TextBoxWidget", "name": "gold_amount"
+        },
+        {
+            "type": "ButtonWidget", "name": "gold_withdraw"
+        },
+        {
+            "type": "ButtonWidget", "name": "close"
+        },
+        {
+            "type": "InventoryGridWidget", "name": "grid",
+            "fields": {
+                "rect": { "x": 33, "y": 35 },
+                "cellCount": { "x": 16, "y": 13 }
+            }
+        },
+        {
+            "type": "TabBarWidget", "name": "BankTabs",
+            "fields": {
+                "rect": { "x": 20, "y": -55 },
+                "tabCount": 8,
+                "filename": "..\\..\\..\\ReMoDDeD\\Stash_Tabs7",
+                "inactiveFrames": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+                "activeFrames": [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+                "disabledFrames": [0, 0, 0, 0, 0, 0, 0, 0 ],
+                "textStrings": [ "@personal", "@shared", "@shared", "@shared", "@shared", "@shared", "@shared", "@shared" ],
+                "textStyle": { "pointSize": "$SmallPanelFontSize" },
+                "activeTextColor": "$TabsActiveTextColor",
+                "inactiveTextColor": "$TabsInactiveTextColor",
+                "tabSize": { "x": 195, "y": 75 },
+                "tabPadding": { "x": 4, "y": 0 },
+                "onSwitchTabMessage": "BankPanelMessage:SelectTab"
+            }
+        },
+        {
+            "type": "ButtonWidget", "name": "close",
+            "fields": {
+                "rect": { "x": 1538, "y": -184 },
+                "filename": "..\\..\\..\\ReMoDDeD\\Exit",
+                "hoveredFrame": 3,
+                "tooltipString": "@strClose",
+                "onClickMessage": "BankPanelMessage:Close"
+            }
+        }
+    ]
+}

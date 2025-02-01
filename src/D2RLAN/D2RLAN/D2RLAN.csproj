@@ -1,0 +1,674 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>D2RLAN.ico</ApplicationIcon>
+    <UseWindowsForms>True</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ViewModels\Drawers\KeybindMappingsViewMode2l.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\appSettings.json" />
+    <None Remove="Resources\BuffIcons\BuffIcons.zip" />
+    <None Remove="Resources\BuffIcons\Images\BuffIconPreview.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_BattleCommand.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_BattleOrders.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_BladesofIce.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_Blaze.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_BoneArmor.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_BurstOfSpeed.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_ChillingArmor.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_ClawsofThunder.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_CobraStrike.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_CycloneArmor.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_Enchant.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_EnergyShield.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_Fade.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_FistsofFire.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_FrozenArmor.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_HolyShield.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_PhoenixStrike.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_ShiverArmor.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_Shout.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_Thunderstorm.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_TigerStrike.png" />
+    <None Remove="Resources\BuffIcons\Images\Preview_Venom.png" />
+    <None Remove="Resources\BuffIcons\MyBuffTemplates.txt" />
+    <None Remove="Resources\BuffIcons\Overlays\Assassin\fade.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Assassin\quickness.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\battlecommand.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\battleorders.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\buff_blaze.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\buff_decoy.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\buff_enchant.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\buff_holyshield.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\buff_shout.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\buff_venom.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_cold_1.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_cold_2.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_cold_3.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_damage_1.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_damage_2.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_damage_3.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_fire_1.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_fire_2.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_fire_3.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_lightning_1.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_lightning_2.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_lightning_3.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_other_1.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_other_2.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_other_3.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_steal_1.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_steal_2.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Common\progressive_steal_3.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Druid\cyclonearmor_1back.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Necro\bonearmor_front.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Sorceress\chillarmor.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Sorceress\energyshield.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Sorceress\frozenarmor.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Sorceress\shiverarmor.json" />
+    <None Remove="Resources\BuffIcons\Overlays\Sorceress\thunderstormback.json" />
+    <None Remove="Resources\CASC\armor.txt" />
+    <None Remove="Resources\CASC\charstats.txt" />
+    <None Remove="Resources\CASC\cubemain.txt" />
+    <None Remove="Resources\CASC\D2RLAN_Config.txt" />
+    <None Remove="Resources\CASC\inventory.txt" />
+    <None Remove="Resources\CASC\item-modifiers.json" />
+    <None Remove="Resources\CASC\item-names.json" />
+    <None Remove="Resources\CASC\item-runes.json" />
+    <None Remove="Resources\CASC\itemstatcost.txt" />
+    <None Remove="Resources\CASC\itemtypes.txt" />
+    <None Remove="Resources\CASC\levels.txt" />
+    <None Remove="Resources\CASC\misc.txt" />
+    <None Remove="Resources\CASC\monstats.txt" />
+    <None Remove="Resources\CASC\profilehd.json" />
+    <None Remove="Resources\CASC\properties.txt" />
+    <None Remove="Resources\CASC\skills.txt" />
+    <None Remove="Resources\CASC\skillstreepanelhd.json" />
+    <None Remove="Resources\CASC\states.txt" />
+    <None Remove="Resources\CASC\Subtitles\dede\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\dede\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\dede\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\dede\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\dede\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\dede\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\enus\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\enus\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\enus\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\enus\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\enus\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\enus\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\enus\d2x_out.srt" />
+    <None Remove="Resources\CASC\Subtitles\eses\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\eses\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\eses\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\eses\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\eses\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\eses\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\esmx\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\esmx\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\esmx\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\esmx\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\esmx\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\esmx\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\frfr\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\frfr\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\frfr\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\frfr\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\frfr\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\frfr\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\itit\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\itit\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\itit\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\itit\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\itit\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\itit\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\jajp\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\jajp\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\jajp\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\jajp\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\jajp\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\jajp\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\kokr\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\kokr\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\kokr\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\kokr\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\kokr\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\kokr\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\plpl\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\plpl\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\plpl\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\plpl\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\plpl\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\plpl\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\ptbr\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\ptbr\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\ptbr\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\ptbr\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\ptbr\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\ptbr\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\ruru\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\ruru\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\ruru\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\ruru\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\ruru\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\ruru\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhcn\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhcn\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhcn\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhcn\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhcn\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhcn\d2x_intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhtw\act02start.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhtw\act03start.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhtw\act04end.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhtw\act04start.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhtw\d2intro.srt" />
+    <None Remove="Resources\CASC\Subtitles\zhtw\d2x_intro.srt" />
+    <None Remove="Resources\CASC\treasureclassex.txt" />
+    <None Remove="Resources\CASC\weapons.txt" />
+    <None Remove="Resources\DefaultUserSettings.json" />
+    <None Remove="Resources\DefaultUserSettings.txt" />
+    <None Remove="Resources\Fonts\0.otf" />
+    <None Remove="Resources\Fonts\0.png" />
+    <None Remove="Resources\Fonts\1.otf" />
+    <None Remove="Resources\Fonts\1.png" />
+    <None Remove="Resources\Fonts\10.otf" />
+    <None Remove="Resources\Fonts\10.png" />
+    <None Remove="Resources\Fonts\11.otf" />
+    <None Remove="Resources\Fonts\11.png" />
+    <None Remove="Resources\Fonts\2.otf" />
+    <None Remove="Resources\Fonts\2.png" />
+    <None Remove="Resources\Fonts\3.otf" />
+    <None Remove="Resources\Fonts\3.png" />
+    <None Remove="Resources\Fonts\4.otf" />
+    <None Remove="Resources\Fonts\4.png" />
+    <None Remove="Resources\Fonts\5.otf" />
+    <None Remove="Resources\Fonts\5.png" />
+    <None Remove="Resources\Fonts\6.otf" />
+    <None Remove="Resources\Fonts\6.png" />
+    <None Remove="Resources\Fonts\7.otf" />
+    <None Remove="Resources\Fonts\7.png" />
+    <None Remove="Resources\Fonts\8.otf" />
+    <None Remove="Resources\Fonts\8.png" />
+    <None Remove="Resources\Fonts\9.otf" />
+    <None Remove="Resources\Fonts\9.png" />
+    <None Remove="Resources\Fonts\formal436bt.ttf" />
+    <None Remove="Resources\Icons\Icon_Beacon.png" />
+    <None Remove="Resources\Icons\Icon_Events.png" />
+    <None Remove="Resources\Icons\Icon_Files.png" />
+    <None Remove="Resources\Icons\Icon_Home.png" />
+    <None Remove="Resources\Icons\Icon_Modding.png" />
+    <None Remove="Resources\Icons\Icon_Options.png" />
+    <None Remove="Resources\Icons\Icon_Patreon.png" />
+    <None Remove="Resources\Icons\Icon_Preview.png" />
+    <None Remove="Resources\Icons\Icon_Settings.png" />
+    <None Remove="Resources\Icons\Icon_Size.png" />
+    <None Remove="Resources\Icons\Icon_Social.png" />
+    <None Remove="Resources\Icons\Icon_Speed.png" />
+    <None Remove="Resources\Icons\Icon_Time.png" />
+    <None Remove="Resources\Icons\Icon_Vault.png" />
+    <None Remove="Resources\Images\ChatGem1b.png" />
+    <None Remove="Resources\Images\ChatGem1c.png" />
+    <None Remove="Resources\Images\ChatGem1d.png" />
+    <None Remove="Resources\Images\ChatGemBG.png" />
+    <None Remove="Resources\Images\D2RLAN_ColorDyePreview.png" />
+    <None Remove="Resources\Images\D2RLAN_Logo.png" />
+    <None Remove="Resources\Images\D2RL_Logo.png" />
+    <None Remove="Resources\Images\StashSettingsBackground.png" />
+    <None Remove="Resources\modinfo_blank.json" />
+    <None Remove="Resources\Options\D2RL_SkillIcons.zip" />
+    <None Remove="Resources\Options\HideHelmets\hide_helmets.json" />
+    <None Remove="Resources\Options\ItemIcons\ber_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\cham_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\dol_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\fal_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\gul_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\hel_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\io_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\ist_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\item-runes.json" />
+    <None Remove="Resources\Options\ItemIcons\jah_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\ko_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\lem_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\lo_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\lum_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\mal_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\ohm_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\pul_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\shael_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\sol_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\sur_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\um_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\vex_rune.json" />
+    <None Remove="Resources\Options\ItemIcons\zod_rune.json" />
+    <None Remove="Resources\Options\MercIcons\act2hire.json" />
+    <None Remove="Resources\Options\MercIcons\act3hire.json" />
+    <None Remove="Resources\Options\MercIcons\act5hire1.json" />
+    <None Remove="Resources\Options\MercIcons\MercName.particles" />
+    <None Remove="Resources\Options\MercIcons\MercName1a.texture" />
+    <None Remove="Resources\Options\MercIcons\MercName1b.texture" />
+    <None Remove="Resources\Options\MercIcons\MercName2a.texture" />
+    <None Remove="Resources\Options\MercIcons\MercName2b.texture" />
+    <None Remove="Resources\Options\MercIcons\roguehire.json" />
+    <None Remove="Resources\Options\MergedHUD\hudpanelhd-m.json" />
+    <None Remove="Resources\Options\MergedHUD\hudpanelhd-mc.json" />
+    <None Remove="Resources\Options\MergedHUD\hudpanelhd-n.json" />
+    <None Remove="Resources\Options\MergedHUD\skillselecthd.json" />
+    <None Remove="Resources\Options\MonsterStats.dll" />
+    <None Remove="Resources\Options\MonsterStats\D2RHUD_Config.txt" />
+    <None Remove="Resources\Options\MonsterStats\hudmonsterhealthhd.json" />
+    <None Remove="Resources\Options\MonsterStats\MS_Assets.zip" />
+    <None Remove="Resources\Options\PersonalizedTabs\stash_rmd" />
+    <None Remove="Resources\Options\PersonalizedTabs\stash_vnp" />
+    <None Remove="Resources\Preview\D2RLAN_MonsterBarPreview.gif" />
+    <None Remove="Resources\Preview\Preview_HUD.png" />
+    <None Remove="Resources\Preview\Preview_ItemIcons.png" />
+    <None Remove="Resources\Preview\Preview_MercIcon.png" />
+    <None Remove="Resources\Preview\Preview_MonsterStats.gif" />
+    <None Remove="Resources\Preview\Preview_RuneDisplay.gif" />
+    <None Remove="Resources\Preview\Preview_SinIcons.gif" />
+    <None Remove="Resources\Preview\Preview_SkillIcons.gif" />
+    <None Remove="Resources\Preview\Preview_SuperTK.gif" />
+    <None Remove="Resources\SharedStashHardCoreV2.d2i" />
+    <None Remove="Resources\SharedStashSoftCoreV2.d2i" />
+    <None Remove="RMD_Logo_New.ico" />
+    <None Remove="Views\Dialogs\AITest1.png" />
+    <None Remove="Views\Dialogs\ChatBG.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="D2RLAN.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\appSettings.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\BuffIcons.zip" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_BattleCommand.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_BattleOrders.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_BladesofIce.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_Blaze.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_BoneArmor.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_BurstOfSpeed.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_ChillingArmor.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_ClawsofThunder.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_CobraStrike.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_CycloneArmor.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_Enchant.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_EnergyShield.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_Fade.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_FistsofFire.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_FrozenArmor.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_HolyShield.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_PhoenixStrike.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_ShiverArmor.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_Shout.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_Thunderstorm.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_TigerStrike.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\Images\Preview_Venom.png" />
+    <EmbeddedResource Include="Resources\BuffIcons\MyBuffTemplates.txt" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Assassin\fade.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Assassin\quickness.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\battlecommand.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\battleorders.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\buff_blaze.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\buff_decoy.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\buff_enchant.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\buff_holyshield.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\buff_shout.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\buff_venom.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_cold_1.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_cold_2.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_cold_3.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_damage_1.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_damage_2.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_damage_3.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_fire_1.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_fire_2.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_fire_3.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_lightning_1.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_lightning_2.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_lightning_3.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_other_1.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_other_2.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_other_3.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_steal_1.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_steal_2.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Common\progressive_steal_3.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Druid\cyclonearmor_1back.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Necro\bonearmor_front.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Sorceress\chillarmor.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Sorceress\energyshield.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Sorceress\frozenarmor.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Sorceress\shiverarmor.json" />
+    <EmbeddedResource Include="Resources\BuffIcons\Overlays\Sorceress\thunderstormback.json" />
+    <EmbeddedResource Include="Resources\CASC\armor.txt" />
+    <EmbeddedResource Include="Resources\CASC\charstats.txt" />
+    <EmbeddedResource Include="Resources\CASC\cubemain.txt" />
+    <EmbeddedResource Include="Resources\CASC\D2RLAN_Config.txt" />
+    <EmbeddedResource Include="Resources\CASC\inventory.txt" />
+    <EmbeddedResource Include="Resources\CASC\item-modifiers.json" />
+    <EmbeddedResource Include="Resources\CASC\item-names.json" />
+    <EmbeddedResource Include="Resources\CASC\itemstatcost.txt" />
+    <EmbeddedResource Include="Resources\CASC\itemtypes.txt" />
+    <EmbeddedResource Include="Resources\CASC\levels.txt" />
+    <EmbeddedResource Include="Resources\CASC\misc.txt" />
+    <EmbeddedResource Include="Resources\CASC\monstats.txt" />
+    <EmbeddedResource Include="Resources\CASC\profilehd.json" />
+    <EmbeddedResource Include="Resources\CASC\properties.txt" />
+    <EmbeddedResource Include="Resources\CASC\skills.txt" />
+    <EmbeddedResource Include="Resources\CASC\skillstreepanelhd.json" />
+    <EmbeddedResource Include="Resources\CASC\states.txt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\dede\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\dede\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\dede\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\dede\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\dede\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\dede\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\enus\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\enus\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\enus\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\enus\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\enus\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\enus\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\enus\d2x_out.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\eses\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\eses\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\eses\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\eses\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\eses\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\eses\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\esmx\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\esmx\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\esmx\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\esmx\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\esmx\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\esmx\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\frfr\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\frfr\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\frfr\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\frfr\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\frfr\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\frfr\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\itit\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\itit\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\itit\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\itit\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\itit\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\itit\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\jajp\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\jajp\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\jajp\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\jajp\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\jajp\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\jajp\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\kokr\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\kokr\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\kokr\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\kokr\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\kokr\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\kokr\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\plpl\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\plpl\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\plpl\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\plpl\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\plpl\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\plpl\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ptbr\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ptbr\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ptbr\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ptbr\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ptbr\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ptbr\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ruru\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ruru\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ruru\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ruru\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ruru\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\ruru\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhcn\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhcn\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhcn\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhcn\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhcn\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhcn\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhtw\act02start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhtw\act03start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhtw\act04end.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhtw\act04start.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhtw\d2intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\Subtitles\zhtw\d2x_intro.srt" />
+    <EmbeddedResource Include="Resources\CASC\treasureclassex.txt" />
+    <EmbeddedResource Include="Resources\CASC\weapons.txt" />
+    <EmbeddedResource Include="Resources\DefaultUserSettings.json" />
+    <EmbeddedResource Include="Resources\Fonts\0.otf" />
+    <EmbeddedResource Include="Resources\Fonts\1.otf" />
+    <EmbeddedResource Include="Resources\Fonts\1.png" />
+    <EmbeddedResource Include="Resources\Fonts\10.otf" />
+    <EmbeddedResource Include="Resources\Fonts\10.png" />
+    <EmbeddedResource Include="Resources\Fonts\11.otf" />
+    <EmbeddedResource Include="Resources\Fonts\11.png" />
+    <EmbeddedResource Include="Resources\Fonts\2.otf" />
+    <EmbeddedResource Include="Resources\Fonts\2.png" />
+    <EmbeddedResource Include="Resources\Fonts\3.otf" />
+    <EmbeddedResource Include="Resources\Fonts\3.png" />
+    <EmbeddedResource Include="Resources\Fonts\4.otf" />
+    <EmbeddedResource Include="Resources\Fonts\4.png" />
+    <EmbeddedResource Include="Resources\Fonts\5.otf" />
+    <EmbeddedResource Include="Resources\Fonts\5.png" />
+    <EmbeddedResource Include="Resources\Fonts\6.otf" />
+    <EmbeddedResource Include="Resources\Fonts\6.png" />
+    <EmbeddedResource Include="Resources\Fonts\7.otf" />
+    <EmbeddedResource Include="Resources\Fonts\7.png" />
+    <EmbeddedResource Include="Resources\Fonts\8.otf" />
+    <EmbeddedResource Include="Resources\Fonts\8.png" />
+    <EmbeddedResource Include="Resources\Fonts\9.otf" />
+    <EmbeddedResource Include="Resources\Fonts\9.png" />
+    <EmbeddedResource Include="Resources\Fonts\0.png" />
+    <EmbeddedResource Include="Resources\Options\MonsterStats\D2RHUD_Config.txt" />
+    <EmbeddedResource Include="Resources\Options\MonsterStats\MS_Assets.zip" />
+    <EmbeddedResource Include="Resources\CASC\item-runes.json" />
+    <Resource Include="Resources\Icons\Icon_Beacon.png" />
+    <Resource Include="Resources\Icons\Icon_Events.png" />
+    <Resource Include="Resources\Images\ChatGem1b.png" />
+    <Resource Include="Resources\Images\ChatGem1c.png" />
+    <Resource Include="Resources\Images\ChatGem1d.png" />
+    <Resource Include="Resources\Images\ChatGemBG.png" />
+    <Resource Include="Resources\Images\D2RLAN_Logo.png" />
+    <Resource Include="Resources\Preview\D2RLAN_MonsterBarPreview.gif" />
+    <Resource Include="Resources\Preview\D2RLAN_ColorDyePreview.png" />
+    <EmbeddedResource Include="Resources\modinfo_blank.json" />
+    <EmbeddedResource Include="Resources\Options\D2RL_SkillIcons.zip" />
+    <EmbeddedResource Include="Resources\Options\HideHelmets\hide_helmets.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\ber_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\cham_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\dol_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\fal_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\gul_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\hel_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\io_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\ist_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\item-runes.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\jah_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\ko_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\lem_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\lo_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\lum_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\mal_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\ohm_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\pul_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\shael_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\sol_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\sur_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\um_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\vex_rune.json" />
+    <EmbeddedResource Include="Resources\Options\ItemIcons\zod_rune.json" />
+    <EmbeddedResource Include="Resources\Options\MercIcons\act2hire.json" />
+    <EmbeddedResource Include="Resources\Options\MercIcons\act3hire.json" />
+    <EmbeddedResource Include="Resources\Options\MercIcons\act5hire1.json" />
+    <EmbeddedResource Include="Resources\Options\MercIcons\MercName.particles" />
+    <EmbeddedResource Include="Resources\Options\MercIcons\MercName1a.texture" />
+    <EmbeddedResource Include="Resources\Options\MercIcons\MercName1b.texture" />
+    <EmbeddedResource Include="Resources\Options\MercIcons\MercName2a.texture" />
+    <EmbeddedResource Include="Resources\Options\MercIcons\MercName2b.texture" />
+    <EmbeddedResource Include="Resources\Options\MercIcons\roguehire.json" />
+    <EmbeddedResource Include="Resources\Options\MergedHUD\hudpanelhd-m.json" />
+    <EmbeddedResource Include="Resources\Options\MergedHUD\hudpanelhd-mc.json" />
+    <EmbeddedResource Include="Resources\Options\MergedHUD\hudpanelhd-n.json" />
+    <EmbeddedResource Include="Resources\Options\MergedHUD\skillselecthd.json" />
+    <EmbeddedResource Include="Resources\Options\MonsterStats\hudmonsterhealthhd.json" />
+    <EmbeddedResource Include="Resources\Options\PersonalizedTabs\stash_rmd" />
+    <EmbeddedResource Include="Resources\Options\PersonalizedTabs\stash_vnp" />
+    <Resource Include="Resources\BuffIcons\Images\BuffIconPreview.png" />
+    <Resource Include="Resources\Fonts\formal436bt.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\StashSettingsBackground.png" />
+    <Resource Include="Resources\Preview\Preview_HUD.png" />
+    <Resource Include="Resources\Preview\Preview_ItemIcons.png" />
+    <Resource Include="Resources\Preview\Preview_MercIcon.png" />
+    <Resource Include="Resources\Preview\Preview_MonsterStats.gif" />
+    <Resource Include="Resources\Preview\Preview_RuneDisplay.gif" />
+    <Resource Include="Resources\Preview\Preview_SinIcons.gif" />
+    <Resource Include="Resources\Preview\Preview_SkillIcons.gif" />
+    <Resource Include="Resources\Preview\Preview_SuperTK.gif" />
+    <EmbeddedResource Include="Resources\SharedStashHardCoreV2.d2i" />
+    <EmbeddedResource Include="Resources\SharedStashSoftCoreV2.d2i" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Icon_Files.png" />
+    <Resource Include="Resources\Icons\Icon_Home.png" />
+    <Resource Include="Resources\Icons\Icon_Modding.png" />
+    <Resource Include="Resources\Icons\Icon_Options.png" />
+    <Resource Include="Resources\Icons\Icon_Patreon.png" />
+    <Resource Include="Resources\Icons\Icon_Preview.png" />
+    <Resource Include="Resources\Icons\Icon_Settings.png" />
+    <Resource Include="Resources\Icons\Icon_Size.png" />
+    <Resource Include="Resources\Icons\Icon_Social.png" />
+    <Resource Include="Resources\Icons\Icon_Speed.png" />
+    <Resource Include="Resources\Icons\Icon_Time.png" />
+    <Resource Include="Resources\Icons\Icon_Vault.png" />
+    <Resource Include="Resources\Images\D2RL_Logo.png" />
+    <Resource Include="RMD_Logo_New.ico" />
+    <Resource Include="Views\Dialogs\AITest1.png" />
+    <Resource Include="Views\Dialogs\ChatBG.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Caliburn.Micro" Version="4.0.212" />
+    <PackageReference Include="Caliburn.Micro.Core" Version="4.0.212" />
+    <PackageReference Include="Costura.Fody" Version="5.7.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Google.Apis" Version="1.64.0" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.64.0.3148" />
+    <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
+    <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="MySql.Data" Version="9.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Syncfusion.Licensing" Version="23.1.41" />
+    <PackageReference Include="Syncfusion.SfColorPalette.WPF" Version="23.1.41" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="23.1.41" />
+    <PackageReference Include="Syncfusion.SfNavigationDrawer.WPF" Version="23.1.41" />
+    <PackageReference Include="Syncfusion.SfProgressBar.WPF" Version="23.1.41" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="23.1.41" />
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="23.1.41" />
+    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="23.1.41" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="23.1.41" />
+    <PackageReference Include="System.ComponentModel" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CASCLib.NET">
+      <HintPath>..\..\Shared\CASCLib.NET.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+   <ItemGroup>
+    <Compile Update="Culture\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Culture\Resources.de.resx">
+      <LastGenOutput>Resources.de.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.da-DK.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.es-ES.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.es-MX.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.fr.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.it.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.ja-JP.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.ko-KR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.pl.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.pt-BR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.en.resx">
+      <LastGenOutput>Resources.en.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.zh-CN.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Culture\Resources.zh-TW.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="D2RLAN.log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

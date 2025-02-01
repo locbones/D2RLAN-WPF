@@ -1,0 +1,55 @@
+{
+    "dependencies": {
+        "particles": [
+            {
+                "path": "data/hd/vfx/particles/overlays/sorceress/enchant/vfx_enchant.particles"
+            }
+        ],
+        "models": [],
+        "skeletons": [],
+        "animations": [],
+        "textures": [
+            {
+                "path": "data/hd/vfx/textures/gradient/T_FX_flame_gradient_07.texture"
+            }
+        ],
+        "physics": [],
+        "json": [],
+        "variantdata": [],
+        "objecteffects": [],
+        "other": []
+    },
+    "type": "OverlayDefinition",
+    "name": "enchant",
+    "entities": [
+        {
+            "type": "Entity",
+            "name": "entity_root",
+            "id": 1942950687,
+            "components": []
+        },
+        {
+            "type": "Entity",
+            "name": "entity_root",
+            "id": 2666374947,
+            "components": [
+                {
+                    "type": "VfxDefinitionComponent",
+                    "name": "component_vfx",
+                    "filename": "data/D2RLAN/Buff Icons/Particles/decoy.particles",
+                    "hardKillOnDestroy": false
+                },
+                {
+					"type": "TransformDefinitionComponent",
+					"name": "entity_root_TransformDefinition",
+					"position": {
+						"x": 155.0,
+						"y": 100.15,
+						"z": 148.0
+					},
+					"inheritOnlyPosition": true
+				}
+            ]
+        }
+    ]
+}

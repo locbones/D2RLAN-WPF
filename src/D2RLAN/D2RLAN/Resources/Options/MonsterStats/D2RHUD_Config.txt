@@ -1,0 +1,5 @@
+Monster Stats: 0
+Transmute: NaN
+Sort Stash: NaN
+Sort Inventory: NaN
+Sort Cube: NaN

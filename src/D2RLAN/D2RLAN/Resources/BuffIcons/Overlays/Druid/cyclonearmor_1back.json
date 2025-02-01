@@ -1,0 +1,62 @@
+{
+    "dependencies": {
+        "particles": [
+            {
+                "path": "data/hd/vfx/particles/overlays/druid/cyclonearmor_1back/vfx_druid_cycloneArmor.particles"
+            }
+        ],
+        "models": [],
+        "skeletons": [],
+        "animations": [],
+        "textures": [
+            {
+                "path": "data/hd/vfx/textures/noise/T_FX_billowy_cloud_noise.texture"
+            }
+        ],
+        "physics": [],
+        "json": [],
+        "variantdata": [],
+        "objecteffects": [],
+        "other": []
+    },
+    "type": "OverlayDefinition",
+    "name": "cyclonearmor_1back",
+    "entities": [
+        {
+            "type": "Entity",
+            "name": "entity_root",
+            "id": 4028638150,
+            "components": [
+                {
+                    "type": "VfxDefinitionComponent",
+                    "name": "component_vfx",
+                    "filename": "data/hd/vfx/particles/overlays/druid/cyclonearmor_1back/vfx_druid_cycloneArmor.particles",
+                    "hardKillOnDestroy": false
+                }
+            ]
+        },
+        {
+            "type": "Entity",
+            "name": "entity_root",
+            "id": 2666374947,
+            "components": [
+                {
+                    "type": "VfxDefinitionComponent",
+                    "name": "component_vfx",
+                    "filename": "data/D2RLAN/Buff Icons/Particles/cyclonearmor.particles",
+                    "hardKillOnDestroy": false
+                },
+                {
+					"type": "TransformDefinitionComponent",
+					"name": "entity_root_TransformDefinition",
+					"position": {
+						"x": 155.0,
+						"y": 100.15,
+						"z": 148.0
+					},
+					"inheritOnlyPosition": true
+				}
+            ]
+        }
+    ]
+}

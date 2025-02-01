@@ -1,0 +1,13 @@
+Transmute: NaN
+Identify Items: NaN
+Force Save: NaN
+Reset Stats: NaN
+Reset Skills: NaN
+Remove Ground Items: NaN
+Custom Command 1: NaN, "my_command_here"
+Custom Command 2: NaN, "my_command_here"
+Custom Command 3: NaN, "my_command_here"
+Custom Command 4: NaN, "my_command_here"
+Custom Command 5: NaN, "my_command_here"
+Custom Command 6: NaN, "my_command_here"
+

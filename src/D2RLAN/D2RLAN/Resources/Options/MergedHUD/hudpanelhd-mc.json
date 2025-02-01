@@ -1,0 +1,316 @@
+{
+    "basedOn": "HUDPanelHD.json",
+    "type": "HUDPanelHD", "name": "HUDPanel",
+    "fields": {
+        // Keep the HUD below the controller overlay, which itself is below all the in-game panels.
+        "priority": -3,
+        "rect": { "x": -1473, "y": -417},
+    },
+    "children": [
+        {
+            "type": "ClickCatcherWidget", "name": "BGClickCatcher"
+        },
+        {
+            "type": "AttributeBallWidget", "name": "HealthBall",
+            "fields": {
+                "rect": { "x": 1282, "y": 20, "width": 348, "height": 350 },
+            },
+            "children": [
+                {
+                    "type": "TextBoxWidget", "name": "ValueDisplay",
+                     "fields": {
+                        "rect": { "x": 472, "y": 127 },
+                        "style": {
+                            "pointSize": "$TooltipFontSize",
+                            "alignment": { "h": "left" },
+                        },
+                    }
+                },
+                {
+                    "type": "AnimatedImageWidget", "name": "BallImage",
+                },
+                {
+                    "type": "ImageWidget", "name": "EdgeImage",
+                },
+            ]
+        },
+
+        {
+            "type": "AttributeBallWidget", "name": "ManaBall",
+            "fields": {
+                "rect": { "x": 1470, "y": 18, "width": 348, "height": 350 },
+            },
+            "children": [
+                {
+                    "type": "TextBoxWidget", "name": "ValueDisplay",
+                     "fields": {
+                        "rect": { "x": 285, "y": 177 },
+                        "style": {
+                            "pointSize": "$TooltipFontSize",
+                            "alignment": { "h": "left" },
+                        },
+                    }
+                },
+                {
+                    "type": "AnimatedImageWidget", "name": "BallImage",
+                },
+                {
+                    "type": "ImageWidget", "name": "EdgeImage",
+                },
+            ]
+        },
+
+        {
+            "type": "ImageWidget", "name": "Overlay",
+            "fields": {
+                "rect": { "x": -121, "y": -37 },
+                "filename": "..\\..\\..\\ReMoDDeD\\Controller\\HUD"
+            }
+        },
+        {
+            "type": "ExpBarWidget", "name": "ExpBar",
+            "fields": {
+                "rect": { "x": 222, "y": 380 },
+                "hitMargin": { "top": 10, "bottom": 7 },
+                "filename": "..\\..\\..\\ReMoDDeD\\Controller\\ExpBar"
+            },
+            "children": [
+                {
+                    "type": "AnimatedImageWidget", "name": "ExpFlashLeft",
+                    "fields": {
+                        "rect": { "x": -12, "y": -7, "scale": 1.22 },
+                    },
+                },
+                {
+                    "type": "AnimatedImageWidget", "name": "ExpFlashRight",
+                    "fields": {
+                        "rect": { "x": 942, "y": -7, "scale": 1.22 },
+                    },
+                },
+            ]
+        },
+        {
+            "type": "StaminaBarWidget", "name": "StaminaBar",
+            "fields": {
+                "filename": "Controller/HUD/StaminaBar",
+                "rect": { "x": 2452, "y": 250, "width": 203, "height": 43 }
+            }
+        },
+        {
+            "type": "ButtonLegendWidget", "name": "RunButtonPrompt",
+            "fields": {
+                "rect": { "x": 2554, "y": 318 },
+                "presets": [
+                    {
+                      "action": "option3",
+                    },
+                ],
+            }
+        },
+        {
+            "type": "ImageWidget", "name": "SkillSwapIndicator",
+            "fields": {
+                "filename": "Controller/HUD/SkillSwapButton",
+                "rect": { "x": 489, "y": 254 },
+            }
+        },
+        {
+            "type": "TextBoxWidget", "name": "LTButtonPrompt",
+            "fields": {
+                "rect": { "x": 471, "y": 272 },
+                "text": "\uE00D",
+            }
+        },
+        {
+            "type": "SkillSelectButtonWidget", "name": "SkillButton1",
+            "fields": {
+                "rect": { "x": 242, "y": 213 },
+                "side": "right",
+                "skillIconFilenames": "$SkillIconFilenames",
+                "skillButton": "SkillButton1"
+            },
+            "children": [
+
+                {
+                    "type": "TextBoxWidget", "name": "QuantityText",
+                    "fields": {
+                        "rect": "$SkillQuantityTextRectController",
+                        "style": "$SkillQuantityTextStyle",
+                    }
+                },
+                {
+                    "type": "SkillButtonPromptWidget", "name": "SkillButton1Prompt",
+                    "fields": {
+                        "anchor": { "x": 0.5, "y": 1.0 },
+                        "skillButton": "SkillButton1",
+                        "style": {
+                            "alignment": { "h": "center", "v": "center" },
+                        },
+                    }
+                },
+            ]
+        },
+        {
+            "type": "SkillSelectButtonWidget", "name": "SkillButton2",
+            "fields": {
+                "rect": { "x": 376, "y": 213 },
+                "side": "right",
+                "skillIconFilenames": "$SkillIconFilenames",
+                "skillButton": "SkillButton2"
+            },
+            "children": [
+
+                {
+                    "type": "TextBoxWidget", "name": "QuantityText",
+                    "fields": {
+                        "rect": "$SkillQuantityTextRectController",
+                        "style": "$SkillQuantityTextStyle",
+                    }
+                },
+                {
+                    "type": "SkillButtonPromptWidget", "name": "SkillButton2Prompt",
+                    "fields": {
+                        "anchor": { "x": 0.5, "y": 1.0 },
+                        "skillButton": "SkillButton2",
+                        "style": {
+                            "alignment": { "h": "center", "v": "center" },
+                        },
+                    }
+                },
+            ]
+        },
+        {
+            "type": "SkillSelectButtonWidget", "name": "SkillButton3",
+            "fields": {
+                "rect": { "x": 510, "y": 213 },
+                "side": "right",
+                "skillIconFilenames": "$SkillIconFilenames",
+                "skillButton": "SkillButton3",
+            },
+            "children": [
+
+                {
+                    "type": "TextBoxWidget", "name": "QuantityText",
+                    "fields": {
+                        "rect": "$SkillQuantityTextRectController",
+                        "style": "$SkillQuantityTextStyle",
+                    }
+                },
+                {
+                    "type": "SkillButtonPromptWidget", "name": "SkillButton3Prompt",
+                    "fields": {
+                        "anchor": { "x": 0.5, "y": 1.0 },
+                        "skillButton": "SkillButton3",
+                        "style": {
+                            "alignment": { "h": "center", "v": "center" },
+                        },
+                    }
+                },
+            ]
+        },
+        {
+            "type": "SkillSelectButtonWidget", "name": "SkillButton4",
+            "fields": {
+                "rect": { "x": 644, "y": 213 },
+                "side": "right",
+                "skillIconFilenames": "$SkillIconFilenames",
+                "skillButton": "SkillButton4",
+            },
+            "children": [
+
+                {
+                    "type": "TextBoxWidget", "name": "QuantityText",
+                    "fields": {
+                        "rect": "$SkillQuantityTextRectController",
+                        "style": "$SkillQuantityTextStyle",
+                    }
+                },
+                {
+                    "type": "SkillButtonPromptWidget", "name": "SkillButton4Prompt",
+                    "fields": {
+                        "anchor": { "x": 0.5, "y": 1.0 },
+                        "skillButton": "SkillButton4",
+                        "style": {
+                            "alignment": { "h": "center", "v": "center" },
+                        },
+                    }
+                },
+            ]
+        },
+        {
+            "type": "SkillSelectButtonWidget", "name": "SkillButton5",
+            "fields": {
+                "rect": { "x": 778, "y": 213 },
+                "side": "right",
+                "skillIconFilenames": "$SkillIconFilenames",
+                "skillButton": "SkillButton5",
+            },
+            "children": [
+
+                {
+                    "type": "TextBoxWidget", "name": "QuantityText",
+                    "fields": {
+                        "rect": "$SkillQuantityTextRectController",
+                        "style": "$SkillQuantityTextStyle",
+                    }
+                },
+                {
+                    "type": "SkillButtonPromptWidget", "name": "SkillButton5Prompt",
+                    "fields": {
+                        "anchor": { "x": 0.5, "y": 1.0 },
+                        "skillButton": "SkillButton5",
+                        "style": {
+                            "alignment": { "h": "center", "v": "center" },
+                        },
+                    }
+                },
+            ]
+        },
+        {
+            "type": "SkillSelectButtonWidget", "name": "SkillButton6",
+            "fields": {
+                "rect": { "x": 912, "y": 213 },
+                "side": "right",
+                "skillIconFilenames": "$SkillIconFilenames",
+                "skillButton": "SkillButton6",
+            },
+            "children": [
+
+                {
+                    "type": "TextBoxWidget", "name": "QuantityText",
+                    "fields": {
+                        "rect": "$SkillQuantityTextRectController",
+                        "style": "$SkillQuantityTextStyle",
+                    }
+                },
+                {
+                    "type": "SkillButtonPromptWidget", "name": "SkillButton6Prompt",
+                    "fields": {
+                        "anchor": { "x": 0.5, "y": 1.0 },
+                        "skillButton": "SkillButton6",
+                        "style": {
+                            "alignment": { "h": "center", "v": "center" },
+                        },
+                    }
+                },
+            ]
+        },
+        {
+            "type": "BeltWidget", "name": "Belt",
+            "fields": {
+                "rect": { "x": 1891, "y": 213, },
+                "cellPadding": { "x": 32, "y": 15 },
+                "controllerDefaultItemTransparency": 0.5,
+                "focusOnMouseOver": false,
+            },
+            "children": [
+                {
+                    "type": "TextBoxWidget", "name": "HotkeyLabelTemplate",
+                    "fields": {
+                        "rect": { "x": 8, "y": 98 },
+                    }
+                },
+            ]
+        }
+    ]
+}

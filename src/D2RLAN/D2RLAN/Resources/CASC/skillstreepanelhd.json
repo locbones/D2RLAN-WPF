@@ -1,0 +1,220 @@
+{
+    "type": "SkillsTreePanel", "name": "SkillsTreePanel",
+    "fields": {
+        "anchor": "$RightPanelAnchor",
+        "rect": "$RightPanelRect",
+        "skillRow": [ 296, 478, 654, 834, 1014, 1190 ],
+        "skillColumn": [ 253, 515, 775 ],
+        "hoverButtonTint": { "r": 1.5, "g": 1.447, "b": 1.335, "a": 1.5 },
+        "grantedColor": { "r": 102, "g": 102, "b": 255 },
+        "activeTabFontColor": "$TabsActiveTextColorInGame",
+        "inactiveTabFontColor": "$TabsInactiveTextColor",
+        "skillChoicesRemainingActiveFontColor": "$FontColorRed",
+        "skillChoicesRemainingInactiveFontColor": "$TabsInactiveTextColor",
+        // Amazon, Sorceress, Necromancer, Palladin, Barbarian, Druid, Assassin
+        "skillButtonFile": [
+             "Spells\\amazon\\AmSkillicon",
+             "Spells\\Sorceress\\SoSkillicon",
+             "Spells\\Necromancer\\NeSkillicon",
+             "Spells\\paladin\\PaSkillicon",
+             "Spells\\Barbarian\\BaSkillicon",
+             "Spells\\Druid\\DrSkillicon",
+             "Spells\\Assassin\\AsSkillicon"
+        ],
+        "skillBackgroundFile": [
+            "Spells\\Skill_Trees\\AmSkilltree",
+            "Spells\\Skill_Trees\\SoSkilltree",
+            "Spells\\Skill_Trees\\NeSkilltree",
+            "Spells\\Skill_Trees\\PaSkilltree",
+            "Spells\\Skill_Trees\\BaSkilltree",
+            "Spells\\Skill_Trees\\DrSkilltree",
+            "Spells\\Skill_Trees\\AsSkilltree"
+        ],
+        "textTab0": [
+            "@SkillCategoryAm1",
+            "@SkillCategorySo1",
+            "@SkillCategoryNe1",
+            "@SkillCategoryPa1",
+            "@SkillCategoryBa1",
+            "@SkillCategoryDr1",
+            "@SkillCategoryAs1",
+        ],
+        "textTab1": [
+            "@SkillCategoryAm2",
+            "@SkillCategorySo2",
+            "@SkillCategoryNe2",
+            "@SkillCategoryPa2",
+            "@SkillCategoryBa2",
+            "@SkillCategoryDr2",
+            "@SkillCategoryAs2",
+        ],
+        "textTab2": [
+            "@SkillCategoryAm3",
+            "@SkillCategorySo3",
+            "@SkillCategoryNe3",
+            "@SkillCategoryPa3",
+            "@SkillCategoryBa3",
+            "@SkillCategoryDr3",
+            "@SkillCategoryAs3",
+        ],
+        "cancelPositionX": [ 1075, 1075, 1075 ],
+        "cancelPositionCode": [ 0, 0, 0, 0, 0, 0, 0 ],
+        "focusIndicatorFilename": "Controller/HoverImages/SkillIcon_Hover",
+        "focusIndicatorOffset": { "x": 0, "y": 0 },
+        "focusIndicatorPadding": { "left": 0, "top": 0, "right": 0, "bottom": 0 },
+    },
+
+    "children": [
+        {
+            "type": "ClickCatcherWidget", "name": "ClickCatcher",
+            "fields": {
+                "rect": "$PanelClickCatcherRect"
+            }
+        },
+        {
+             "type": "ImageWidget", "name": "MainBackground",
+             "fields": {
+                 "filename": "PANEL\\PANEL_BG"
+             }
+        },
+        {
+             "type": "ImageWidget", "name": "TreeBackground",
+             "fields": {
+                 "filename": "Spells\\Skill_Trees\\PANEL_SkillTreeBG",
+                 "rect": { "x": 68, "y": 145 },
+             }
+        },
+                {
+                    "type": "ImageWidget", "name": "RightHinge",
+                    "fields": {
+                        "rect": "$RightHingeRect",
+                        "filename": "$RightHingeSprite"
+                    },
+                },
+        {
+            "type": "TabWidget", "name": "Tab0",
+            "fields": {
+                "activationRect": { "x": 130, "y": 160, "width": 294, "height": 99 },
+                "onClickMessage": "SkillsTreePanelMessage:ActivateTab:0",
+            },
+            "children": [
+                {
+                    "type": "ImageWidget", "name": "Background",
+                    "fields": {
+                        "frame": 0,
+                        "rect": { "x": 132, "y": 160 },
+                    }
+                },
+
+            ]
+        },
+        {
+            "type": "TabWidget", "name": "Tab1",
+            "fields": {
+                "activationRect": { "x": 428, "y": 160, "width": 294, "height": 99 },
+                "onClickMessage": "SkillsTreePanelMessage:ActivateTab:1",
+            },
+            "children": [
+                {
+                    "type": "ImageWidget", "name": "Background",
+                    "fields": {
+                        "frame": 1,
+                        "rect": { "x": 132, "y": 160 },
+                    }
+                },
+            ]
+        },
+        {
+            "type": "TabWidget", "name": "Tab2",
+            "fields": {
+                "activationRect": { "x": 724, "y": 160, "width": 294, "height": 99 },
+                "onClickMessage": "SkillsTreePanelMessage:ActivateTab:2",
+            },
+            "children": [
+                {
+                    "type": "ImageWidget", "name": "Background",
+                    "fields": {
+                        "frame": 2,
+                        "rect": { "x": 132, "y": 160 },
+                    }
+                },
+            ]
+        },
+        {
+            "type": "TextBoxWidget", "name": "Title",
+            "fields": {
+                "rect": "$InGamePanelTitleRect",
+                "style": "$StyleTitleBlock",
+                "text": "@strpanel8",
+            },
+        },
+        {
+            "type": "TextBoxWidget", "name": "SkillCounter",
+            "fields": {
+                "rect": { "x": 91, "y": 1388, "width": 972, "height": 60 },
+                "style": {
+                    "pointSize": "$XMediumPanelFontSize",
+                    "alignment": { "h": "center" },
+                }
+            },
+            "children": [
+                {
+                    "type": "FocusableWidget", "name": "Tooltip",
+                    "fields": {
+                        "fitToParent": true,
+                        "tooltipString": "@SkillTreeTooltipSkillChoicesRemaining",
+                        "tooltipStyle": "$TooltipStyle",
+                        "tooltipStyle": {
+                            "fontStyle": {
+                                "options": { "newlineHandling": "standard" },
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "TextBoxWidget", "name": "CounterTemplate",
+            "fields": {
+                "rect": { "x": 148, "y": 82, "width": 52, "height": 52 },
+                "style": {
+                    "pointSize": "$MediumPanelFontSize",
+                    "alignment": { "h": "center", "v": "center" },
+                    "fontColor": { "r": 255, "g": 255, "b": 255, "a": 255 }
+                }
+            }
+        },
+        {
+            "type": "ButtonWidget", "name": "Cancel",
+            "fields": {
+                "rect": { "x": 1075, "y": 9 },
+                "filename": "PANEL\\closebtn_4x",
+                "hoveredFrame": 3,
+                "tooltipString": "@strClose",
+                "sound": "cursor_close_window_hd",
+                "onClickMessage": "SkillsTreePanelMessage:Close",
+            },
+        },
+        {
+            "type": "TextBoxWidget", "name": "TextTab0",
+            "fields": {
+                "rect": { "x": 153, "y": 172, "width": 260, "height": 76 },
+                "style": "$StyleSkillTreeTabs"
+            }
+        },
+        {
+            "type": "TextBoxWidget", "name": "TextTab1",
+            "fields": {
+                "rect": { "x": 449, "y": 172, "width": 260, "height": 76 },
+                "style": "$StyleSkillTreeTabs"
+            }
+        },
+        {
+            "type": "TextBoxWidget", "name": "TextTab2",
+            "fields": {
+                "rect": { "x": 748, "y": 172, "width": 260, "height": 76 },
+                "style": "$StyleSkillTreeTabs"
+            }
+        },
+    ]
+}
