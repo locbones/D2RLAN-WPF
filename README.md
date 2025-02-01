@@ -251,12 +251,84 @@ Special thanks to the following people or groups for their help along this proje
 
 # Changelogs
 <details>
-  <summary>2.5.2</summary>
-- Added some stuff
-- Added more stuff
+  <summary>1.1.2</summary>
+    - Source Code is now available via https://github.com/locbones/D2RLAN-WPF<br>
+    - Code Cleanup performed to comment, organize and simplify functions<br>
+    - More logging info added to output logs to indicate options used, function chain status, etc<br>
+    - Fixed an issue where Customizations UI Display would not update correctly after reloading it<br>
+    - Improved the Auto Backup functionality and logging data<br>
+    - Added a new log file for D2RHUD hooking progress (save issue troubleshooting)
+    - Shared Stash Backups will now appear in the Restoral dropdown box<br>
+    - Added the ability to restore shared stash files individually instead of grouped with character<br>
+    - Cold color has been lightened to make it more readable (when using the Advanced Monster Stats Display option)<br>
+    - An "Overlay Fix" option has been added for improved compatibility with MSI Afterburner<br>
+    - .NET Runtime package is now included with core package files<br>
+    - Core file package has been updated from 1.1.0 to 1.1.2
 </details>
 <details>
-  <summary>2.5.3</summary>
-- Added stuff
-- Added weird stuff
+  <summary>1.1.1</summary>
+    - Updated earlier controller fix to support ReMoDDeD players also (oops)<br>
+    - Beacon app updated to version 1.0.6; now displays mod version, slightly improved load logic
+</details>
+<details>
+  <summary>1.1.0</summary>
+    - Hotfix update to resolve app loading failure when UserSettings don't yet exist<br>
+    - Core files package updated
+</details>
+<details>
+  <summary>1.0.9</summary>
+    - Fixed an issue that would cause a crash when controller player tried to view custom skill icons in tree<br>
+    - Fixed an issue that would cause BNET access to remain disabled until opened the BNET app<br>
+    - Removed The Vault and Fast Load Options (non-functional in MP currently)<br>
+    - Gem Mode Added; This feature is working as intended
+</details>
+<details>
+  <summary>1.0.8</summary>
+    - Custom Command Hotkeys can now be set for player commands also (/nopickup, /players X, etc)<br>
+    - Startup Commands can now be set; allows you to automatically apply a series of commands on game start<br>
+    - Fixed an issue where the game would crash when using a hotkey outside of an active game<br>
+    - Fixed an issue with retrieving save files location for "alternate" OS/User configs
+</details>
+<details>
+  <summary>1.0.7</summary>
+    - UI Theme and Icon updated to distinguish itself from D2RLaunch<br>
+    - Fixed an issue that would cause Expanded Merc layouts not to be applied<br>
+    - Added missing references for needed files for various QoL Options
+</details>
+<details>
+  <summary>1.0.6</summary>
+    - Core Files Package now has documentation and tools included, and has been updated to 1.0.6 (website link)<br>
+    - Fixed an issue where Customizations would not function when missing needed files<br>
+    - Fixed an issue where Expanded Storage options would not apply<br>
+    - Fixed an issue that caused the D2RLAN update prompt to fail to appear in some scenarios<br>
+    - Fixed an issue that would cause player trades to fail if exceeding the retail gold cap
+</details>
+<details>
+  <summary>1.0.5</summary>
+    - Chat colors can now be customized in launcher (Channel, Player and Message)<br>
+    - Fixed a crashing issue when linking certain items in chat<br>
+    - Fixed a crashing issue when typing messages over 256 characters in length<br>
+</details>
+<details>
+  <summary>1.0.4</summary>
+    - Added support for item linking in chat<br>
+    - Chat colors can now be controlled (user-customizable next update)<br>
+    - MemoryConfig updated for pname display and gold max cap<br>
+    - Fixed an issue that would cause stat point buttons to disappear when using expanded storage feature
+</details>
+<details>
+  <summary>1.0.3</summary>
+    - Fixed an issue that would cause ReMoDDeD UI to be force chosen<br>
+    - Added support for "special" hotkeys; Insert, Delete, etc
+</details>
+<details>
+  <summary>1.0.2</summary>
+    - Fixed an issue which would cause mod to fail to start when setting runeword layouts<br>
+    - Fixed an issue that would prevent "Show Item iLvls" option from saving preferences<br>
+    - Fixed an issue that would cause crash or gold overflow if selling items and also over retail gold limit
+</details>
+<details>
+  <summary>1.0.1</summary>
+    - Fixed an issue that would cause ReMoDDeD players unable to launch game<br>
+    - Fixed the Item Level Toggle for ReMoDDeD players
 </details>

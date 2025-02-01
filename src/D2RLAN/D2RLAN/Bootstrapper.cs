@@ -36,7 +36,7 @@ public class Bootstrapper : BootstrapperBase
     {
         try
         {
-            XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, "D2RLaunch.log4net.config")));
+            XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, "D2RLAN.log4net.config")));
 
             _container = new SimpleContainer();
 

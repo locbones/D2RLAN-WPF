@@ -130,7 +130,7 @@ namespace D2RLAN.ViewModels.Drawers
         {
             ShellViewModel = shellViewModel;
 
-            _customizationsPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "D2Rlaunch/Customizations");
+            _customizationsPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN/Customizations");
 
             _globalTreasureClassExTxtPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/excel/treasureclassex.txt");
             _globalLevelsTxtPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/excel/levels.txt");
