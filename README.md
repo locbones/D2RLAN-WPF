@@ -249,9 +249,14 @@ Special thanks to the following people or groups for their help along this proje
 - [D2RModding Community](https://www.discord.gg/pqUWcDcjWF) for being patient, supportive and assisting with bug-reports or improvements<br>
 - Killshot for helping with D2RHUD function hooks and debug assistance <br>
 
-<details>
-  <summary>
 # Changelogs
-</summary>
-Testing
+<details>
+  <summary>2.5.2</summary>
+- Added some stuff
+- Added more stuff
+</details>
+<details>
+  <summary>2.5.3</summary>
+- Added stuff
+- Added weird stuff
 </details>
