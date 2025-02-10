@@ -1275,9 +1275,6 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
                             if (File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "On", "weapons.bin")))
                                 File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "On", "weapons.bin"), System.IO.Path.Combine(SelectedModDataFolder, "global", "excel", "weapons.bin"), true);
-
-                            MessageBox.Show(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "On", "armor.bin"));
-
                         }
                         else
                         {
