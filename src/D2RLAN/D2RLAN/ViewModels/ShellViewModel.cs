@@ -47,7 +47,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.1.2";
+    private string appVersion = "1.1.3";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -63,7 +63,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private bool _itemIconDisplayEnabled;
     private bool _launcherHasUpdate;
     private string _launcherUpdateString = "D2RLAN Update Ready!";
-    private const string TAB_BYTE_CODE = "55AA55AA0000000061000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D0000";
+    private const string TAB_BYTE_CODE = "55AA55AA0100000062000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D0000";
     private bool _ColorDyesEnabled = true;
     private bool _ExpandedInventoryEnabled = true;
     private bool _ExpandedStashEnabled = true;
