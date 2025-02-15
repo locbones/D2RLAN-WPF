@@ -263,7 +263,6 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                     }
 
                     GetD2RArgs();
-                    DownloadD2RHUDZip();
                     //await ApplyUiTheme();
                 }
             }
@@ -623,6 +622,9 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     [UsedImplicitly]
     public async void OnPlayMod()
     {
+        if (!File.Exists("D2RHUD.dll"))
+            DownloadD2RHUDZip();
+
         if (ShellViewModel.ModInfo == null)
             return;
 
@@ -1297,10 +1299,10 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 
         if (ShellViewModel.ModInfo.Name == "Vanilla++" || ShellViewModel.ModInfo.Name == "ReMoDDeD")
         {
-            if (File.Exists(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/bankexpansionlayouthd.json")))
+            if (File.Exists(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/bankexpansionlayouthd.json")))
             {
                 File.Delete(Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"));
-                File.Copy(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/bankexpansionlayouthd.json"), Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"));
+                File.Copy(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/bankexpansionlayouthd.json"), Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"));
             }
             else
             {
