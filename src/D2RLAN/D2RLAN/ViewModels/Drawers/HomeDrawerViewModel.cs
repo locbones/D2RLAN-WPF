@@ -1142,10 +1142,10 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     private async Task ApplyUiTheme()
     {
         string layoutPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts");
-        string layoutExpandedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/expanded/layouts");
-        string layoutRemoddedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/remodded/layouts");
+        string layoutExpandedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/expanded/layouts");
+        string layoutRemoddedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/remodded/layouts");
         string uiPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui");
-        string uiExpandedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/Expanded/ui");
+        string uiExpandedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/Expanded/ui");
 
         if (ShellViewModel.ModInfo.Name == "ReMoDDeD")
             await File.WriteAllBytesAsync(Path.Combine(layoutPath, "bankexpansionlayouthd.json"), await Helper.GetResourceByteArray("Options.PersonalizedTabs.stash_rmd"));
