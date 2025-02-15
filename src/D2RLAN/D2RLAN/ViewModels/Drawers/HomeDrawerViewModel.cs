@@ -31,6 +31,7 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Net;
+using System.Text;
 
 namespace D2RLAN.ViewModels.Drawers;
 
@@ -224,7 +225,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 
                     if (ShellViewModel.ModInfo.Name == "RMD-MP")
                     {
-                        UiThemeEnabled = false;
+                        UiThemeEnabled = true;
                         ShellViewModel.WikiEnabled = true;
                         ShellViewModel.UserSettings.UiTheme = 2;
 
@@ -262,6 +263,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                     }
 
                     GetD2RArgs();
+                    DownloadD2RHUDZip();
                     //await ApplyUiTheme();
                 }
             }
@@ -621,9 +623,6 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     [UsedImplicitly]
     public async void OnPlayMod()
     {
-        if (!File.Exists("D2RHUD.dll"))
-            DownloadD2RHUDZip();
-
         if (ShellViewModel.ModInfo == null)
             return;
 
@@ -1142,16 +1141,16 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     }
     private async Task ApplyUiTheme()
     {
-        string layoutPath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts");
-        string layoutExpandedPath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/expanded/layouts");
-        string layoutRemoddedPath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/remodded/layouts");
-        string uiPath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui");
-        string uiExpandedPath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/Expanded/ui");
+        string layoutPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts");
+        string layoutExpandedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/expanded/layouts");
+        string layoutRemoddedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/remodded/layouts");
+        string uiPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui");
+        string uiExpandedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/Expanded/ui");
 
-        if (ShellViewModel.ModInfo.Name == "RMD-MP")
-            await File.WriteAllBytesAsync(System.IO.Path.Combine(layoutPath, "bankexpansionlayouthd.json"), await Helper.GetResourceByteArray("Options.PersonalizedTabs.stash_rmd"));
-        if (ShellViewModel.ModInfo.Name == "VNP-MP")
-            await File.WriteAllBytesAsync(System.IO.Path.Combine(layoutPath, "bankexpansionlayouthd.json"), await Helper.GetResourceByteArray("Options.PersonalizedTabs.stash_vnp"));
+        if (ShellViewModel.ModInfo.Name == "ReMoDDeD")
+            await File.WriteAllBytesAsync(Path.Combine(layoutPath, "bankexpansionlayouthd.json"), await Helper.GetResourceByteArray("Options.PersonalizedTabs.stash_rmd"));
+        if (ShellViewModel.ModInfo.Name == "Vanilla++")
+            await File.WriteAllBytesAsync(Path.Combine(layoutPath, "bankexpansionlayouthd.json"), await Helper.GetResourceByteArray("Options.PersonalizedTabs.stash_vnp"));
 
         if (Directory.Exists(layoutRemoddedPath) || Directory.Exists(layoutExpandedPath))
         {
@@ -1178,12 +1177,117 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                             }
                             break;
                         }
-                    case eUiThemes.ReMoDDeD:
+                    case eUiThemes.ReMoDDeD1:
                         {
                             if (Directory.Exists(layoutPath))
                             {
                                 Directory.Delete(layoutPath, true);
                                 await Helper.CloneDirectory(layoutRemoddedPath, layoutPath);
+
+                                string[] searchStrings = { "_B\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                if (Directory.Exists(layoutPath))
+                                {
+                                    foreach (string file in Directory.GetFiles(layoutPath, "*.json*", SearchOption.AllDirectories))
+                                    {
+                                        ReplaceStringsInFile(file, searchStrings, "_R\"");
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    case eUiThemes.ReMoDDeD2:
+                        {
+                            if (Directory.Exists(layoutPath))
+                            {
+                                Directory.Delete(layoutPath, true);
+                                await Helper.CloneDirectory(layoutRemoddedPath, layoutPath);
+
+                                string[] searchStrings = { "_R\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                if (Directory.Exists(layoutPath))
+                                {
+                                    foreach (string file in Directory.GetFiles(layoutPath, "*.json*", SearchOption.AllDirectories))
+                                    {
+                                        ReplaceStringsInFile(file, searchStrings, "_B\"");
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    case eUiThemes.ReMoDDeD3:
+                        {
+                            if (Directory.Exists(layoutPath))
+                            {
+                                Directory.Delete(layoutPath, true);
+                                await Helper.CloneDirectory(layoutRemoddedPath, layoutPath);
+
+                                string[] searchStrings = { "_R\"", "_B\"", "_Y\"", "_G\"", "_D\"" };
+
+                                if (Directory.Exists(layoutPath))
+                                {
+                                    foreach (string file in Directory.GetFiles(layoutPath, "*.json*", SearchOption.AllDirectories))
+                                    {
+                                        ReplaceStringsInFile(file, searchStrings, "_P\"");
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    case eUiThemes.ReMoDDeD4:
+                        {
+                            if (Directory.Exists(layoutPath))
+                            {
+                                Directory.Delete(layoutPath, true);
+                                await Helper.CloneDirectory(layoutRemoddedPath, layoutPath);
+
+                                string[] searchStrings = { "_R\"", "_B\"", "_P\"", "_G\"", "_D\"" };
+
+                                if (Directory.Exists(layoutPath))
+                                {
+                                    foreach (string file in Directory.GetFiles(layoutPath, "*.json*", SearchOption.AllDirectories))
+                                    {
+                                        ReplaceStringsInFile(file, searchStrings, "_Y\"");
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    case eUiThemes.ReMoDDeD5:
+                        {
+                            if (Directory.Exists(layoutPath))
+                            {
+                                Directory.Delete(layoutPath, true);
+                                await Helper.CloneDirectory(layoutRemoddedPath, layoutPath);
+
+                                string[] searchStrings = { "_R\"", "_B\"", "_P\"", "_Y\"", "_D\"" };
+
+                                if (Directory.Exists(layoutPath))
+                                {
+                                    foreach (string file in Directory.GetFiles(layoutPath, "*.json*", SearchOption.AllDirectories))
+                                    {
+                                        ReplaceStringsInFile(file, searchStrings, "_G\"");
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    case eUiThemes.ReMoDDeD6:
+                        {
+                            if (Directory.Exists(layoutPath))
+                            {
+                                Directory.Delete(layoutPath, true);
+                                await Helper.CloneDirectory(layoutRemoddedPath, layoutPath);
+
+                                string[] searchStrings = { "_R\"", "_B\"", "_P\"", "_Y\"", "_G\"" };
+
+                                if (Directory.Exists(layoutPath))
+                                {
+                                    foreach (string file in Directory.GetFiles(layoutPath, "*.json*", SearchOption.AllDirectories))
+                                    {
+                                        ReplaceStringsInFile(file, searchStrings, "_D\"");
+                                    }
+                                }
                             }
                             break;
                         }
@@ -1191,20 +1295,49 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             }
         }
 
-        if (ShellViewModel.ModInfo.Name == "VNP-MP" || ShellViewModel.ModInfo.Name == "RMD-MP")
+        if (ShellViewModel.ModInfo.Name == "Vanilla++" || ShellViewModel.ModInfo.Name == "ReMoDDeD")
         {
-            if (File.Exists(System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/bankexpansionlayouthd.json")))
+            if (File.Exists(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/bankexpansionlayouthd.json")))
             {
-                File.Delete(System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"));
-                File.Copy(System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/bankexpansionlayouthd.json"), System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"));
+                File.Delete(Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"));
+                File.Copy(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/bankexpansionlayouthd.json"), Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"));
             }
             else
             {
                 if ((ePersonalizedStashTabs)ShellViewModel.UserSettings.PersonalizedStashTabs == ePersonalizedStashTabs.Enabled)
-                    File.Copy(System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"), System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/bankexpansionlayouthd.json"));
+                    File.Copy(Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"), Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/bankexpansionlayouthd.json"));
             }
         }
     }
+
+    static void ReplaceStringsInFile(string filePath, string[] searchStrings, string replacementString)
+    {
+        try
+        {
+            string content = File.ReadAllText(filePath, Encoding.UTF8);
+            bool modified = false;
+
+            foreach (string searchString in searchStrings)
+            {
+                if (content.Contains(searchString))
+                {
+                    content = content.Replace(searchString, replacementString);
+                    modified = true;
+                }
+            }
+
+            if (modified)
+            {
+                File.WriteAllText(filePath, content, Encoding.UTF8);
+                Console.WriteLine($"Updated: {filePath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error processing file {filePath}: {ex.Message}");
+        }
+    }
+
     [UsedImplicitly]
     public async void OnMapsHelp()
     {

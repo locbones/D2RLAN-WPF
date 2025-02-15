@@ -91,7 +91,7 @@ namespace D2RLAN.ViewModels.Dialogs
             if (File.Exists(bankExpansionLayoutHdJsonPath))
             {
                 string jsonString = await File.ReadAllTextAsync(bankExpansionLayoutHdJsonPath);
-                JsonDocument jsonDoc = JsonDocument.Parse(jsonString);
+                JsonDocument jsonDoc = JsonDocument.Parse(jsonString.Replace("@", ""));
                 JsonElement bankTabs = jsonDoc.RootElement.GetProperty("children")[8];
                 JsonElement textStrings = bankTabs.GetProperty("fields").GetProperty("textStrings");
 
@@ -109,6 +109,14 @@ namespace D2RLAN.ViewModels.Dialogs
 
             string jsonString = await File.ReadAllTextAsync(bankExpansionLayoutHdJsonPath);
 
+            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[0] + "\"", "\"" + StashTabNames[0] + "\"");
+            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[1] + "\"", "\"" + StashTabNames[1] + "\"");
+            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[2] + "\"", "\"" + StashTabNames[2] + "\"");
+            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[3] + "\"", "\"" + StashTabNames[3] + "\"");
+            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[4] + "\"", "\"" + StashTabNames[4] + "\"");
+            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[5] + "\"", "\"" + StashTabNames[5] + "\"");
+            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[6] + "\"", "\"" + StashTabNames[6] + "\"");
+            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[7] + "\"", "\"" + StashTabNames[7] + "\"");
             jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[0] + "\"", "\"" + StashTabNames[0] + "\"");
             jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[1] + "\"", "\"" + StashTabNames[1] + "\"");
             jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[2] + "\"", "\"" + StashTabNames[2] + "\"");

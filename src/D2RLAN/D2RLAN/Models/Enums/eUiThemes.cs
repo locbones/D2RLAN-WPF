@@ -13,7 +13,17 @@ namespace D2RLAN.Models.Enums
         Disabled,
         [Display(Name = "Standard UI")]
         Standard,
-        [Display(Name = "ReMoDDeD UI")]
-        ReMoDDeD,
+        [Display(Name = "RMD (Red)")]
+        ReMoDDeD1,
+        [Display(Name = "RMD (Blue)")]
+        ReMoDDeD2,
+        [Display(Name = "RMD (Purple)")]
+        ReMoDDeD3,
+        [Display(Name = "RMD (Gold)")]
+        ReMoDDeD4,
+        [Display(Name = "RMD (Green)")]
+        ReMoDDeD5,
+        [Display(Name = "RMD (Dark)")]
+        ReMoDDeD6,
     }
 }

@@ -31,7 +31,7 @@
                 BorderThickness="4,4,4,2"
                 CornerRadius="1,1,1,1">
                 <Border.BorderBrush>
-                    <SolidColorBrush Opacity="0.5" Color="DarkRed" />
+                    <SolidColorBrush Opacity="0.5" Color="CornflowerBlue" />
                 </Border.BorderBrush>
 
                 <Grid>
@@ -46,9 +46,9 @@
                         Height="62"
                         BorderThickness="0,0,0,2">
                         <Border.BorderBrush>
-                            <SolidColorBrush Opacity="0.5" Color="DarkRed" />
+                            <SolidColorBrush Opacity="0.5" Color="CornflowerBlue" />
                         </Border.BorderBrush>
-                        <Label Content="Stash" Style="{StaticResource LabelHeaderStyle}" />
+                        <Label Content="My Current Stash Tab Names:" Style="{StaticResource LabelHeaderStyle}" />
                     </Border>
 
                     <UniformGrid
