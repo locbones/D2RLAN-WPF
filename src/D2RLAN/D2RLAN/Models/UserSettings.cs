@@ -53,6 +53,7 @@ public class UserSettings : INotifyPropertyChanged
     private bool _Cheats;
     private bool _CheatsActive;
     private bool _MSIFix;
+    private bool _skipCinematics;
 
     #endregion
 
@@ -619,6 +620,19 @@ public class UserSettings : INotifyPropertyChanged
                 return;
             }
             _MSIFix = value;
+            OnPropertyChanged();
+        }
+    }
+    public bool skipCinematics
+    {
+        get => _skipCinematics;
+        set
+        {
+            if (value == _skipCinematics)
+            {
+                return;
+            }
+            _skipCinematics = value;
             OnPropertyChanged();
         }
     }

@@ -9,10 +9,10 @@ namespace D2RLAN.Models.Enums
 {
     public enum eRunewordSorting
     {
-        [Display(Name = "By Name")]
-        ByName,
         [Display(Name = "By Itemtype")]
         ByItemtype,
+        [Display(Name = "By Name")]
+        ByName,
         [Display(Name = "By Req.Level")]
         ByReqLevel
     }

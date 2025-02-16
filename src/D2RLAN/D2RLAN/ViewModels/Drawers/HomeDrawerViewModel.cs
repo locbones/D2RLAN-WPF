@@ -227,8 +227,6 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                     {
                         UiThemeEnabled = true;
                         ShellViewModel.WikiEnabled = true;
-                        ShellViewModel.UserSettings.UiTheme = 2;
-
                         ShellViewModel.ShowItemLevelsEnabled = true;
                         ShellViewModel.UserSettings.SuperTelekinesis = 1;
                         ShellViewModel.SuperTelekinesisEnabled = false;
@@ -242,7 +240,6 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                         ShellViewModel.ExpandedCubeEnabled = false;
                         ShellViewModel.ExpandedMercEnabled = false;
                         ShellViewModel.ColorDyesEnabled = false;
-                        ShellViewModel.UserSettings.RunewordSorting = 1;
                     }
                     else
                     {
@@ -628,9 +625,8 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         if (ShellViewModel.ModInfo == null)
             return;
 
-
-
         await ApplyHdrFix();
+        await ApplyCinematicSkip();
         await ShellViewModel.ApplyModSettings();
         GetD2RArgs();
 
@@ -1139,6 +1135,33 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         {
             _logger.Error(ex);
             MessageBox.Show(ex.Message);
+        }
+    }
+    private async Task ApplyCinematicSkip()
+    {
+        string videoPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "hd/global/video");
+
+        if (!File.Exists(videoPath + "/act2/act02start.webm"))
+        {
+            if (ShellViewModel.UserSettings.skipCinematics)
+            {
+                if (!Directory.Exists(videoPath))
+                    Directory.CreateDirectory(videoPath);
+                if (!Directory.Exists(videoPath + "/act2"))
+                    Directory.CreateDirectory(videoPath + "/act2");
+                if (!Directory.Exists(videoPath + "/act3"))
+                    Directory.CreateDirectory(videoPath + "/act3");
+                if (!Directory.Exists(videoPath + "/act4"))
+                    Directory.CreateDirectory(videoPath + "/act4");
+                if (!Directory.Exists(videoPath + "/act5"))
+                    Directory.CreateDirectory(videoPath + "/act5");
+
+                File.Create(videoPath + "/act2/act02start.webm").Close();
+                File.Create(videoPath + "/act3/act03start.webm").Close();
+                File.Create(videoPath + "/act4/act04start.webm").Close();
+                File.Create(videoPath + "/act4/act04end.webm").Close();
+                File.Create(videoPath + "/act5/d2x_out.webm").Close();
+            }
         }
     }
     private async Task ApplyUiTheme()

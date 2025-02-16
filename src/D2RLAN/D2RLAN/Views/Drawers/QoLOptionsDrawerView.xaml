@@ -527,16 +527,31 @@
                         FontWeight="Bold"
                         Foreground="Goldenrod"
                         Style="{StaticResource LabelHeaderStyle}" Padding="5,5,5,5" />
-                    <ComboBox
+                    <UniformGrid
                         Grid.Row="17"
-                        Width="125"
-                        Height="40"
-                        DisplayMemberPath="Key"
-                        IsEnabled="True"
-                        ItemsSource="{Binding CinematicSubs}"
-                        SelectedIndex="{Binding ShellViewModel.UserSettings.CinematicSubs}"
-                        SelectedValuePath="Value"
-                        Style="{StaticResource ComboBoxStyle}" Background="#FF313030" />
+                        HorizontalAlignment="Center"
+                        Columns="2">
+                        <ComboBox
+                            Grid.Row="17"
+                            Grid.Column="0"
+                            Width="125"
+                            Height="40"
+                            Background="#FF313030"
+                            DisplayMemberPath="Key"
+                            IsEnabled="True"
+                            ItemsSource="{Binding CinematicSubs}"
+                            SelectedIndex="{Binding ShellViewModel.UserSettings.CinematicSubs}"
+                            SelectedValuePath="Value"
+                            Style="{StaticResource ComboBoxStyle}" />
+                        <CheckBox
+                            Grid.Row="17"
+                            Grid.Column="1"
+                            Margin="5,5,5,5"
+                            HorizontalAlignment="Center"
+                            Content="Skip Act Cinematics"
+                            IsChecked="{Binding ShellViewModel.UserSettings.skipCinematics}"
+                            Style="{StaticResource CheckBoxStyle}" />
+                    </UniformGrid>
                     <Label
                         Grid.Row="18"
                         Content="{Binding AuthorFiles, Source={StaticResource Resources}}"
