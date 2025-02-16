@@ -75,6 +75,7 @@ Publicly ready download can be found at http://d2rmodding.com/D2RLaunch
 - **Character Renaming:** Rename your character (in-game name also)
 - **Character Map Seeds:** Edit your characters map seed directly from save file
 - **Cinematic Subtitles:** Improved subtitle text and no longer formatted for the deaf/hard-of-hearing
+- **Cinematic Skipper:** Ability to skip Act Cinematics automatically
 
 ### -Author Feature List-
 - **Code-less:** No code needed to add D2RLAN support; control news, features, community links or appearance
@@ -250,6 +251,41 @@ Special thanks to the following people or groups for their help along this proje
 - Killshot for helping with D2RHUD function hooks and debug assistance <br>
 
 # Changelogs
+<details>
+  <summary>1.1.8</summary>
+    - Added 'Skip Act Cinematics' Option<br>
+    - Fixed User Settings issue with UI Theme choice<br>
+    - Changed default RW Sorting method (RMD)
+</details>
+<details>
+  <summary>1.1.7</summary>
+    - Adjusted default Runeword Sorting method<br>
+    - User Settings Saving for Runeword Sorting Updated
+</details>
+<details>
+  <summary>1.1.6</summary>
+    - Reverted D2RHUD update logic<br>
+    - Fixed an issue with Personal Stash file safekeeping
+</details>
+<details>
+  <summary>1.1.5</summary>
+    - Added In-Game UI Theme Switcher (RMD Only for now)<br>
+    - Adjusted D2RHUD for forced update (will come up with update system later)<br>
+    - Adjusted Stash Tab Renamer to not display @ symbols to avoid confusion<br>
+    - Small updates to Stash Tab Renamer UI for clarity
+</details>
+<details>
+  <summary>1.1.4</summary>
+    - Fixed the 'Show Item Levels' option<br>
+    - Fixed an issue which would potentially cause strings to be replaced unintentionally<br>
+    - Fixed Stash Tab Unlock Logging
+</details>
+<details>
+  <summary>1.1.3</summary>
+    - Updated Stash Tab Versioning Info<br>
+    - Added Log Output for Stash Unlocking<br>
+    - Updated Project Reference Files
+</details>
 <details>
   <summary>1.1.2</summary>
     - Source Code is now available via https://github.com/locbones/D2RLAN-WPF<br>
