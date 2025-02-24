@@ -35,6 +35,7 @@ using System.Text.Json;
 using MemoryEditor;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
+using System.Security.Cryptography;
 
 
 namespace D2RLAN.ViewModels;
@@ -47,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.1.8";
+    private string appVersion = "1.2.0";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -656,7 +657,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         eHudDesign hudDesign = (eHudDesign)UserSettings.HudDesign;
 
 
-        string mergedHudDirectory = System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Merged HUD");
+        string mergedHudDirectory = System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design");
         string layoutFolder = System.IO.Path.Combine(SelectedModDataFolder, "global/ui/layouts");
         string hudPanelhdJsonFilePath = System.IO.Path.Combine(layoutFolder, "hudpanelhd.json");
         string controllerhudPanelhdJsonFilePath = System.IO.Path.Combine(layoutFolder, "controller/hudpanelhd.json");
@@ -673,15 +674,18 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             {
                 case eHudDesign.Standard:
                     {
-                        if (File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/expanded/layouts/hudpanelhd.json")) || File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/remodded/layouts/hudpanelhd.json")))
+                        if (File.Exists(Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/expanded/layouts/hudpanelhd.json")) || File.Exists(Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/remodded/layouts/hudpanelhd.json")))
                         {
                             if ((eUiThemes)UserSettings.UiTheme == eUiThemes.Standard)
-                                File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/expanded/layouts/hudpanelhd.json"), hudPanelhdJsonFilePath, true);
+                                File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/expanded/layouts/hudpanelhd.json"), hudPanelhdJsonFilePath, true);
                             else
-                                File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/remodded/layouts/hudpanelhd.json"), hudPanelhdJsonFilePath, true);
+                                File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/remodded/layouts/hudpanelhd.json"), hudPanelhdJsonFilePath, true);
 
                             if (File.Exists(controllerhudPanelhdJsonFilePath))
                                 File.Delete(controllerhudPanelhdJsonFilePath);
+
+                            if (File.Exists(Path.Combine(layoutFolder, "hireablespanelhd.json")))
+                                File.Delete(Path.Combine(layoutFolder, "hireablespanelhd.json"));
 
                             // Update skillselecthd.json if it exists
                             if (File.Exists(skillSelecthdJsonFilePath))
@@ -692,20 +696,86 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                         }
                         else
                             if (File.Exists(hudPanelhdJsonFilePath))
-                                File.Delete(hudPanelhdJsonFilePath);
+                            File.Delete(hudPanelhdJsonFilePath);
+
+                        string[] searchStrings = null;
+                        if (Directory.Exists(layoutFolder))
+                        {
+                            if (UserSettings.UiTheme == 2)
+                            {
+                                searchStrings = new string[] { "_B\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_R\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 3)
+                            {
+                                searchStrings = new string[] { "_R\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_B\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 4)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_P\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 5)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_Y\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 6)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_Y\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_G\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 7)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_Y\"", "_G\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_D\"");
+                                }
+                            }
+                        }
                         break;
                     }
-                case eHudDesign.Merged:
+                case eHudDesign.ReMoDDeD:
                     {
                         if (!Directory.Exists(controllerDirectory))
                             Directory.CreateDirectory(controllerDirectory);
 
-                        if (File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Merged HUD/hudpanelhd-merged.json")))
+                        if (File.Exists(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/remodded/hudpanelhd.json")))
                         {
-                            File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Merged HUD/hudpanelhd-merged.json"), hudPanelhdJsonFilePath, true);
-                            File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Merged HUD/Controller/hudpanelhd-merged_controller.json"), controllerhudPanelhdJsonFilePath, true);
+                            File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/remodded/hudpanelhd.json"), hudPanelhdJsonFilePath, true);
+                            File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/remodded/hireablespanelhd.json"), Path.Combine(layoutFolder, "hireablespanelhd.json"), true);
+                            // File.Copy(Path.Combine(SelectedModDataFolder, "D2RLaunch/HUD Design/remodded/Controller/hudpanelhd-merged_controller.json"), controllerhudPanelhdJsonFilePath, true);
                         }
-                        
+
+                        /*
                         // Update skillselecthd.json if it exists
                         if (!File.Exists(skillSelecthdJsonFilePath))
                         {
@@ -714,11 +784,280 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                         }
                         string skillSelect = File.ReadAllText(skillSelecthdJsonFilePath);
                         await File.WriteAllTextAsync(skillSelecthdJsonFilePath, skillSelect.Replace("\"centerMirrorGapWidth\": 146,", "\"centerMirrorGapWidth\": 846,"));
+                        */
+
+                        string[] searchStrings = null;
+                        if (Directory.Exists(layoutFolder))
+                        {
+                            if (UserSettings.UiTheme == 2)
+                            {
+                                searchStrings = new string[] { "_B\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_R\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 3)
+                            {
+                                searchStrings = new string[] { "_R\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_B\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 4)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_P\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 5)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_Y\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 6)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_Y\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_G\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 7)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_Y\"", "_G\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_D\"");
+                                }
+                            }
+                        }
+                        break;
+                    }
+                case eHudDesign.Merged:
+                    {
+                        if (!Directory.Exists(controllerDirectory))
+                            Directory.CreateDirectory(controllerDirectory);
+
+                        if (File.Exists(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/merged/hudpanelhd-merged.json")))
+                        {
+                            File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/merged/hudpanelhd-merged.json"), hudPanelhdJsonFilePath, true);
+                            File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/merged/Controller/hudpanelhd-merged_controller.json"), controllerhudPanelhdJsonFilePath, true);
+                        }
+                        if (File.Exists(Path.Combine(layoutFolder, "hireablespanelhd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "hireablespanelhd.json"));
+
+                        // Update skillselecthd.json if it exists
+                        if (!File.Exists(skillSelecthdJsonFilePath))
+                        {
+                            File.Create(skillSelecthdJsonFilePath).Close();
+                            await File.WriteAllBytesAsync(skillSelecthdJsonFilePath, await Helper.GetResourceByteArray("Options.MergedHUD.skillselecthd.json"));
+                        }
+                        string skillSelect = File.ReadAllText(skillSelecthdJsonFilePath);
+                        await File.WriteAllTextAsync(skillSelecthdJsonFilePath, skillSelect.Replace("\"centerMirrorGapWidth\": 146,", "\"centerMirrorGapWidth\": 846,"));
+
+                        string[] searchStrings = null;
+                        if (Directory.Exists(layoutFolder))
+                        {
+                            if (UserSettings.UiTheme == 2)
+                            {
+                                searchStrings = new string[] { "_B\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_R\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 3)
+                            {
+                                searchStrings = new string[] { "_R\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_B\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 4)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_P\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 5)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_Y\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 6)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_Y\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_G\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 7)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_Y\"", "_G\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_D\"");
+                                }
+                            }
+                        }
+                        break;
+                    }
+                case eHudDesign.MergedMini:
+                    {
+                        if (!Directory.Exists(controllerDirectory))
+                            Directory.CreateDirectory(controllerDirectory);
+
+                        if (File.Exists(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/merged_v2/hudpanelhd.json")))
+                        {
+                            File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/merged_v2/hudpanelhd.json"), hudPanelhdJsonFilePath, true);
+                            File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/merged_v2/hudmessagepanelhd.json"), Path.Combine(layoutFolder, "hudmessagepanelhd.json"), true);
+                            File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/merged_v2/chatpanelhd.json"), Path.Combine(layoutFolder, "chatpanelhd.json"), true);
+                            File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/merged_v2/messagelogpanel_640x480hd.json"), Path.Combine(layoutFolder, "messagelogpanel_640x480hd.json"), true);
+                        }
+                        if (File.Exists(Path.Combine(layoutFolder, "hireablespanelhd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "hireablespanelhd.json"));
+
+                        /*
+                        // Update skillselecthd.json if it exists
+                        if (!File.Exists(skillSelecthdJsonFilePath))
+                        {
+                            File.Create(skillSelecthdJsonFilePath).Close();
+                            await File.WriteAllBytesAsync(skillSelecthdJsonFilePath, await Helper.GetResourceByteArray("Options.MergedHUD.skillselecthd.json"));
+                        }
+                        string skillSelect = File.ReadAllText(skillSelecthdJsonFilePath);
+                        await File.WriteAllTextAsync(skillSelecthdJsonFilePath, skillSelect.Replace("\"centerMirrorGapWidth\": 146,", "\"centerMirrorGapWidth\": 846,"));
+                        */
+
+                        string[] searchStrings = null;
+                        if (Directory.Exists(layoutFolder))
+                        {
+                            if (UserSettings.UiTheme == 2)
+                            {
+                                searchStrings = new string[] { "_B\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_R\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 3)
+                            {
+                                searchStrings = new string[] { "_R\"", "_P\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_B\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 4)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_Y\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_P\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 5)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_G\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_Y\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 6)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_Y\"", "_D\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_G\"");
+                                }
+                            }
+
+                            if (UserSettings.UiTheme == 7)
+                            {
+                                searchStrings = new string[] { "_R\"", "_B\"", "_P\"", "_Y\"", "_G\"" };
+
+                                foreach (string file in Directory.GetFiles(layoutFolder, "*.json*", SearchOption.AllDirectories))
+                                {
+                                    ReplaceStringsInFile(file, searchStrings, "_D\"");
+                                }
+                            }
+                        }
                         break;
                     }
             }
         }
-        //TODO: Add warning.
+    }
+    static void ReplaceStringsInFile(string filePath, string[] searchStrings, string replacementString)
+    {
+        try
+        {
+            string content = File.ReadAllText(filePath, Encoding.UTF8);
+            bool modified = false;
+
+            foreach (string searchString in searchStrings)
+            {
+                if (content.Contains(searchString))
+                {
+                    content = content.Replace(searchString, replacementString);
+                    modified = true;
+                }
+            }
+
+            if (modified)
+            {
+                File.WriteAllText(filePath, content, Encoding.UTF8);
+                Console.WriteLine($"Updated: {filePath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error processing file {filePath}: {ex.Message}");
+        }
     }
     private async Task ConfigureRunewordSorting() //Runeword Sorting
     {
@@ -726,13 +1065,16 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         string abRunewordJsonFilePath = System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Runeword Sort/runewords-ab.json");
         string itRunewordJsonFilePath = System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Runeword Sort/runewords-it.json");
-        string lvRunewordJsonFilePath = System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Runeword Sort//runewords-lv.json");
+        string lvRunewordJsonFilePath = System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Runeword Sort/runewords-lv.json");
 
         string abHelpPandelHdJsonFilePath = System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Runeword Sort/helppanelhd-ab.json");
         string itHelpPandelHdJsonFilePath = System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Runeword Sort/helppanelhd-it.json");
         string lvHelpPandelHdJsonFilePath = System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN/Runeword Sort/helppanelhd-lv.json");
 
         string helpPandelHdJsonFilePath = System.IO.Path.Combine(SelectedModDataFolder, "global/ui/layouts/helppanelhd.json");
+
+        if (ModInfo.Name != "RMD-MP" && ModInfo.Name != "VNP-MP")
+            return;
 
         switch (runewordSorting)
         {
@@ -3368,48 +3710,71 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         try
         {
-            // Determine if the mod is using a mod folder or retail folder for backups by verifying the directories first
+            // Determine if the mod is using a mod folder or retail folder for backups
             if (!Directory.Exists(Path.Combine(baseSavePath, @$"Diablo II Resurrected\Mods\{Settings.Default.SelectedMod}")))
             {
-                // The save directory doesn't exist; this mod is using retail location - set default pathing info
+                // Retail location
                 actualSaveFilePath = BaseSaveFilesFilePath;
                 actualBackupFolder = Path.Combine(BaseSaveFilesFilePath, "Backups");
             }
             else
             {
-                // The save directory exists; this mod is using mod folder locations - proceed normally
+                // Mod folder location
                 actualSaveFilePath = SaveFilesFilePath;
                 actualBackupFolder = BackupFolder;
             }
 
-            // Create backup folder if it doesn't exist yet
+            _logger.Error($"BackupRecentCharacter using save path: {actualSaveFilePath}, backup folder: {actualBackupFolder}");
+
+            // Create backup folder if it doesn't exist
             if (!Directory.Exists(actualBackupFolder))
                 Directory.CreateDirectory(actualBackupFolder);
 
-            if (new DirectoryInfo(actualSaveFilePath).GetFiles("*.d2s").Length >= 1)
+            await Task.Delay(100);
+
+            var saveFiles = new DirectoryInfo(actualSaveFilePath).GetFiles("*.d2s");
+            if (saveFiles.Length >= 1)
             {
-                // Backup Character
-                FileInfo mostRecentCharacterFile = new DirectoryInfo(actualSaveFilePath).GetFiles("*.d2s").OrderByDescending(o => o.LastWriteTime).First();
+                FileInfo mostRecentCharacterFile = saveFiles.OrderByDescending(o => o.LastWriteTimeUtc).First();
                 mostRecentCharacterName = Path.GetFileNameWithoutExtension(mostRecentCharacterFile.Name);
 
                 string mostRecentCharacterBackupFolder = Path.Combine(actualBackupFolder, mostRecentCharacterName);
                 if (!Directory.Exists(mostRecentCharacterBackupFolder))
                     Directory.CreateDirectory(mostRecentCharacterBackupFolder);
 
-                File.Copy(mostRecentCharacterFile.FullName, Path.Combine(mostRecentCharacterBackupFolder, mostRecentCharacterFile.Name + DateTime.Now.ToString("_MM_dd--hh_mmtt") + ".d2s"), true);
+                // Get latest backup file
+                var backupFiles = new DirectoryInfo(mostRecentCharacterBackupFolder).GetFiles($"{mostRecentCharacterFile.Name}_*.d2s");
+                if (backupFiles.Length > 0)
+                {
+                    FileInfo latestBackupFile = backupFiles.OrderByDescending(f => f.LastWriteTimeUtc).First();
+
+                    // Compare hashes to check if the file has changed
+                    if (ComputeMD5(mostRecentCharacterFile.FullName) == ComputeMD5(latestBackupFile.FullName))
+                    {
+                        _logger.Error($"Auto Backups: Skipped backup for {mostRecentCharacterFile.Name}, no changes detected.");
+                        return (mostRecentCharacterName, true);
+                    }
+                }
+
+                string backupFilePath = Path.Combine(mostRecentCharacterBackupFolder, mostRecentCharacterFile.Name + DateTime.Now.ToString("_MM_dd--hh_mmtt") + ".d2s");
+                File.Copy(mostRecentCharacterFile.FullName, backupFilePath, true);
                 _logger.Error($"Auto Backups: Backed up {mostRecentCharacterFile.Name} at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {mostRecentCharacterBackupFolder}");
 
-                // Backup Stash
-                string mostRecentStashFileSC = Path.Combine(actualSaveFilePath, "SharedStashSoftCoreV2.d2i");
-                string mostRecentStashFileHC = Path.Combine(actualSaveFilePath, "SharedStashHardCoreV2.d2i");
-                string stashBackupFolder = Path.Combine(actualBackupFolder, "Stash");
+                // Display Size Limit Warning (55% or more)
+                long fileSizeInBytes = mostRecentCharacterFile.Length;
+                if (fileSizeInBytes >= 7000)
+                {
+                    MessageBox.Show(
+                        $"WARNING!\nYour current save file size is {fileSizeInBytes} / 8192 bytes.\n\n" +
+                        "If you exceed the max size, you will start losing items!\n" +
+                        "It is highly recommended that you place smaller items in your shared stash to avoid this.\n\n" +
+                        "All items in your personal stash, cube and inventory contribute to this size",
+                        "Attention!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
 
-                if (!Directory.Exists(stashBackupFolder))
-                    Directory.CreateDirectory(stashBackupFolder);
-
-                File.Copy(mostRecentStashFileSC, Path.Combine(stashBackupFolder, "SharedStashSoftCoreV2" + DateTime.Now.ToString("_MM_dd--hh_mmtt") + ".d2i"), true);
-                File.Copy(mostRecentStashFileHC, Path.Combine(stashBackupFolder, "SharedStashHardCoreV2" + DateTime.Now.ToString("_MM_dd--hh_mmtt") + ".d2i"), true);
-                _logger.Error($"Auto Backups: Backed up Shared Stash files at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {mostRecentCharacterBackupFolder}");
+                // Backup Stash (Only if changed)
+                BackupStashFile(actualSaveFilePath, actualBackupFolder, "SharedStashSoftCoreV2.d2i");
+                BackupStashFile(actualSaveFilePath, actualBackupFolder, "SharedStashHardCoreV2.d2i");
             }
         }
         catch (Exception ex)
@@ -3421,6 +3786,43 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         return (mostRecentCharacterName, true);
     }
+    private string ComputeMD5(string filePath)
+    {
+        using (var md5 = MD5.Create())
+        using (var stream = File.OpenRead(filePath))
+        {
+            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
+        }
+    }
+    private void BackupStashFile(string savePath, string backupFolder, string stashFileName)
+    {
+        string stashFilePath = Path.Combine(savePath, stashFileName);
+        if (!File.Exists(stashFilePath))
+            return;
+
+        string stashBackupFolder = Path.Combine(backupFolder, "Stash");
+        if (!Directory.Exists(stashBackupFolder))
+            Directory.CreateDirectory(stashBackupFolder);
+
+        // Get latest backup file
+        var backupFiles = new DirectoryInfo(stashBackupFolder).GetFiles($"{stashFileName}_*.d2i");
+        if (backupFiles.Length > 0)
+        {
+            FileInfo latestBackupFile = backupFiles.OrderByDescending(f => f.LastWriteTimeUtc).First();
+
+            // Compare hashes
+            if (ComputeMD5(stashFilePath) == ComputeMD5(latestBackupFile.FullName))
+            {
+                _logger.Error($"Auto Backups: Skipped stash backup for {stashFileName}, no changes detected.");
+                return;
+            }
+        }
+
+        string backupFilePath = Path.Combine(stashBackupFolder, stashFileName + DateTime.Now.ToString("_MM_dd--hh_mmtt") + ".d2i");
+        File.Copy(stashFilePath, backupFilePath, true);
+        _logger.Error($"Auto Backups: Backed up {stashFileName} at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {stashBackupFolder}");
+    }
+
     public string GetSavePath()
     {
         string savePath = null;

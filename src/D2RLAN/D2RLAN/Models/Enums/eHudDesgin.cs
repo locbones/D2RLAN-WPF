@@ -9,9 +9,13 @@ namespace D2RLAN.Models.Enums
 {
     public enum eHudDesign
     {
+        [Display(Name = "ReMoDDeD")]
+        ReMoDDeD,
         [Display(Name = "Standard")]
         Standard,
         [Display(Name = "Merged")]
         Merged,
+        [Display(Name = "Merged Mini")]
+        MergedMini,
     }
 }
