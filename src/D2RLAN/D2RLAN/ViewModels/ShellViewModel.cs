@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.2.0";
+    private string appVersion = "1.2.1";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -674,29 +674,24 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             {
                 case eHudDesign.Standard:
                     {
-                        if (File.Exists(Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/expanded/layouts/hudpanelhd.json")) || File.Exists(Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/remodded/layouts/hudpanelhd.json")))
+                        if (File.Exists(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/standard/hudpanelhd.json")))
                         {
-                            if ((eUiThemes)UserSettings.UiTheme == eUiThemes.Standard)
-                                File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/expanded/layouts/hudpanelhd.json"), hudPanelhdJsonFilePath, true);
-                            else
-                                File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/UI Theme/remodded/layouts/hudpanelhd.json"), hudPanelhdJsonFilePath, true);
-
-                            if (File.Exists(controllerhudPanelhdJsonFilePath))
-                                File.Delete(controllerhudPanelhdJsonFilePath);
-
-                            if (File.Exists(Path.Combine(layoutFolder, "hireablespanelhd.json")))
-                                File.Delete(Path.Combine(layoutFolder, "hireablespanelhd.json"));
-
-                            // Update skillselecthd.json if it exists
-                            if (File.Exists(skillSelecthdJsonFilePath))
-                            {
-                                string skillSelect = await File.ReadAllTextAsync(skillSelecthdJsonFilePath);
-                                await File.WriteAllTextAsync(skillSelecthdJsonFilePath, skillSelect.Replace("\"centerMirrorGapWidth\": 846,", "\"centerMirrorGapWidth\": 146,"));
-                            }
+                            File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/standard/hudpanelhd.json"), hudPanelhdJsonFilePath, true);
+                            // File.Copy(Path.Combine(SelectedModDataFolder, "D2RLaunch/HUD Design/remodded/Controller/hudpanelhd-merged_controller.json"), controllerhudPanelhdJsonFilePath, true);
                         }
-                        else
-                            if (File.Exists(hudPanelhdJsonFilePath))
-                            File.Delete(hudPanelhdJsonFilePath);
+
+                        if (File.Exists(controllerhudPanelhdJsonFilePath))
+                            File.Delete(controllerhudPanelhdJsonFilePath);
+
+                        if (File.Exists(Path.Combine(layoutFolder, "hireablespanelhd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "hireablespanelhd.json"));
+
+                        // Update skillselecthd.json if it exists
+                        if (File.Exists(skillSelecthdJsonFilePath))
+                        {
+                            string skillSelect = await File.ReadAllTextAsync(skillSelecthdJsonFilePath);
+                            await File.WriteAllTextAsync(skillSelecthdJsonFilePath, skillSelect.Replace("\"centerMirrorGapWidth\": 846,", "\"centerMirrorGapWidth\": 146,"));
+                        }
 
                         string[] searchStrings = null;
                         if (Directory.Exists(layoutFolder))
@@ -2380,7 +2375,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                         }
 
                         // Remove entries only if "key" contains "ModCD"
-                        int[] idsToRemove = { 48000, 48001, 48002, 48003, 48004, 48005, 48006 };
+                        int[] idsToRemove = { 48990, 48991, 48992, 48993, 48994, 48995, 48996 };
                         entries.RemoveAll(entry => idsToRemove.Contains(entry.id) && entry.Key.Contains("ModCD"));
 
                         using (StreamWriter file = File.CreateText(stringPath))
@@ -2566,7 +2561,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             // Add new entries for color dye strings
             entries.Add(new Entry
             {
-                id = 48000,
+                id = 48990,
                 Key = "ModCDWhite",
                 deDE = "ÿc4Farbe gefärbt: ÿc0Weiß",
                 enUS = "ÿc4Color Dyed: ÿc0White",
@@ -2585,7 +2580,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
             entries.Add(new Entry
             {
-                id = 48001,
+                id = 48991,
                 Key = "ModCDBlack",
                 deDE = "ÿc4Farbe gefärbt: ÿc5Schwarz",
                 enUS = "ÿc4Color Dyed: ÿc5Black",
@@ -2604,7 +2599,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
             entries.Add(new Entry
             {
-                id = 48002,
+                id = 48992,
                 Key = "ModCDRed",
                 deDE = "ÿc4Farbe gefärbt: ÿc1Rot",
                 enUS = "ÿc4Color Dyed: ÿc1Red",
@@ -2623,7 +2618,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
             entries.Add(new Entry
             {
-                id = 48003,
+                id = 48993,
                 Key = "ModCDGreen",
                 deDE = "ÿc4Farbe gefärbt: ÿc2Grün",
                 enUS = "ÿc4Color Dyed: ÿc2Green",
@@ -2642,7 +2637,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
             entries.Add(new Entry
             {
-                id = 48004,
+                id = 48994,
                 Key = "ModCDBlue",
                 deDE = "ÿc4Farbe gefärbt: ÿc3Blau",
                 enUS = "ÿc4Color Dyed: ÿc3Blue",
@@ -2661,7 +2656,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
             entries.Add(new Entry
             {
-                id = 48005,
+                id = 48995,
                 Key = "ModCDYellow",
                 deDE = "ÿc4Farbe gefärbt: ÿc9Gelb",
                 enUS = "ÿc4Color Dyed: ÿc9Yellow",
@@ -2680,7 +2675,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
             entries.Add(new Entry
             {
-                id = 48006,
+                id = 48996,
                 Key = "ModCDPurple",
                 deDE = "ÿc4Farbe gefärbt: ÿc;Lila",
                 enUS = "ÿc4Color Dyed: ÿc;Purple",
