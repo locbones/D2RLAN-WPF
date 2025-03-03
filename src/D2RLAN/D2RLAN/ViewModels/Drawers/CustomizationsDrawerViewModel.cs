@@ -94,11 +94,11 @@ namespace D2RLAN.ViewModels.Drawers
                 Directory.CreateDirectory(_customizationsPath);
 
             if (!File.Exists(_globalLevelsTxtPath))
-                Helper.ExtractFileFromCasc(ShellViewModel.GamePath, @"data:data\global\excel\levels.txt", ShellViewModel.SelectedModDataFolder, "data:data");
+                File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/levels.txt", Helper.GetResourceByteArray2("CASC.levels.txt"));
             if (!File.Exists(_globalMonStatsTxtPath))
-                Helper.ExtractFileFromCasc(ShellViewModel.GamePath, @"data:data\global\excel\monstats.txt", ShellViewModel.SelectedModDataFolder, "data:data");
+                File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/monstats.txt", Helper.GetResourceByteArray2("CASC.monstats.txt"));
             if (!File.Exists(_globalTreasureClassExTxtPath))
-                Helper.ExtractFileFromCasc(ShellViewModel.GamePath, @"data:data\global\excel\treasureclassex.txt", ShellViewModel.SelectedModDataFolder, "data:data");
+                File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/treasureclassex.txt", Helper.GetResourceByteArray2("CASC.treasureclassex.txt"));
 
             if (!File.Exists(_customizationLevelsTxtPath))
                 File.Copy(_globalLevelsTxtPath, _customizationLevelsTxtPath);
@@ -106,6 +106,8 @@ namespace D2RLAN.ViewModels.Drawers
                 File.Copy(_globalMonStatsTxtPath, _customizationMonStatsTxtPath);
             if (!File.Exists(_customizationsTreasureClassExTxtPath))
                 File.Copy(_globalTreasureClassExTxtPath, _customizationsTreasureClassExTxtPath);
+
+            MessageBox.Show(_globalLevelsTxtPath);
 
             ChangeDifficulty();
 
@@ -379,7 +381,7 @@ namespace D2RLAN.ViewModels.Drawers
             if (Directory.Exists(_customizationsPath))
             {
                 if (!File.Exists(_globalTreasureClassExTxtPath))
-                    Helper.ExtractFileFromCasc(ShellViewModel.GamePath, @"data:data\global\excel\treasureclassex.txt", ShellViewModel.SelectedModDataFolder, "data:data");
+                    await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/treasureclassex.txt", await Helper.GetResourceByteArray("CASC.treasureclassex.txt"));
 
                 string[] lines = await File.ReadAllLinesAsync(_customizationsTreasureClassExTxtPath);
                 string contents = "";
@@ -787,7 +789,6 @@ namespace D2RLAN.ViewModels.Drawers
                 #endregion
                 MessageBox.Show("Customizations applied successfully!");
                 await ShellViewModel.SaveUserSettings();
-                MessageBox.Show("Customizations still applied successfully!");
             }
         }
 

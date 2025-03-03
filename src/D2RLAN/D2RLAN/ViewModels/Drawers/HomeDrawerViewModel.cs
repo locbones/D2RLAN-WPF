@@ -652,6 +652,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             {
                 File.Create(sharedStashSoftCorePath).Close();
                 await File.WriteAllBytesAsync(sharedStashSoftCorePath, await Helper.GetResourceByteArray("SharedStashSoftCoreV2.d2i"));
+                _logger.Error("Startup: Stash Tabs Created - Softcore");
             }
             else
             {
