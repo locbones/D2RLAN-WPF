@@ -24,6 +24,7 @@ Mod Players can download, update and customize mods in a few button clicks.<br>
 Some features require additional author support to function correctly, and will be indicated with a **+**<br>
 
 <img src="https://static.wixstatic.com/media/698f72_5d0916a305544662bb4e0a741ba5edd7~mv2.png" alt="D2RLAN Home View" width="820">
+
 Publicly ready download can be found at [D2RModding](https://d2rmodding.com/D2RLaunch)
 
 
