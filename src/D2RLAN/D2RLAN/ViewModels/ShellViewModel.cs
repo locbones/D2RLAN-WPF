@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.2.2";
+    private string appVersion = "1.2.3";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -686,6 +686,15 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                         if (File.Exists(Path.Combine(layoutFolder, "hireablespanelhd.json")))
                             File.Delete(Path.Combine(layoutFolder, "hireablespanelhd.json"));
 
+                        if (File.Exists(Path.Combine(layoutFolder, "chatpanelhd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "chatpanelhd.json"));
+
+                        if (File.Exists(Path.Combine(layoutFolder, "hudmessagepanelhd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "hudmessagepanelhd.json"));
+
+                        if (File.Exists(Path.Combine(layoutFolder, "messagelogpanel_640x480hd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "messagelogpanel_640x480hd.json"));
+
                         // Update skillselecthd.json if it exists
                         if (File.Exists(skillSelecthdJsonFilePath))
                         {
@@ -769,6 +778,15 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                             File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/HUD Design/remodded/hireablespanelhd.json"), Path.Combine(layoutFolder, "hireablespanelhd.json"), true);
                             // File.Copy(Path.Combine(SelectedModDataFolder, "D2RLaunch/HUD Design/remodded/Controller/hudpanelhd-merged_controller.json"), controllerhudPanelhdJsonFilePath, true);
                         }
+
+                        if (File.Exists(Path.Combine(layoutFolder, "chatpanelhd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "chatpanelhd.json"));
+
+                        if (File.Exists(Path.Combine(layoutFolder, "hudmessagepanelhd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "hudmessagepanelhd.json"));
+
+                        if (File.Exists(Path.Combine(layoutFolder, "messagelogpanel_640x480hd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "messagelogpanel_640x480hd.json"));
 
                         /*
                         // Update skillselecthd.json if it exists
@@ -858,6 +876,15 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                         }
                         if (File.Exists(Path.Combine(layoutFolder, "hireablespanelhd.json")))
                             File.Delete(Path.Combine(layoutFolder, "hireablespanelhd.json"));
+
+                        if (File.Exists(Path.Combine(layoutFolder, "chatpanelhd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "chatpanelhd.json"));
+
+                        if (File.Exists(Path.Combine(layoutFolder, "hudmessagepanelhd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "hudmessagepanelhd.json"));
+
+                        if (File.Exists(Path.Combine(layoutFolder, "messagelogpanel_640x480hd.json")))
+                            File.Delete(Path.Combine(layoutFolder, "messagelogpanel_640x480hd.json"));
 
                         // Update skillselecthd.json if it exists
                         if (!File.Exists(skillSelecthdJsonFilePath))
@@ -4407,7 +4434,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             rowCount = lines.Length;
         }
         if (!File.Exists(filePath) && ModInfo.Name == "RMD-MP")
-            rowCount = 715;
+            rowCount = 718;
 
         return rowCount;
     }
