@@ -16,6 +16,7 @@ using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using JetBrains.Annotations;
+using SevenZip;
 using ILog = log4net.ILog;
 using LogManager = log4net.LogManager;
 
@@ -212,176 +213,144 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
     public async void OnInstallMod()
     {
         ModDownloadLink = ModDownloadLink.TrimEnd();
-        string tempFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "NewModDownload.zip");
-        string tempExtractedModFolderPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "NewModDownload");
+        string tempPath = Path.GetTempPath();
+        string tempFile = Path.Combine(tempPath, "NewModDownload.zip");
+        string tempExtractedModFolderPath = Path.Combine(tempPath, "NewModDownload");
+        SevenZipExtractor.SetLibraryPath("7z.dll");
 
-        if (File.Exists(ShellViewModel.GamePath + "D2R_Installer.exe") && File.Exists(ShellViewModel.GamePath + "data/data/data.027"))
+        if (tempFile.Contains(".zip"))
+            tempFile = "NewModDownload.7z";
+
+        try
         {
-            try
+            Progress<double> progress = new Progress<double>();
+
+            progress.ProgressChanged += (sender, args) =>
             {
-                var progress = new Progress<double>(value =>
+                Execute.OnUIThread(() =>
                 {
-                    Execute.OnUIThread(() =>
+                    if (args == -1)
                     {
-                        if (value == -1)
-                        {
-                            DownloadProgress = 0;
-                            DownloadProgressString = string.Empty;
-                            ProgressBarIsIndeterminate = true;
-                        }
-                        else
-                        {
-                            DownloadProgress = Math.Round(value, MidpointRounding.AwayFromZero);
-                            DownloadProgressString = $"{DownloadProgress}%";
-                        }
-                    });
-                });
-
-                using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
-                ProgressStatus = "Downloading mod...";
-
-                await Execute.OnUIThreadAsync(async () =>
-                {
-                    await using var file = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
-                    await client.DownloadAsync(ModDownloadLink, file, progress, CancellationToken.None);
-                });
-
-                ProgressStatus = "Extracting mod...";
-                ProgressBarIsIndeterminate = true;
-
-                if (Directory.Exists(tempExtractedModFolderPath))
-                    Directory.Delete(tempExtractedModFolderPath, true);
-
-                await Task.Run(() => ZipFile.ExtractToDirectory(tempFile, tempExtractedModFolderPath, true));
-
-                string tempModDirPath = await Helper.FindFolderWithMpq(tempExtractedModFolderPath);
-                string modName = System.IO.Path.GetFileName(tempModDirPath)?.Replace(".mpq", "") ?? string.Empty;
-
-                if (string.IsNullOrEmpty(modName))
-                {
-                    System.Windows.MessageBox.Show("Mod download was unsuccessful", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                string modInstallPath = System.IO.Path.Combine(ShellViewModel.BaseModsFolder, modName);
-
-                if (Directory.Exists(modInstallPath))
-                    Directory.Delete(modInstallPath, true);
-
-                ProgressStatus = "Installing mod...";
-                await Task.Run(async () => await Helper.CloneDirectory(System.IO.Path.GetDirectoryName(tempModDirPath), modInstallPath));
-
-                string versionPath = System.IO.Path.Combine(modInstallPath, "version.txt");
-                if (!File.Exists(versionPath))
-                    File.Create(versionPath).Close();
-
-                var modInfo = await Helper.ParseModInfo(System.IO.Path.Combine(tempModDirPath, "modinfo.json"));
-                if (modInfo != null)
-                    await File.WriteAllTextAsync(versionPath, modInfo.ModVersion);
-                else
-                    System.Windows.MessageBox.Show("Could not parse ModInfo.json!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                CleanupTempFiles(tempFile, tempExtractedModFolderPath);
-
-                ProgressStatus = "Installation Complete!";
-                System.Windows.MessageBox.Show($"{modName} has been installed!", "Mod Installed!", MessageBoxButton.OK, MessageBoxImage.None);
-
-                if (string.IsNullOrEmpty(SelectedMod.Key))
-                    SelectedMod = new KeyValuePair<string, string>(modName, "DirectDownload");
-
-                await TryCloseAsync(true);
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                _logger.Error(ex);
-                CleanupTempFiles(tempFile, tempExtractedModFolderPath);
-                await TryCloseAsync(false);
-            }
-
-        }
-        else if (!File.Exists(ShellViewModel.GamePath + "D2R_Installer.exe") && !File.Exists(ShellViewModel.GamePath + "data/data/data.027"))
-        {
-            try
-            {
-                var progress = new Progress<double>(value =>
-                {
-                    Execute.OnUIThread(() =>
+                        DownloadProgress = 0;
+                        DownloadProgressString = string.Empty;
+                        ProgressBarIsIndeterminate = true;
+                    }
+                    else
                     {
-                        if (value == -1)
-                        {
-                            DownloadProgress = 0;
-                            DownloadProgressString = string.Empty;
-                            ProgressBarIsIndeterminate = true;
-                        }
-                        else
-                        {
-                            DownloadProgress = Math.Round(value, MidpointRounding.AwayFromZero);
-                            DownloadProgressString = $"{DownloadProgress}%";
-                        }
-                    });
+                        DownloadProgress = Math.Round(args, MidpointRounding.AwayFromZero);
+                        DownloadProgressString = $"{DownloadProgress}%";
+                    }
                 });
-
-                using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
-                ProgressStatus = "Downloading core files...";
-
-                await Execute.OnUIThreadAsync(async () =>
-                {
-                    await using var file = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
-                    await client.DownloadAsync(ModDownloadLink, file, progress, CancellationToken.None);
-                });
-
-                ProgressStatus = "Extracting core files...";
-                ProgressBarIsIndeterminate = true;
-
-                if (Directory.Exists(tempExtractedModFolderPath))
-                    Directory.Delete(tempExtractedModFolderPath, true);
-
-                await Task.Run(() => ZipFile.ExtractToDirectory(tempFile, tempExtractedModFolderPath, true));
-                string tempModDirPath = await Helper.FindFolderWithMpq(tempExtractedModFolderPath);
-                string modName = System.IO.Path.GetFileName(tempModDirPath)?.Replace(".mpq", "") ?? string.Empty;
-
-                if (string.IsNullOrEmpty(modName))
-                {
-                    System.Windows.MessageBox.Show("Core files download was unsuccessful", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                string modInstallPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-                ProgressStatus = "Extracting core files...";
-                await Task.Run(async () => await Helper.CloneDirectory(tempExtractedModFolderPath, modInstallPath));
-                CleanupTempFiles(tempFile, tempExtractedModFolderPath);
-                ProgressStatus = "Download Complete!";
-                System.Windows.MessageBox.Show($"Core file package has been extracted!\nNow Proceeding with game file download...\n\nWarning: This process may take some time to complete\nRestarting download from launcher will resume download if needed", "Mod Installed!", MessageBoxButton.OK, MessageBoxImage.None);
-
-                ProcessStartInfo psi = new ProcessStartInfo
-                {
-                    FileName = ShellViewModel.GamePath + "D2R_Installer.exe",
-                    WorkingDirectory = ShellViewModel.GamePath
-                };
-                Process.Start(psi);
-
-                if (string.IsNullOrEmpty(SelectedMod.Key))
-                    SelectedMod = new KeyValuePair<string, string>(modName, "DirectDownload");
-
-                await TryCloseAsync(true);
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                _logger.Error(ex);
-                CleanupTempFiles(tempFile, tempExtractedModFolderPath);
-                await TryCloseAsync(false);
-            }
-        }
-        else
-        {
-            ProcessStartInfo psi = new ProcessStartInfo
-            {
-                FileName = ShellViewModel.GamePath + "D2R_Installer.exe",
-                WorkingDirectory = ShellViewModel.GamePath
             };
-            Process.Start(psi);
+
+            using HttpClient client = new HttpClient();
+            client.Timeout = TimeSpan.FromMinutes(5);
+            await using FileStream file = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+            ProgressStatus = "Downloading mod...";
+
+            await Execute.OnUIThreadAsync(async () =>
+            {
+                await client.DownloadAsync(ModDownloadLink, file, progress, CancellationToken.None);
+            });
+
+            file.Close();
+            client.Dispose();
+
+            ProgressStatus = "Extracting mod...";
+            DownloadProgressString = string.Empty;
+            ProgressBarIsIndeterminate = true;
+
+            if (Directory.Exists(tempExtractedModFolderPath))
+                Directory.Delete(tempExtractedModFolderPath, true);
+
+            await Task.Run(() =>
+            {
+                if (tempFile.Contains(".zip"))
+                    ZipFile.ExtractToDirectory(tempFile, tempExtractedModFolderPath, true);
+                else
+                {
+                    using (var extractor = new SevenZipExtractor(tempFile))
+                    {
+                        extractor.ExtractArchive(tempExtractedModFolderPath);
+                    }
+                }
+                return Task.CompletedTask;
+            });
+
+            string tempModDirPath = await Helper.FindFolderWithMpq(tempExtractedModFolderPath);
+            string tempModDir = Path.GetFileName(tempModDirPath);
+            string tempParentDir = Path.GetDirectoryName(tempModDirPath);
+            string modName = string.Empty;
+
+            if (tempModDir != null)
+                modName = tempModDir.Replace(".mpq", "");
+            else
+            {
+                MessageBox.Show("Mod download was unsuccessful", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            string modInstallPath = Path.Combine(ShellViewModel.BaseModsFolder, modName);
+
+            //Delete current Mod folder if it exists
+            if (Directory.Exists(modInstallPath))
+            {
+                if (File.Exists(Path.Combine(modInstallPath, $@"{modName}.mpq\MyUserSettings.json")))
+                    File.Move(Path.Combine(modInstallPath, $@"{modName}.mpq\MyUserSettings.json"), Path.Combine(ShellViewModel.BaseModsFolder, "MyUserSettings.json"));
+                Directory.Delete(modInstallPath, true);
+            }
+
+
+            ProgressStatus = "Installing mod...";
+
+            await Task.Run(async () =>
+            {
+                await Helper.CloneDirectory(tempParentDir, modInstallPath);
+            });
+
+            string versionPath = Path.Combine(modInstallPath, "version.txt");
+            if (!File.Exists(versionPath))
+                File.Create(versionPath).Close();
+
+            string tempModInfoPath = Path.Combine(tempModDirPath, "modinfo.json");
+
+            ModInfo modInfo = await Helper.ParseModInfo(tempModInfoPath);
+
+            if (modInfo != null)
+                await File.WriteAllTextAsync(versionPath, modInfo.ModVersion);
+            else
+                MessageBox.Show("Could not parse ModInfo.json!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            //Always clean up temp files.
+            if (File.Exists(tempFile))
+                File.Delete(tempFile);
+            if (Directory.Exists(tempExtractedModFolderPath))
+                Directory.Delete(tempExtractedModFolderPath, true);
+            if (File.Exists(Path.Combine(ShellViewModel.BaseModsFolder, "MyUserSettings.json")))
+                File.Move(Path.Combine(ShellViewModel.BaseModsFolder, "MyUserSettings.json"), Path.Combine(modInstallPath, $@"{modName}.mpq\MyUserSettings.json"));
+            ProgressStatus = "Installing Complete!";
+
+            MessageBox.Show($"{modName} has been installed!", "Mod Installed!", MessageBoxButton.OK, MessageBoxImage.None);
+
+
+            //We installed a custom mod from a direct link. 
+            if (string.IsNullOrEmpty(SelectedMod.Key))
+                SelectedMod = new KeyValuePair<string, string>(modName, "DirectDownload");
+
+            await TryCloseAsync(true);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            _logger.Error(ex);
+
+            //Always clean up temp files.
+            if (File.Exists(tempFile))
+                File.Delete(tempFile);
+            if (Directory.Exists(tempExtractedModFolderPath))
+                Directory.Delete(tempExtractedModFolderPath, true);
+
+            await TryCloseAsync(false);
         }
     }
     [UsedImplicitly]

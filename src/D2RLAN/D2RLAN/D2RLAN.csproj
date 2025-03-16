@@ -577,6 +577,7 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="MySql.Data" Version="9.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Squid-Box.SevenZipSharp" Version="1.6.2.24" />
     <PackageReference Include="Syncfusion.Licensing" Version="23.1.41" />
     <PackageReference Include="Syncfusion.SfColorPalette.WPF" Version="23.1.41" />
     <PackageReference Include="Syncfusion.SfInput.WPF" Version="23.1.41" />
