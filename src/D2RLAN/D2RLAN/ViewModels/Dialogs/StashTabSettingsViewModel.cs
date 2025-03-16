@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
@@ -84,15 +85,26 @@ namespace D2RLAN.ViewModels.Dialogs
 
         #region ---Stash Tab Functions---
 
-        public async Task GetStashTabNames()
+        public async Task GetStashTabNames() //Read names from bankexpansionlayout.json
         {
-            string bankExpansionLayoutHdJsonPath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json");
+            string bankExpansionLayoutHdJsonPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json");
 
             if (File.Exists(bankExpansionLayoutHdJsonPath))
             {
                 string jsonString = await File.ReadAllTextAsync(bankExpansionLayoutHdJsonPath);
+                jsonString = Regex.Replace(jsonString, @"(\s*,\s*)([\}\]])", "$2");
                 JsonDocument jsonDoc = JsonDocument.Parse(jsonString.Replace("@", ""));
-                JsonElement bankTabs = jsonDoc.RootElement.GetProperty("children")[8];
+                JsonElement children = jsonDoc.RootElement.GetProperty("children");
+                JsonElement bankTabs = default(JsonElement);
+                foreach (JsonElement child in children.EnumerateArray())
+                {
+                    if (child.TryGetProperty("name", out JsonElement name) && name.GetString() == "BankTabs")
+                    {
+                        bankTabs = child;
+                        break;
+                    }
+                }
+
                 JsonElement textStrings = bankTabs.GetProperty("fields").GetProperty("textStrings");
 
                 foreach (JsonElement element in textStrings.EnumerateArray())
@@ -100,38 +112,43 @@ namespace D2RLAN.ViewModels.Dialogs
                     StashTabNames.Add(element.GetString());
                     OriginalStashTabNames.Add(element.GetString());
                 }
+
+                while (StashTabNames.Count < 8)
+                {
+                    StashTabNames.Add("JustUnlocked");
+                    OriginalStashTabNames.Add("JustUnlocked");
+                }
             }
         }
-        [UsedImplicitly]
-        public async void OnApply()
-        {
-            string bankExpansionLayoutHdJsonPath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json");
 
+        [UsedImplicitly]
+        public async void OnApply() //Apply User-Chosen Settings
+        {
+            string bankExpansionLayoutHdJsonPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json");
             string jsonString = await File.ReadAllTextAsync(bankExpansionLayoutHdJsonPath);
 
-            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[0] + "\"", "\"" + StashTabNames[0] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[1] + "\"", "\"" + StashTabNames[1] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[2] + "\"", "\"" + StashTabNames[2] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[3] + "\"", "\"" + StashTabNames[3] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[4] + "\"", "\"" + StashTabNames[4] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[5] + "\"", "\"" + StashTabNames[5] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[6] + "\"", "\"" + StashTabNames[6] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"@" + OriginalStashTabNames[7] + "\"", "\"" + StashTabNames[7] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[0] + "\"", "\"" + StashTabNames[0] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[1] + "\"", "\"" + StashTabNames[1] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[2] + "\"", "\"" + StashTabNames[2] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[3] + "\"", "\"" + StashTabNames[3] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[4] + "\"", "\"" + StashTabNames[4] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[5] + "\"", "\"" + StashTabNames[5] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[6] + "\"", "\"" + StashTabNames[6] + "\"");
-            jsonString = ReplaceFirst(jsonString, "\"" + OriginalStashTabNames[7] + "\"", "\"" + StashTabNames[7] + "\"");
+            jsonString = Regex.Replace(jsonString, @"(\s*,\s*)([\}\]])", "$2");
+            JsonDocument jsonDoc = JsonDocument.Parse(jsonString);
+            JsonElement bankTabs = jsonDoc.RootElement.GetProperty("children")[8];
+            JsonElement textStrings = bankTabs.GetProperty("fields").GetProperty("textStrings");
+            JsonElement tabCount = bankTabs.GetProperty("fields").GetProperty("tabCount");
+            JsonElement inactiveFrames = bankTabs.GetProperty("fields").GetProperty("inactiveFrames");
+            JsonElement activeFrames = bankTabs.GetProperty("fields").GetProperty("activeFrames");
+            JsonElement disabledFrames = bankTabs.GetProperty("fields").GetProperty("disabledFrames");
 
-            //Write updated values back to JSON file
+            jsonString = ReplaceFirst(jsonString, $"\"tabCount\": {tabCount},", "\"tabCount\": 8,");
+            jsonString = ReplaceFirst(jsonString, textStrings.ToString(), "[ \"" + StashTabNames[0] + "\", " + "\"" + StashTabNames[1] + "\", " + "\"" + StashTabNames[2] + "\", " + "\"" + StashTabNames[3] + "\", " + "\"" + StashTabNames[4] + "\", " + "\"" + StashTabNames[5] + "\", " + "\"" + StashTabNames[6] + "\", " + "\"" + StashTabNames[7] + "\" ]");
+            jsonString = ReplaceFirst(jsonString, inactiveFrames.ToString(), "[ 0, 0, 0, 0, 0, 0, 0, 0 ]");
+            jsonString = ReplaceFirst(jsonString, activeFrames.ToString(), "[ 1, 1, 1, 1, 1, 1, 1, 1 ]");
+            jsonString = ReplaceFirst(jsonString, disabledFrames.ToString(), "[ 0, 0, 0, 0, 0, 0, 0, 0 ]");
+
+            // Write updated values back to JSON file
             await File.WriteAllTextAsync(bankExpansionLayoutHdJsonPath, jsonString);
 
-            string remoddedThemePath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN/UI Theme/ReMoDDeD");
-            string remoddedBankExpansionLayoutHdJsonPath = System.IO.Path.Combine(remoddedThemePath, "layouts/bankexpansionlayouthd.json");
-            string remoddedBankExpansionLayoutHdJsonExpandedPath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN/UI Theme/expanded/layouts/bankexpansionlayouthd.json");
+            string remoddedThemePath = Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLaunch/UI Theme/ReMoDDeD");
+            string remoddedBankExpansionLayoutHdJsonPath = Path.Combine(remoddedThemePath, "layouts/bankexpansionlayouthd.json");
+            string remoddedBankExpansionLayoutHdJsonExpandedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLaunch/UI Theme/expanded/layouts/bankexpansionlayouthd.json");
+
             if (Directory.Exists(remoddedThemePath))
             {
                 if (File.Exists(remoddedBankExpansionLayoutHdJsonPath))
@@ -145,12 +162,13 @@ namespace D2RLAN.ViewModels.Dialogs
                 File.Copy(bankExpansionLayoutHdJsonPath, remoddedBankExpansionLayoutHdJsonExpandedPath);
             }
 
-            //Success Message
+            // Success Message
             MessageBox.Show("Stash Tab Names have been updated successfully!");
 
             await TryCloseAsync(true);
         }
-        private string ReplaceFirst(string original, string oldValue, string newValue)
+
+        private string ReplaceFirst(string original, string oldValue, string newValue) //Helper method to replace only the first occurrence of a substring in a string
         {
             int index = original.IndexOf(oldValue);
 

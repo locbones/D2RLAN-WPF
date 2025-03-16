@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.2.3";
+    private string appVersion = "1.2.4";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
