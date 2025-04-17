@@ -633,7 +633,8 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         //Unlock / create SharedStash
         if (ShellViewModel.ModInfo != null)
         {
-            string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, 4));
+            int tabsToAdd = 0;
+            
             string d2rSavePath = string.Empty;
 
             if (ShellViewModel.ModInfo.SavePath == "\"../\"")
@@ -647,7 +648,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             string sharedStashSoftCorePath = System.IO.Path.Combine(d2rSavePath, "SharedStashSoftCoreV2.d2i");
             string sharedStashHardCorePath = System.IO.Path.Combine(d2rSavePath, "SharedStashHardCoreV2.d2i");
 
-            //If stash doesn't exist yet; create a new one with all 7 tabs unlocked
+            //If stash doesn't exist yet; create a new one with 255 tabs unlocked
             if (!File.Exists(sharedStashSoftCorePath))
             {
                 File.Create(sharedStashSoftCorePath).Close();
@@ -660,12 +661,21 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                 byte[] data = await File.ReadAllBytesAsync(sharedStashSoftCorePath);
                 string bitString = BitConverter.ToString(data).Replace("-", string.Empty);
 
-                if (Regex.Matches(bitString, "4A4D").Count == 3)
+                if (Regex.Matches(bitString, "4A4D").Count == 3) //Retail tab count
                 {
+                    tabsToAdd = 252;
+                    string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
                     await File.WriteAllBytesAsync(sharedStashSoftCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked - Softcore");
+                    _logger.Error("Startup: Stash Tabs Unlocked (252) - Softcore");
                 }
-                    
+                if (Regex.Matches(bitString, "4A4D").Count == 7) //Previously unlocked tab count
+                {
+                    tabsToAdd = 248;
+                    string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
+                    await File.WriteAllBytesAsync(sharedStashSoftCorePath, Helper.StringToByteArray(bitString + hexString));
+                    _logger.Error("Startup: Stash Tabs Unlocked (248) - Softcore");
+                }
+
             }
 
             //Repeat for the hardcore stash
@@ -673,6 +683,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             {
                 File.Create(sharedStashHardCorePath).Close();
                 await File.WriteAllBytesAsync(sharedStashHardCorePath, await Helper.GetResourceByteArray("SharedStashHardCoreV2.d2i"));
+                _logger.Error("Startup: Stash Tabs Created - Hardcore");
             }
             else
             {
@@ -680,9 +691,18 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                 string bitString = BitConverter.ToString(data).Replace("-", string.Empty);
                 if (Regex.Matches(bitString, "4A4D").Count == 3)
                 {
+                    tabsToAdd = 252;
+                    string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
                     await File.WriteAllBytesAsync(sharedStashHardCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked - Hardcore");
-                }        
+                    _logger.Error("Startup: Stash Tabs Unlocked (252) - Hardcore");
+                }
+                if (Regex.Matches(bitString, "4A4D").Count == 7)
+                {
+                    tabsToAdd = 248;
+                    string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
+                    await File.WriteAllBytesAsync(sharedStashSoftCorePath, Helper.StringToByteArray(bitString + hexString));
+                    _logger.Error("Startup: Stash Tabs Unlocked (248) - Hardcore");
+                }
             }
         }
 

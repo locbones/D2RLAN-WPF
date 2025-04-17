@@ -162,7 +162,7 @@ namespace D2RLAN.Views.Drawers
             var mainWindow = Window.GetWindow(this);
             var shellViewModel = mainWindow.DataContext as ShellViewModel;
 
-            string filePath = System.IO.Path.Combine(shellViewModel.GamePath, "D2RHUD_Config.txt");
+            string filePath = System.IO.Path.Combine(shellViewModel.GamePath, "Keybind_Config.txt");
             string dllPath = System.IO.Path.Combine(shellViewModel.GamePath, "D2RHUD.dll");
 
             if (!File.Exists(filePath))

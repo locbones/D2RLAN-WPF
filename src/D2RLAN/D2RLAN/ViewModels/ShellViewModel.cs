@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.2.5";
+    private string appVersion = "1.2.7";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -3782,6 +3782,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 File.Copy(mostRecentCharacterFile.FullName, backupFilePath, true);
                 _logger.Error($"Auto Backups: Backed up {mostRecentCharacterFile.Name} at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {mostRecentCharacterBackupFolder}");
 
+                /* Disabled for now, as default size has been set to 32KB
+
                 // Display Size Limit Warning (55% or more)
                 long fileSizeInBytes = mostRecentCharacterFile.Length;
                 if (fileSizeInBytes >= 7000)
@@ -3793,6 +3795,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                         "All items in your personal stash, cube and inventory contribute to this size",
                         "Attention!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
+                */
 
                 // Backup Stash (Only if changed)
                 BackupStashFile(actualSaveFilePath, actualBackupFolder, "SharedStashSoftCoreV2.d2i");
@@ -4543,7 +4546,9 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         byte[] valueBytes;
 
-        if (int.TryParse(values, out int intValue))
+        if (values.Equals("80", StringComparison.OrdinalIgnoreCase))
+            valueBytes = Convert.FromHexString(values);
+        else if (int.TryParse(values, out int intValue))
             valueBytes = BitConverter.GetBytes(intValue);
         else
             valueBytes = Convert.FromHexString(values);
