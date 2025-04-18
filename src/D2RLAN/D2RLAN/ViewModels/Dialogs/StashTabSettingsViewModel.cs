@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
+using D2RLAN.Models;
 using JetBrains.Annotations;
 using ILog = log4net.ILog;
 using LogManager = log4net.LogManager;
@@ -64,19 +68,7 @@ namespace D2RLAN.ViewModels.Dialogs
                                     "Page 18",
                                     "Page 19",
                                     "Page 20",
-                                    "Page 20",
-                                    "Page 21",
-                                    "Page 22",
-                                    "Page 23",
-                                    "Page 24",
-                                    "Page 25",
-                                    "Page 26",
-                                    "Page 27",
-                                    "Page 28",
-                                    "Page 29",
-                                    "Page 30",
-                                    "Page 31",
-                                    "Page 32"
+                                    "Page 20"
                                 };
             }
         }
@@ -86,7 +78,6 @@ namespace D2RLAN.ViewModels.Dialogs
             ShellViewModel = shellViewModel;
 
             Execute.OnUIThread(async () => { await GetStashTabNames(); });
-            Execute.OnUIThread(async () => { await GetStashPageNames(); });
         }
 
         #endregion
@@ -151,17 +142,65 @@ namespace D2RLAN.ViewModels.Dialogs
 
         #region ---Stash Tab Functions---
 
-        public async Task GetStashTabNames() //Read names from bankexpansionlayout.json
+        public async Task GetStashTabNames()
         {
-            string bankExpansionLayoutHdJsonPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json");
+            string bankExpansionLayoutHdJsonPath = ShellViewModel.SelectedModDataFolder + "/global/ui/layouts/bankexpansionlayouthd.json";
+
+            if (!File.Exists(bankExpansionLayoutHdJsonPath))
+            {
+                await File.WriteAllBytesAsync(bankExpansionLayoutHdJsonPath,
+                    await Helper.GetResourceByteArray("Options.PersonalizedTabs.bankexpansionlayouthd.json"));
+            }
+
+            string jsonString = await File.ReadAllTextAsync(bankExpansionLayoutHdJsonPath);
+
+            // Only insert if it doesn't already exist
+            if (!jsonString.Contains("\"name\": \"BankPages\""))
+            {
+                // Trim leading whitespace to avoid blank line
+                string bankPagesJson = @"{
+            ""type"": ""DropdownListWidget"", ""name"": ""BankPages"",
+            ""fields"": {
+                ""anchor"": { ""x"": 0.05, ""y"": -0.1 },
+                ""rect"": { ""width"": 288, ""height"": 75 },
+                ""background/rect"": { ""width"": 328, ""height"": 75 },
+                ""background/leftCapOffset"": ""$OptionsDropDownLeftCapOffset2"",
+                ""background/rightCapOffset"": ""$OptionsDropDownRightCapOffset2"",
+                ""pressedFrame"": 1,
+                ""disabledFrame"": 2,
+                ""hoveredFrame"": 3,
+                ""focusIndicatorFilename"": ""$OptionsDropDownFocusIndicatorFilename"",
+                ""states"": [ ""Page 1"", ""Page 2"", ""Page 3"", ""Page 4"", ""Page 5"", ""Page 6"", ""Page 7"", ""Page 8"", ""Page 9"", ""Page 10"", ""Page 11"", ""Page 12"", ""Page 13"", ""Page 14"", ""Page 15"", ""Page 16"", ""Page 17"", ""Page 18"", ""Page 19"", ""Page 20"" ],
+                ""onUpdateMessage"": ""BankPanelMessage:SelectPage"",
+                ""text/style"": { ""pointSize"": ""$MediumFontSize"" },
+                ""textColor"": ""$FontColorLightGold"",
+                ""tooltipString"": ""This allows you to switch between multiple pages of shared stash tabs"",
+                ""tooltipStyle"": {
+                ""showAfterDelay"": true
+                }
+            }
+        }";
+
+                int bankTabsIndex = jsonString.IndexOf("\"name\": \"BankTabs\"");
+                if (bankTabsIndex >= 0)
+                {
+                    int insertIndex = jsonString.LastIndexOf('}', bankTabsIndex);
+                    if (insertIndex >= 0)
+                    {
+                        jsonString = jsonString.Insert(insertIndex + 1, ",\n\t\t" + bankPagesJson.Trim());
+                        await File.WriteAllTextAsync(bankExpansionLayoutHdJsonPath, jsonString);
+                    }
+                }
+            }
 
             if (File.Exists(bankExpansionLayoutHdJsonPath))
             {
-                string jsonString = await File.ReadAllTextAsync(bankExpansionLayoutHdJsonPath);
+                jsonString = await File.ReadAllTextAsync(bankExpansionLayoutHdJsonPath);
                 jsonString = Regex.Replace(jsonString, @"(\s*,\s*)([\}\]])", "$2");
                 JsonDocument jsonDoc = JsonDocument.Parse(jsonString.Replace("@", ""));
                 JsonElement children = jsonDoc.RootElement.GetProperty("children");
-                JsonElement bankTabs = default(JsonElement);
+                JsonElement bankTabs = default;
+
                 foreach (JsonElement child in children.EnumerateArray())
                 {
                     if (child.TryGetProperty("name", out JsonElement name) && name.GetString() == "BankTabs")
@@ -184,20 +223,12 @@ namespace D2RLAN.ViewModels.Dialogs
                     StashTabNames.Add("JustUnlocked");
                     OriginalStashTabNames.Add("JustUnlocked");
                 }
-            }
-        }
 
-        public async Task GetStashPageNames() //Read names from bankexpansionlayout.json
-        {
-            string bankExpansionLayoutHdJsonPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json");
-
-            if (File.Exists(bankExpansionLayoutHdJsonPath))
-            {
-                string jsonString = await File.ReadAllTextAsync(bankExpansionLayoutHdJsonPath);
+                jsonString = await File.ReadAllTextAsync(bankExpansionLayoutHdJsonPath);
                 jsonString = Regex.Replace(jsonString, @"(\s*,\s*)([\}\]])", "$2");
-                JsonDocument jsonDoc = JsonDocument.Parse(jsonString.Replace("@", ""));
-                JsonElement children = jsonDoc.RootElement.GetProperty("children");
-                JsonElement bankTabs = default(JsonElement);
+                jsonDoc = JsonDocument.Parse(jsonString.Replace("@", ""));
+                children = jsonDoc.RootElement.GetProperty("children");
+                bankTabs = default(JsonElement);
                 foreach (JsonElement child in children.EnumerateArray())
                 {
                     if (child.TryGetProperty("name", out JsonElement name) && name.GetString() == "BankPages")
@@ -207,18 +238,12 @@ namespace D2RLAN.ViewModels.Dialogs
                     }
                 }
 
-                JsonElement textStrings = bankTabs.GetProperty("fields").GetProperty("states");
+                textStrings = bankTabs.GetProperty("fields").GetProperty("states");
 
                 foreach (JsonElement element in textStrings.EnumerateArray())
                 {
                     StashPageNames.Add(element.GetString());
                     OriginalStashPageNames.Add(element.GetString());
-                }
-
-                while (StashPageNames.Count < 20)
-                {
-                    StashPageNames.Add("JustUnlocked");
-                    OriginalStashPageNames.Add("JustUnlocked");
                 }
             }
         }
@@ -246,7 +271,7 @@ namespace D2RLAN.ViewModels.Dialogs
             jsonString = ReplaceFirst(jsonString, activeFrames.ToString(), "[ 1, 1, 1, 1, 1, 1, 1, 1 ]");
             jsonString = ReplaceFirst(jsonString, disabledFrames.ToString(), "[ 0, 0, 0, 0, 0, 0, 0, 0 ]");
 
-            jsonString = ReplaceFirst(jsonString, states.ToString(), "[ \"" + StashPageNames[0] + "\", " + "\"" + StashPageNames[1] + "\", " + "\"" + StashPageNames[2] + "\", " + "\"" + StashPageNames[3] + "\", " + "\"" + StashPageNames[4] + "\", " + "\"" + StashPageNames[5] + "\", " + "\"" + StashPageNames[6] + "\", " + "\"" + StashPageNames[7] + "\", " + "\"" + StashPageNames[8] + "\", " + "\"" + StashPageNames[9] + "\", " + "\"" + StashPageNames[10] + "\", " + "\"" + StashPageNames[11] + "\", " + "\"" + StashPageNames[12] + "\", " + "\"" + StashPageNames[13] + "\", " + "\"" + StashPageNames[14] + "\", " + "\"" + StashPageNames[15] + "\", " + "\"" + StashPageNames[16] + "\", " + "\"" + StashPageNames[17] + "\", " + "\"" + StashPageNames[18] + "\", " + "\"" + StashPageNames[19] + "\", " + "\"" + StashPageNames[20] + "\", " + "\"" + StashPageNames[21] + "\", " + "\"" + StashPageNames[22] + "\", " + "\"" + StashPageNames[23] + "\", " + "\"" + StashPageNames[24] + "\", " + "\"" + StashPageNames[25] + "\", " + "\"" + StashPageNames[26] + "\", " + "\"" + StashPageNames[27] + "\", " + "\"" + StashPageNames[28] + "\", " + "\"" + StashPageNames[29] + "\", " + "\"" + StashPageNames[30] + "\", " + "\"" + StashPageNames[31] + "\" ]");
+            jsonString = ReplaceFirst(jsonString, states.ToString(), "[ \"" + StashPageNames[0] + "\", " + "\"" + StashPageNames[1] + "\", " + "\"" + StashPageNames[2] + "\", " + "\"" + StashPageNames[3] + "\", " + "\"" + StashPageNames[4] + "\", " + "\"" + StashPageNames[5] + "\", " + "\"" + StashPageNames[6] + "\", " + "\"" + StashPageNames[7] + "\", " + "\"" + StashPageNames[8] + "\", " + "\"" + StashPageNames[9] + "\", " + "\"" + StashPageNames[10] + "\", " + "\"" + StashPageNames[11] + "\", " + "\"" + StashPageNames[12] + "\", " + "\"" + StashPageNames[13] + "\", " + "\"" + StashPageNames[14] + "\", " + "\"" + StashPageNames[15] + "\", " + "\"" + StashPageNames[16] + "\", " + "\"" + StashPageNames[17] + "\", " + "\"" + StashPageNames[18] + "\", " + "\"" + StashPageNames[19] + "\" ]");
 
             // Write updated values back to JSON file
             await File.WriteAllTextAsync(bankExpansionLayoutHdJsonPath, jsonString);

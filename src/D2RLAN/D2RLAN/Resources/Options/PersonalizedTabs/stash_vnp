@@ -3,51 +3,108 @@
     "type": "BankPanel", "name": "BankExpansionLayout",
     "children": [
         {
-            "type": "ClickCatcherWidget", "name": "click_catcher"
+            "type": "ClickCatcherWidget",
+            "name": "click_catcher"
         },
         {
-            "type": "ImageWidget", "name": "background",
+            "type": "ImageWidget",
+            "name": "background",
             "fields": {
                 "filename": "PANEL\\Stash\\StashPanel_BG2"
             }
         },
         {
-            "type": "ImageWidget", "name": "LeftHinge"
+            "type": "ImageWidget",
+            "name": "LeftHinge"
         },
         {
-            "type": "TextBoxWidget", "name": "title"
+            "type": "TextBoxWidget",
+            "name": "title"
         },
         {
-            "type": "TextBoxWidget", "name": "gold_amount"
+            "type": "TextBoxWidget",
+            "name": "gold_amount"
         },
         {
-            "type": "ButtonWidget", "name": "gold_withdraw"
+            "type": "ButtonWidget",
+            "name": "gold_withdraw"
         },
         {
-            "type": "ButtonWidget", "name": "close"
+            "type": "ButtonWidget",
+            "name": "close"
         },
         {
-            "type": "InventoryGridWidget", "name": "grid",
+            "type": "InventoryGridWidget",
+            "name": "grid",
             "fields": {
-                "rect": { "x": 91, "y": 235 },
-                "cellCount": { "x": 16, "y": 13 }
+                "rect": {
+                    "x": 91,
+                    "y": 235
+                },
+                "cellCount": {
+                    "x": 16,
+                    "y": 13
+                }
             }
         },
         {
-            "type": "TabBarWidget", "name": "BankTabs",
+            "type": "DropdownListWidget",
+            "name": "BankPages",
             "fields": {
-                "rect": { "x": 82, "y": 160 },
+                "anchor": {
+                    "x": 0.05,
+                    "y": -0.1
+                },
+                "rect": {
+                    "width": 288,
+                    "height": 75
+                },
+                "background/rect": {
+                    "width": 328,
+                    "height": 75
+                },
+                "background/leftCapOffset": "$OptionsDropDownLeftCapOffset2",
+                "background/rightCapOffset": "$OptionsDropDownRightCapOffset2",
+                "pressedFrame": 1,
+                "disabledFrame": 2,
+                "hoveredFrame": 3,
+                "focusIndicatorFilename": "$OptionsDropDownFocusIndicatorFilename",
+                "states": [ "Page 1", "Page 2", "Page 3", "Page 4", "Page 5", "Page 6", "Page 7", "Page 8", "Page 9", "Page 10", "Page 11", "Page 12", "Page 13", "Page 14", "Page 15", "Page 16", "Page 17", "Page 18", "Page 19", "Page 20" ],
+                "onUpdateMessage": "BankPanelMessage:SelectPage",
+                "text/style": "$StyleSettingsCarousel",
+                "text/style": { "pointSize": "$MediumFontSize" },
+                "textColor": "$FontColorLightGold",
+                "tooltipString": "This allows you to switch between multiple pages of shared stash tabs",
+                "tooltipStyle": {
+                    "showAfterDelay": true
+                }
+            }
+        },
+        {
+            "type": "TabBarWidget",
+            "name": "BankTabs",
+            "fields": {
+                "rect": {
+                    "x": 82,
+                    "y": 160
+                },
                 "tabCount": 8,
                 "filename": "PANEL\\stash\\Stash_Tabs_Blank",
                 "inactiveFrames": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
                 "activeFrames": [ 1, 1, 1, 1, 1, 1, 1, 1 ],
-                "disabledFrames": [0, 0, 0, 0, 0, 0, 0, 0 ],
+                "disabledFrames": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
                 "textStrings": [ "@personal", "@shared", "@shared", "@shared", "@shared", "@shared", "@shared", "@shared" ],
                 "textStyle": { "pointSize": "$SmallPanelFontSize" },
                 "activeTextColor": "$TabsActiveTextColor",
                 "inactiveTextColor": "$TabsInactiveTextColor",
-                "tabSize": { "x": 195, "y": 75 },
-                "tabPadding": { "x": 4, "y": 0 },
+                "tabSize": {
+                    "x": 195,
+                    "y": 75
+                },
+                "tabPadding": {
+                    "x": 4,
+                    "y": 0
+                },
                 "onSwitchTabMessage": "BankPanelMessage:SelectTab"
             }
         }

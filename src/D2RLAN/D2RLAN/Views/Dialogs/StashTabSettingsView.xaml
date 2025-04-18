@@ -62,7 +62,30 @@
             <Label Content="My Current Stash Page Names:" Style="{StaticResource LabelHeaderStyle}" Margin="327,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="3" />
 
             <UniformGrid
-                Grid.Row="4" Margin="129,0,601,0" VerticalAlignment="Top" Columns="1">
+                Grid.Row="4" Margin="441,0,289,0" VerticalAlignment="Top" Columns="1">
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[10]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[11]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[12]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[13]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[14]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[15]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[16]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[17]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[18]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[19]}" />
+            </UniformGrid>
+            <UniformGrid
+                Grid.Row="4" Margin="287,0,443,0" VerticalAlignment="Top" Columns="1">
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[0]}" />
                 <TextBox
@@ -79,64 +102,12 @@
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[6]}" />
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[7]}" />
-            </UniformGrid>
-            <UniformGrid
-                Grid.Row="4" Margin="441,0,289,0" VerticalAlignment="Top" Columns="1">
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[16]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[17]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[18]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[19]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[20]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[21]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[22]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[23]}" />
-            </UniformGrid>
-            <UniformGrid
-                Grid.Row="4" Margin="287,0,443,0" VerticalAlignment="Top" Columns="1">
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[8]}" />
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[9]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[10]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[11]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[12]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[13]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[14]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[15]}" />
             </UniformGrid>
-            <UniformGrid
-                Grid.Row="4" Margin="595,0,135,0" VerticalAlignment="Top" Columns="1">
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[24]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[25]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[26]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[27]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[28]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[29]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[30]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[31]}" />
-            </UniformGrid>
+
             <Border
                 Grid.Row="5" Width="813" BorderThickness="0,0,0,2" Margin="39,2,32,3" VerticalAlignment="Center">
                 <Border.BorderBrush>

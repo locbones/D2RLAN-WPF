@@ -174,10 +174,11 @@
                         Columns="4">
                         <ToggleButton
                             cm:Message.Attach="[Event Click] = [Action OnExpanded_Inventory];"
+                            Background="#0d2905"
                             Content="Inventory"
                             IsChecked="{Binding ShellViewModel.UserSettings.ExpandedInventory}"
                             IsEnabled="{Binding ShellViewModel.ExpandedStashEnabled}"
-                            Style="{StaticResource ToggleButtonStyle}" Background="{x:Null}" />
+                            Style="{StaticResource ToggleButtonStyle}" />
                         <ToggleButton
                             cm:Message.Attach="[Event Click] = [Action OnExpanded_Stash];"
                             Background="#0d2905"

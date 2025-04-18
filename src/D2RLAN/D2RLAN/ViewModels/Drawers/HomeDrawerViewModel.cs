@@ -663,17 +663,17 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 
                 if (Regex.Matches(bitString, "4A4D").Count == 3) //Retail tab count
                 {
-                    tabsToAdd = 252;
+                    tabsToAdd = 156;
                     string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
                     await File.WriteAllBytesAsync(sharedStashSoftCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked (252) - Softcore");
+                    _logger.Error("Startup: Stash Tabs Unlocked (156) - Softcore");
                 }
                 if (Regex.Matches(bitString, "4A4D").Count == 7) //Previously unlocked tab count
                 {
-                    tabsToAdd = 248;
+                    tabsToAdd = 152;
                     string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
                     await File.WriteAllBytesAsync(sharedStashSoftCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked (248) - Softcore");
+                    _logger.Error("Startup: Stash Tabs Unlocked (152) - Softcore");
                 }
 
             }
@@ -691,17 +691,17 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                 string bitString = BitConverter.ToString(data).Replace("-", string.Empty);
                 if (Regex.Matches(bitString, "4A4D").Count == 3)
                 {
-                    tabsToAdd = 252;
+                    tabsToAdd = 156;
                     string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
                     await File.WriteAllBytesAsync(sharedStashHardCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked (252) - Hardcore");
+                    _logger.Error("Startup: Stash Tabs Unlocked (156) - Hardcore");
                 }
                 if (Regex.Matches(bitString, "4A4D").Count == 7)
                 {
-                    tabsToAdd = 248;
+                    tabsToAdd = 152;
                     string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
-                    await File.WriteAllBytesAsync(sharedStashSoftCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked (248) - Hardcore");
+                    await File.WriteAllBytesAsync(sharedStashHardCorePath, Helper.StringToByteArray(bitString + hexString));
+                    _logger.Error("Startup: Stash Tabs Unlocked (152) - Hardcore");
                 }
             }
         }
@@ -1130,9 +1130,14 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     {
         string profileHdJsonPath = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/_profilehd.json");
 
+        // Ensure the directory exists
+        string? directory = Path.GetDirectoryName(profileHdJsonPath);
+        if (!string.IsNullOrEmpty(directory))
+            Directory.CreateDirectory(directory);
 
         if (!File.Exists(profileHdJsonPath))
             await File.WriteAllBytesAsync(profileHdJsonPath, await Helper.GetResourceByteArray("CASC.profilehd.json"));
+
 
         try
         {
@@ -1195,11 +1200,6 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         string layoutRemoddedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/remodded/layouts");
         string uiPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui");
         string uiExpandedPath = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/Expanded/ui");
-
-        if (ShellViewModel.ModInfo.Name == "ReMoDDeD")
-            await File.WriteAllBytesAsync(Path.Combine(layoutPath, "bankexpansionlayouthd.json"), await Helper.GetResourceByteArray("Options.PersonalizedTabs.stash_rmd"));
-        if (ShellViewModel.ModInfo.Name == "Vanilla++")
-            await File.WriteAllBytesAsync(Path.Combine(layoutPath, "bankexpansionlayouthd.json"), await Helper.GetResourceByteArray("Options.PersonalizedTabs.stash_vnp"));
 
         if (Directory.Exists(layoutRemoddedPath) || Directory.Exists(layoutExpandedPath))
         {
@@ -1341,20 +1341,6 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                             break;
                         }
                 }
-            }
-        }
-
-        if (ShellViewModel.ModInfo.Name == "Vanilla++" || ShellViewModel.ModInfo.Name == "ReMoDDeD")
-        {
-            if (File.Exists(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/bankexpansionlayouthd.json")))
-            {
-                File.Delete(Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"));
-                File.Copy(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN/UI Theme/bankexpansionlayouthd.json"), Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"));
-            }
-            else
-            {
-                if ((ePersonalizedStashTabs)ShellViewModel.UserSettings.PersonalizedStashTabs == ePersonalizedStashTabs.Enabled)
-                    File.Copy(Path.Combine(ShellViewModel.SelectedModDataFolder, "global/ui/layouts/bankexpansionlayouthd.json"), Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLaunch/UI Theme/bankexpansionlayouthd.json"));
             }
         }
     }

@@ -266,6 +266,7 @@
     <None Remove="Resources\Options\MonsterStats\D2RHUD_Config.txt" />
     <None Remove="Resources\Options\MonsterStats\hudmonsterhealthhd.json" />
     <None Remove="Resources\Options\MonsterStats\MS_Assets.zip" />
+    <None Remove="Resources\Options\PersonalizedTabs\bankexpansionlayouthd.json" />
     <None Remove="Resources\Options\PersonalizedTabs\stash_rmd" />
     <None Remove="Resources\Options\PersonalizedTabs\stash_vnp" />
     <None Remove="Resources\Preview\D2RLAN_MonsterBarPreview.gif" />
@@ -475,6 +476,7 @@
     <EmbeddedResource Include="Resources\Options\MonsterStats\D2RHUD_Config.txt" />
     <EmbeddedResource Include="Resources\Options\MonsterStats\MS_Assets.zip" />
     <EmbeddedResource Include="Resources\CASC\item-runes.json" />
+    <EmbeddedResource Include="Resources\Options\PersonalizedTabs\bankexpansionlayouthd.json" />
     <Resource Include="Resources\Icons\Icon_Beacon.png" />
     <Resource Include="Resources\Icons\Icon_Events.png" />
     <Resource Include="Resources\Images\ChatGem1b.png" />
