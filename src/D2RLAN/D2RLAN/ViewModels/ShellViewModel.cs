@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.3.0";
+    private string appVersion = "1.3.3";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -3764,6 +3764,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 if (!Directory.Exists(mostRecentCharacterBackupFolder))
                     Directory.CreateDirectory(mostRecentCharacterBackupFolder);
 
+                BackupAllStashFiles(actualSaveFilePath, actualBackupFolder);
+
                 // Get latest backup file
                 var backupFiles = new DirectoryInfo(mostRecentCharacterBackupFolder).GetFiles($"{mostRecentCharacterFile.Name}_*.d2s");
                 if (backupFiles.Length > 0)
@@ -3782,24 +3784,6 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 File.Copy(mostRecentCharacterFile.FullName, backupFilePath, true);
                 _logger.Error($"Auto Backups: Backed up {mostRecentCharacterFile.Name} at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {mostRecentCharacterBackupFolder}");
 
-                /* Disabled for now, as default size has been set to 32KB
-
-                // Display Size Limit Warning (55% or more)
-                long fileSizeInBytes = mostRecentCharacterFile.Length;
-                if (fileSizeInBytes >= 7000)
-                {
-                    MessageBox.Show(
-                        $"WARNING!\nYour current save file size is {fileSizeInBytes} / 8192 bytes.\n\n" +
-                        "If you exceed the max size, you will start losing items!\n" +
-                        "It is highly recommended that you place smaller items in your shared stash to avoid this.\n\n" +
-                        "All items in your personal stash, cube and inventory contribute to this size",
-                        "Attention!", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                */
-
-                // Backup Stash (Only if changed)
-                BackupStashFile(actualSaveFilePath, actualBackupFolder, "SharedStashSoftCoreV2.d2i");
-                BackupStashFile(actualSaveFilePath, actualBackupFolder, "SharedStashHardCoreV2.d2i");
             }
         }
         catch (Exception ex)
@@ -3847,6 +3831,49 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         File.Copy(stashFilePath, backupFilePath, true);
         _logger.Error($"Auto Backups: Backed up {stashFileName} at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {stashBackupFolder}");
     }
+
+    private void BackupAllStashFiles(string savePath, string backupFolder)
+    {
+        string timestamp = DateTime.Now.ToString("MM_dd--hh_mmtt");
+        string stashBackupFolder = Path.Combine(backupFolder, "Stash");
+        string tempRootFolder = Path.Combine(stashBackupFolder, $"Temp_{timestamp}");
+        string tempSCFolder = Path.Combine(tempRootFolder, "Softcore");
+        string tempHCFolder = Path.Combine(tempRootFolder, "Hardcore");
+        string zipFilePath = Path.Combine(stashBackupFolder, $"SharedStash_{timestamp}.zip");
+
+        _logger.Error("BackupAllStashFiles: Starting backup process.");
+
+        Directory.CreateDirectory(tempSCFolder);
+        Directory.CreateDirectory(tempHCFolder);
+        Directory.CreateDirectory(stashBackupFolder);
+
+        // Copy SC files
+        var scFiles = Directory.GetFiles(savePath, "Stash_SC_*.d2i");
+        foreach (var filePath in scFiles)
+        {
+            string fileName = Path.GetFileName(filePath);
+            string destPath = Path.Combine(tempSCFolder, fileName);
+            File.Copy(filePath, destPath, true);
+            _logger.Error($"Backed up SC file: {fileName}");
+        }
+
+        // Copy HC files
+        var hcFiles = Directory.GetFiles(savePath, "Stash_HC_*.d2i");
+        foreach (var filePath in hcFiles)
+        {
+            string fileName = Path.GetFileName(filePath);
+            string destPath = Path.Combine(tempHCFolder, fileName);
+            File.Copy(filePath, destPath, true);
+            _logger.Error($"Backed up HC file: {fileName}");
+        }
+
+        // Zip everything
+        ZipFile.CreateFromDirectory(tempRootFolder, zipFilePath);
+        Directory.Delete(tempRootFolder, true);
+
+        _logger.Error($"Auto Backups: Created zip archive {Path.GetFileName(zipFilePath)} with all stash files.");
+    }
+
 
     public string GetSavePath()
     {
@@ -4332,7 +4359,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             CloseRivaTuner("EncoderServer");
             await Task.Delay(1000);
         }
-        
+
         Process process = LaunchProcess(processName, arguments); //Start the game
 
         if (process != null)

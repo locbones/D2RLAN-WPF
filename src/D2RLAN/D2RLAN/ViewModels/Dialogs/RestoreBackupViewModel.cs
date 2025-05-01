@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -100,12 +102,34 @@ namespace D2RLAN.ViewModels.Dialogs
                 }
                 else
                 {
-                    if (openFileDialog.FileName.Contains("SoftCore"))
-                        File.Copy(openFileDialog.FileName, Path.Combine(ShellViewModel.SaveFilesFilePath, "SharedStashSoftCoreV2.d2i"), true);
-                    else
-                        File.Copy(openFileDialog.FileName, Path.Combine(ShellViewModel.SaveFilesFilePath, "SharedStashHardCoreV2.d2i"), true);
+                    if (openFileDialog.FileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+                    {
+                        string tempExtractPath = Path.Combine(Path.GetTempPath(), "StashRestore_" + Guid.NewGuid().ToString());
 
-                    System.Windows.MessageBox.Show($"Shared Stash Restored!", "Restore Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                        try
+                        {
+                            ZipFile.ExtractToDirectory(openFileDialog.FileName, tempExtractPath);
+
+                            var extractedFiles = Directory.GetFiles(tempExtractPath, "*.d2i", SearchOption.AllDirectories);
+                            foreach (var file in extractedFiles)
+                            {
+                                string fileName = Path.GetFileName(file);
+                                string destinationPath = Path.Combine(ShellViewModel.SaveFilesFilePath, fileName);
+                                File.Copy(file, destinationPath, true);
+                            }
+
+                            System.Windows.MessageBox.Show("All stash files restored from backup!", "Restore Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Windows.MessageBox.Show($"Error restoring stash files: {ex.Message}", "Restore Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        finally
+                        {
+                            if (Directory.Exists(tempExtractPath))
+                                Directory.Delete(tempExtractPath, true); // Clean up temp extraction folder
+                        }
+                    }
                 }
             }
             await TryCloseAsync();

@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:D2RLAN.Views.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="884"
-    Height="667"
+    Height="889"
     d:DataContext="{d:DesignInstance Type=dialogs:StashTabSettingsViewModel,
                                      IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
@@ -23,15 +23,15 @@
                 <RowDefinition Height="40" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="50" />
-                <RowDefinition Height="50" />
-                <RowDefinition Height="50" />
+                <RowDefinition Height="34" />
+                <RowDefinition Height="66" />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
 
-            <Label Content="My Current Stash Tab Names:" Style="{StaticResource LabelHeaderStyle}" Margin="332,16,0,0" HorizontalAlignment="Left" Grid.Row="0" VerticalAlignment="Top"/>
+            <Label Content="My Current Stash Tab Names:" Style="{StaticResource LabelHeaderStyle}" Margin="332,16,0,0" HorizontalAlignment="Left" Grid.Row="0" VerticalAlignment="Top" Height="29"/>
 
             <UniformGrid
-                Grid.Row="1" Margin="10" VerticalAlignment="Center" Columns="8">
+                Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center" Columns="8" Height="25">
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashTabNames[0]}" />
                 <TextBox
@@ -53,78 +53,162 @@
 
 
             <Border
-            Grid.Row="1" Width="813" BorderThickness="0,0,0,2" Margin="36,28,35,19" Grid.RowSpan="2">
+            Grid.Row="1" BorderThickness="0,0,0,2" Margin="36,28,35,19" Grid.RowSpan="2">
                 <Border.BorderBrush>
                     <SolidColorBrush Opacity="0.5" Color="#FF5CF35E" />
                 </Border.BorderBrush>
             </Border>
 
-            <Label Content="My Current Stash Page Names:" Style="{StaticResource LabelHeaderStyle}" Margin="327,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="3" />
-
+            <Label Content="My Current Stash Page Names:" Style="{StaticResource LabelHeaderStyle}" Margin="327,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="3" Height="29" />
             <UniformGrid
-                Grid.Row="4" Margin="441,0,289,0" VerticalAlignment="Top" Columns="1">
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[10]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[11]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[12]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[13]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[14]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[15]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[16]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[17]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[18]}" />
-                <TextBox
-                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[19]}" />
-            </UniformGrid>
-            <UniformGrid
-                Grid.Row="4" Margin="287,0,443,0" VerticalAlignment="Top" Columns="1">
+                Grid.Row="4" Margin="10,0,10,0" VerticalAlignment="Center" Columns="4" Height="508">
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[0]}" />
                 <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[16]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[32]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[48]}" />
+                <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[1]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[17]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[33]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[49]}" />
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[2]}" />
                 <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[18]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[34]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[50]}" />
+                <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[3]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[19]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[35]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[51]}" />
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[4]}" />
                 <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[20]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[36]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[52]}" />
+                <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[5]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[21]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[37]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[53]}" />
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[6]}" />
                 <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[22]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[38]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[54]}" />
+                <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[7]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[23]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[39]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[55]}" />
                 <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[8]}" />
                 <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[24]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[40]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[56]}" />
+                <TextBox
                     Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[9]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[25]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[41]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[57]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[10]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[26]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[42]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[58]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[11]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[27]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[43]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[59]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[12]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[28]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[44]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[60]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[13]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[29]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[45]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[61]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[14]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[30]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[46]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[62]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[15]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[31]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[47]}" />
+                <TextBox
+                    Margin="5" HorizontalContentAlignment="Center" Text="{Binding StashPageNames[63]}" />
+                
             </UniformGrid>
 
             <Border
-                Grid.Row="5" Width="813" BorderThickness="0,0,0,2" Margin="39,2,32,3" VerticalAlignment="Center">
+                Grid.Row="5" BorderThickness="0,0,0,2" Margin="39,0,32,0" VerticalAlignment="Center" Height="2">
                 <Border.BorderBrush>
                     <SolidColorBrush Opacity="0.5" Color="#FF5CF35E" />
                 </Border.BorderBrush>
             </Border>
 
             <StackPanel
-                Grid.Row="6" Margin="0,0,0,0" HorizontalAlignment="Center" Orientation="Horizontal">
+                Grid.Row="6" HorizontalAlignment="Center" Orientation="Horizontal" Width="170">
                 <Button
                     Width="75" VerticalAlignment="Top" cm:Message.Attach="TryCloseAsync(false);" Background="#200708" Content="{Binding Path=StashCancel, Source={StaticResource Resources}}" Style="{StaticResource ButtonStyle}" />
                 <Button
                     Width="75" VerticalAlignment="Top" cm:Message.Attach="[Event Click] = [Action OnApply];" Background="#0d2905" Content="{Binding Path=StashApply, Source={StaticResource Resources}}" Style="{StaticResource ButtonStyle}" />
             </StackPanel>
 
-            <Label Content="Your Personal tab will be renamed when viewing pages 2+ of your stash." Style="{StaticResource LabelHeaderStyle}" Grid.Row="7" HorizontalContentAlignment="Center" Height="40" Foreground="#FFB50E15" />
-            <Label Content="A known limit of approximately 15k items exists." Style="{StaticResource LabelHeaderStyle}" Grid.Row="7" HorizontalContentAlignment="Center" Height="40" Foreground="#FFB50E15" Margin="0,32,0,0" VerticalAlignment="Top" Grid.RowSpan="2" />
+            <Label Content="Only the pages you use in-game are actually created. This is just the max the UI currently supports." Style="{StaticResource LabelHeaderStyle}" Grid.Row="7" HorizontalContentAlignment="Center" Height="40" Foreground="#FFB50E15" />
         </Grid>
     </Grid>
 </Window>

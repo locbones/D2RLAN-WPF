@@ -39,6 +39,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 {
     #region ---Static Members---
     private const string TAB_BYTE_CODE = "55AA55AA0100000062000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D0000";
+    private const string TAB_BYTE_CODE_FULL = "55AA55AA010000006200000000000000D407000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D3300100080000500F4B02BDCC5DA5E8D0DDBA392389959EA938529173BD0D070200A8418277052E46C81E257FC07100080000508D4FC419039A8821B1BB75913D4263933104E060878604C7860C4D022294B5923F815FF01100080000510F49E15FA440AC8C7C6AE55991445494006302E24588120C349E13F100080000518D4AA09D4772CE563C396AD623E64245AE435A00084830536104AA4D052123E91F51F10008000052054B10DD2A29DE06383F4E7239A6661C2257FE2C40B502840609022274BBA69B99381570C4092112630FE03100080000528F4AA09400E65676343B46D96F2E3353EA44D6800030201A404430B704EF02819FF03100880000538149A199E865C17C686ED534ACCC3997C4BD244880BF1C490042E109E8818C6B0DC18FD07100080000530D4E80D01DC762B63C3152E67FA64350002120C0E3C5940D3E2E83F10008000057014FE4C1073AE181E1BA1596572281E0497B0FA71A045029631A5FF1000800005F8546036586A3A018C0D57A38F68909CD12658A18543822308125A2C8DF1FC071000800005C0548637305A55C28F8DDEA6905033DA0456188D48600401438B9EFF100080000580951B0A555C1DEA6323F7EA50CA264CCA45402003D48A042323841338297056E0B4C0D902956C8041F11F1000800005A8743C2EEC6428418C0DCF97911894F119939A691062A098108074200404142D7EC67878A500E83F1000800005A0743C4CC04059DF181BC141393528E153260B132E34400121C0E90009089C52ECACC117372DBC5200F21F10008000058016C25F985E8B741D1BBB4CE5922FCA06BAA1580020E58451B20106C57F10008000059874036BD8946B911B1BBD75637236239116AFB12E7E80D1000049029505371040D8083020938C8081F11F1000800005C8941B1C380FB54DC7463053C37CC848EC8B79A0931B18005620A01031A4105232FE071000800005D094630DF39B9C136323B62C247A64613EE4571A0410302A40C8900267C58F12114ADB18CF7F1000800005D8743C7258D7C1281E1BAC3D37B428395332C2C52128261C10D2E268CD3CB9690927F01BFE0310008000053015DE1508E48B1AC686AF584E1DD5B0B4C5C2748824302080E02905CE0A252562178F9DFF01100080000528753C1A264FEF55C6862DD04A8C49AF844BB99C0C4E505008508230E644CF0A9D35F5E2A6855FF11F100080000588753D1EC60EC0F4C78627C2138DD078D4C58320032242972E139681E1C04246F00AB380068485FF10008000058856BE2FC06B80118F0D5C8802C9971E028F0B00522268D030E1041B0C2B64FE031000800005205528086D267B866343F4254212632F6A07241F2250A234811B0C026606042834FF01100080000550D5910DD2BD0D206323D520911A232F8203160B229C385161B06098C2FC071000800005B815BF1B046517ADC6462F415F54C715158B6B72E322C28C19396EB8A10F8F0433C38F8691FF10008000053CF73F6F0060A0241E0B04025CF80F10008000055475D917A2A35B86C746A9E57A9C8592D12E784A00409910918D030C96FC86FF1000800005B0F53E1EC88C06FDC6062AC44E4DC58104C6B9D4058F0D1100029C80C30922180A3364085974E1FD071000800005A8F5F12178BF064E8F0DDE84C1989601B91B6030883068D004097C24860D3520FE0310008000055C15DDDB85BB2038F0B171ABD920C1911ED7212A0804B01281099309E5542072D86003992EB24FC47F1000C0000510D69186659F3CB0B1518A92178FD11D6551207D212242041F3E26B86041212358C006C102B2FF1008800005E0D55917EE561525C746F042D24C45604CC67954079E151261CC98096960A0E4C00083255D78FF01100080000514D6930D8063833663E396F28952E48402E640B0A000802402081013689011905227A0CDF80F100080000518D6492754BF10D78D8DDC930259A7BC988BF5006342041E3C262404E300023362110C8FFF10008000051C96A413B693CC0CC6C668CD7A34C5291D8660413463422F16023C0A5D3C7A68F019E53F100080000568D62912F869A872C6062AC399444577AC4C0F01A180508298090ED8781021D345D6AFF80F1000800005BC760136CCAC4CEE8C8DD89A9BA9A40D99163C2468E1E323B1064BE07C9815567C84FD0710008000057076FD285C9D82EF8D0D4FCB071997214A9A27FA0D32252278F132A1910AC1850086C50D19012C5B8C86112428FE030000800005741611147EFDE980C7066DCD877CC5D498224628C8081C4A8382F3CF43674F41FF010000800005D0F6AF4C18DFF4511D9B0C08051C9AB0199CAF800787032DD2A0D6EC98A200AF0400191B6050FC070000800005B856EF185893C677C70668C15DB4D41E9DC5CC140B0C0B113C78687163030185250FC414C9582044E13F1000800005D4F6AFFBA003BB4B3D361D105C33480514451FE22B503038204446A08F12714A9406B5868798212D38F0FC071000800005D856582638DD98BF8C299C242B0EE84880F21F1000800005DC764A9FC0CEE3463016FC0710008000052C17DD0082FD4D58FDD892E860C6880B9181850486448A22390CA8C47F1000A0000528F7304C00100080000524F7FCD8A02F56E83BB680FAF51DF93023FB22520060398062820923022869FF011000A00005E4764D101000A0000520F730FB001000A00005E076090D";
     private ILog _logger = LogManager.GetLogger(typeof(HomeDrawerViewModel));
     private IWindowManager _windowManager;
     private string _launcherDescription = "This application is used to download and configure mods for D2R.";
@@ -260,6 +261,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                     }
 
                     GetD2RArgs();
+                    
                     //await ApplyUiTheme();
                 }
             }
@@ -629,82 +631,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         await ApplyCinematicSkip();
         await ShellViewModel.ApplyModSettings();
         GetD2RArgs();
-
-        //Unlock / create SharedStash
-        if (ShellViewModel.ModInfo != null)
-        {
-            int tabsToAdd = 0;
-            
-            string d2rSavePath = string.Empty;
-
-            if (ShellViewModel.ModInfo.SavePath == "\"../\"")
-                d2rSavePath = GetSavePath();
-            else
-                d2rSavePath = System.IO.Path.Combine(GetSavePath(), @$"Diablo II Resurrected\Mods\{ShellViewModel.ModInfo.Name}");
-
-            if (!Directory.Exists(d2rSavePath))
-                Directory.CreateDirectory(d2rSavePath);
-
-            string sharedStashSoftCorePath = System.IO.Path.Combine(d2rSavePath, "SharedStashSoftCoreV2.d2i");
-            string sharedStashHardCorePath = System.IO.Path.Combine(d2rSavePath, "SharedStashHardCoreV2.d2i");
-
-            //If stash doesn't exist yet; create a new one with 255 tabs unlocked
-            if (!File.Exists(sharedStashSoftCorePath))
-            {
-                File.Create(sharedStashSoftCorePath).Close();
-                await File.WriteAllBytesAsync(sharedStashSoftCorePath, await Helper.GetResourceByteArray("SharedStashSoftCoreV2.d2i"));
-                _logger.Error("Startup: Stash Tabs Created - Softcore");
-            }
-            else
-            {
-                //Check if stash is unlocked already and unlock if not
-                byte[] data = await File.ReadAllBytesAsync(sharedStashSoftCorePath);
-                string bitString = BitConverter.ToString(data).Replace("-", string.Empty);
-
-                if (Regex.Matches(bitString, "4A4D").Count == 3) //Retail tab count
-                {
-                    tabsToAdd = 156;
-                    string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
-                    await File.WriteAllBytesAsync(sharedStashSoftCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked (156) - Softcore");
-                }
-                if (Regex.Matches(bitString, "4A4D").Count == 7) //Previously unlocked tab count
-                {
-                    tabsToAdd = 152;
-                    string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
-                    await File.WriteAllBytesAsync(sharedStashSoftCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked (152) - Softcore");
-                }
-
-            }
-
-            //Repeat for the hardcore stash
-            if (!File.Exists(sharedStashHardCorePath))
-            {
-                File.Create(sharedStashHardCorePath).Close();
-                await File.WriteAllBytesAsync(sharedStashHardCorePath, await Helper.GetResourceByteArray("SharedStashHardCoreV2.d2i"));
-                _logger.Error("Startup: Stash Tabs Created - Hardcore");
-            }
-            else
-            {
-                byte[] data = await File.ReadAllBytesAsync(sharedStashHardCorePath); //read file
-                string bitString = BitConverter.ToString(data).Replace("-", string.Empty);
-                if (Regex.Matches(bitString, "4A4D").Count == 3)
-                {
-                    tabsToAdd = 156;
-                    string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
-                    await File.WriteAllBytesAsync(sharedStashHardCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked (156) - Hardcore");
-                }
-                if (Regex.Matches(bitString, "4A4D").Count == 7)
-                {
-                    tabsToAdd = 152;
-                    string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
-                    await File.WriteAllBytesAsync(sharedStashHardCorePath, Helper.StringToByteArray(bitString + hexString));
-                    _logger.Error("Startup: Stash Tabs Unlocked (152) - Hardcore");
-                }
-            }
-        }
+        StashMigration();
 
         ShellViewModel.DisableBNetConnection();
 
@@ -876,8 +803,8 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                 {
                     if (e.Error == null)
                     {
-                        if (Directory.Exists(extractPathTemp + "D2RHud-main"))
-                            Directory.Delete(extractPathTemp + "D2RHud-main", true);
+                        if (Directory.Exists(extractPathTemp + "D2RHud-2.4-main"))
+                            Directory.Delete(extractPathTemp + "D2RHud-2.4-main", true);
 
                         ZipFile.ExtractToDirectory(savePath, extractPathTemp);
                         _logger.Error("Monster Stats: D2RHUD Downloaded and Extracted");
@@ -908,6 +835,69 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             }
         }
     }
+
+    public void StashMigration()
+    {
+        string savePath = Path.Combine(GetSavePath(), $@"Diablo II Resurrected\Mods\{SelectedMod}");
+        string saveFileSC = Path.Combine(savePath, "SharedStashSoftCoreV2.d2i");
+        string saveFileHC = Path.Combine(savePath, "SharedStashHardCoreV2.d2i");
+        string prefixSC = Path.Combine(savePath, "Stash_SC");
+        string prefixHC = Path.Combine(savePath, "Stash_HC");
+
+        ProcessStashFile(saveFileSC, prefixSC);
+        ProcessStashFile(saveFileHC, prefixHC);
+    }
+
+    private void ProcessStashFile(string inputFilePath, string outputFilePrefix)
+    {
+        if (!File.Exists(inputFilePath))
+            return;
+
+        string firstPagePath = $"{outputFilePrefix}_Page1.d2i";
+        if (File.Exists(firstPagePath))
+            return;
+
+        byte[] data = File.ReadAllBytes(inputFilePath);
+        byte[] pattern = new byte[] { 0x55, 0xAA, 0x55, 0xAA };
+        List<int> markerIndices = new List<int>();
+
+        for (int i = 0; i <= data.Length - pattern.Length; i++)
+        {
+            bool match = true;
+            for (int j = 0; j < pattern.Length; j++)
+            {
+                if (data[i + j] != pattern[j])
+                {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (match)
+            {
+                markerIndices.Add(i);
+            }
+        }
+
+        int page = 1;
+        for (int i = 0; i < markerIndices.Count; i += 8)
+        {
+            int start = (i == 0) ? 0 : markerIndices[i - 1];
+            int end = (i + 8 < markerIndices.Count) ? markerIndices[i + 8 - 1] : data.Length;
+
+            int length = end - start;
+            if (length <= 0) continue;
+
+            byte[] output = new byte[length];
+            Array.Copy(data, start, output, 0, length);
+
+            string outputPath = $"{outputFilePrefix}_Page{page}.d2i";
+            File.WriteAllBytes(outputPath, output);
+            page++;
+        }
+        _logger.Error("Stash Migration completed!");
+    }
+
 
     #endregion
 
@@ -1457,7 +1447,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                             Resources.ResourceManager.GetString("VersionRdy"), MessageBoxButton.OK);
 
             //Backup
-            if (MessageBox.Show($"{Helper.GetCultureString("ModUpdateRdy").Replace("\\n", Environment.NewLine)}", "Backup Option", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show($"{Helper.GetCultureString("ModUpdateRdy").Replace("\\n", Environment.NewLine)}", "Backup Option", MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
             {
                 ProgressStatus = Helper.GetCultureString("UpdateBackup");
 
