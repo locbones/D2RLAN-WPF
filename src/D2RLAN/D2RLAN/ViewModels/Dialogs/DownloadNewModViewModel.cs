@@ -282,6 +282,20 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
             string tempParentDir = Path.GetDirectoryName(tempModDirPath);
             string modName = string.Empty;
 
+            if (tempModDir.Replace(".mpq", "") == "TCP" && Directory.Exists(ShellViewModel.GamePath + "data"))
+            {
+                Process.Start(ShellViewModel.GamePath + "/D2R_Installer.exe");
+                MessageBox.Show("Previous game files detected, restarting the installer...");
+
+                if (File.Exists(tempFile))
+                    File.Delete(tempFile);
+                if (Directory.Exists(tempExtractedModFolderPath))
+                    Directory.Delete(tempExtractedModFolderPath, true);
+
+                await TryCloseAsync(true);
+                return;
+            }
+
             if (tempModDir != null)
                 modName = tempModDir.Replace(".mpq", "");
             else
@@ -300,15 +314,25 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                 Directory.Delete(modInstallPath, true);
             }
 
-
             ProgressStatus = "Installing mod...";
 
-            await Task.Run(async () =>
+            if (modName == "TCP")
             {
-                await Helper.CloneDirectory(tempParentDir, modInstallPath);
-            });
+                await Task.Run(async () =>
+                {
+                    await Helper.CloneDirectory(tempExtractedModFolderPath, ShellViewModel.GamePath);
+                });
+            }
+            else
+            {
+                await Task.Run(async () =>
+                {
+                    await Helper.CloneDirectory(tempParentDir, modInstallPath);
+                });
+            }
 
             string versionPath = Path.Combine(modInstallPath, "version.txt");
+
             if (!File.Exists(versionPath))
                 File.Create(versionPath).Close();
 
@@ -330,7 +354,13 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                 File.Move(Path.Combine(ShellViewModel.BaseModsFolder, "MyUserSettings.json"), Path.Combine(modInstallPath, $@"{modName}.mpq\MyUserSettings.json"));
             ProgressStatus = "Installing Complete!";
 
-            MessageBox.Show($"{modName} has been installed!", "Mod Installed!", MessageBoxButton.OK, MessageBoxImage.None);
+            if (modName == "TCP")
+            {
+                MessageBox.Show($"Base Files have been downloaded!\nGame Installer will launch in a few seconds...", "Mod Installed!", MessageBoxButton.OK, MessageBoxImage.None);
+                Process.Start(ShellViewModel.GamePath + "/D2R_Installer.exe");
+            }
+            else
+                MessageBox.Show($"{modName} has been installed!", "Mod Installed!", MessageBoxButton.OK, MessageBoxImage.None);
 
 
             //We installed a custom mod from a direct link. 

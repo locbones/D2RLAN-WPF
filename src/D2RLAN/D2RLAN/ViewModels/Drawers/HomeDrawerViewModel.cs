@@ -880,10 +880,10 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         }
 
         int page = 1;
-        for (int i = 0; i < markerIndices.Count; i += 8)
+        for (int i = 0; i < markerIndices.Count; i += 7)
         {
-            int start = (i == 0) ? 0 : markerIndices[i - 1];
-            int end = (i + 8 < markerIndices.Count) ? markerIndices[i + 8 - 1] : data.Length;
+            int start = markerIndices[i];
+            int end = (i + 7 < markerIndices.Count) ? markerIndices[i + 7] : data.Length;
 
             int length = end - start;
             if (length <= 0) continue;
@@ -895,6 +895,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             File.WriteAllBytes(outputPath, output);
             page++;
         }
+
         _logger.Error("Stash Migration completed!");
     }
 
