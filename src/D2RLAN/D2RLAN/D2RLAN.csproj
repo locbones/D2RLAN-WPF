@@ -85,6 +85,7 @@
     <None Remove="Resources\CASC\item-runes.json" />
     <None Remove="Resources\CASC\itemstatcost.txt" />
     <None Remove="Resources\CASC\itemtypes.txt" />
+    <None Remove="Resources\CASC\levels-vnp.txt" />
     <None Remove="Resources\CASC\levels.txt" />
     <None Remove="Resources\CASC\misc.txt" />
     <None Remove="Resources\CASC\monstats.txt" />
@@ -359,6 +360,7 @@
     <EmbeddedResource Include="Resources\CASC\item-names.json" />
     <EmbeddedResource Include="Resources\CASC\itemstatcost.txt" />
     <EmbeddedResource Include="Resources\CASC\itemtypes.txt" />
+    <EmbeddedResource Include="Resources\CASC\levels-vnp.txt" />
     <EmbeddedResource Include="Resources\CASC\levels.txt" />
     <EmbeddedResource Include="Resources\CASC\misc.txt" />
     <EmbeddedResource Include="Resources\CASC\monstats.txt" />

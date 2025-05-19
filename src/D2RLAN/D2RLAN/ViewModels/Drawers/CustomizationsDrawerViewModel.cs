@@ -85,7 +85,7 @@ namespace D2RLAN.ViewModels.Drawers
                 ShortenedLevels.Add(new KeyValuePair<string, eShortenedLevels>(Helper.GetCultureString(shortenedLevels.GetAttributeOfType<DisplayAttribute>().Name), shortenedLevels));
             }
 
-            if (ShellViewModel.ModInfo.Name != "Vanilla++")
+            if (ShellViewModel.ModInfo.Name != "VNP-MP")
             {
                 ShortenedLevelsEnabled = false;
             }
@@ -106,8 +106,6 @@ namespace D2RLAN.ViewModels.Drawers
                 File.Copy(_globalMonStatsTxtPath, _customizationMonStatsTxtPath);
             if (!File.Exists(_customizationsTreasureClassExTxtPath))
                 File.Copy(_globalTreasureClassExTxtPath, _customizationsTreasureClassExTxtPath);
-
-            MessageBox.Show(_globalLevelsTxtPath);
 
             ChangeDifficulty();
 
@@ -790,6 +788,12 @@ namespace D2RLAN.ViewModels.Drawers
                 MessageBox.Show("Customizations applied successfully!");
                 await ShellViewModel.SaveUserSettings();
             }
+
+            if (SelectedDifficulty.SelectedShortenedLevel == 0)
+                await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/levels.txt", Helper.GetResourceByteArray2("CASC.levels.txt"));
+            else
+                await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/levels.txt", Helper.GetResourceByteArray2("CASC.levels-vnp.txt"));
+
         }
 
         #endregion
