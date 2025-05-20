@@ -828,7 +828,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             try
             {
                 await client.DownloadFileTaskAsync(new Uri(url), savePath);
-                _logger.Info("DLL FINISHED DOWNLOADING!!!");
+
             }
             catch (Exception ex)
             {
