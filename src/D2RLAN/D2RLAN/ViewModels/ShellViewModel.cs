@@ -44,7 +44,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 {
     #region ---Static/Public Members---
 
-    private ILog _logger = LogManager.GetLogger(typeof(ShellViewModel));
+    private static ILog _logger = LogManager.GetLogger(typeof(ShellViewModel));
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
@@ -143,7 +143,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     {
         _windowManager = windowManager;
         _configuration = configuration;
-        _logger.Error("Shell view model being created..");
+        _logger.Info("Shell view model being created..");
     }
     public async Task ApplyModSettings()
     {
@@ -3746,7 +3746,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 actualBackupFolder = BackupFolder;
             }
 
-            _logger.Error($"BackupRecentCharacter using save path: {actualSaveFilePath}, backup folder: {actualBackupFolder}");
+            _logger.Info($"BackupRecentCharacter using save path: {actualSaveFilePath}, backup folder: {actualBackupFolder}");
 
             // Create backup folder if it doesn't exist
             if (!Directory.Exists(actualBackupFolder))
@@ -3775,14 +3775,14 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     // Compare hashes to check if the file has changed
                     if (ComputeMD5(mostRecentCharacterFile.FullName) == ComputeMD5(latestBackupFile.FullName))
                     {
-                        _logger.Error($"Auto Backups: Skipped backup for {mostRecentCharacterFile.Name}, no changes detected.");
+                        _logger.Info($"Auto Backups: Skipped backup for {mostRecentCharacterFile.Name}, no changes detected.");
                         return (mostRecentCharacterName, true);
                     }
                 }
 
                 string backupFilePath = Path.Combine(mostRecentCharacterBackupFolder, mostRecentCharacterFile.Name + DateTime.Now.ToString("_MM_dd--hh_mmtt") + ".d2s");
                 File.Copy(mostRecentCharacterFile.FullName, backupFilePath, true);
-                _logger.Error($"Auto Backups: Backed up {mostRecentCharacterFile.Name} at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {mostRecentCharacterBackupFolder}");
+                _logger.Info($"Auto Backups: Backed up {mostRecentCharacterFile.Name} at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {mostRecentCharacterBackupFolder}");
 
             }
         }
@@ -3822,14 +3822,14 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             // Compare hashes
             if (ComputeMD5(stashFilePath) == ComputeMD5(latestBackupFile.FullName))
             {
-                _logger.Error($"Auto Backups: Skipped stash backup for {stashFileName}, no changes detected.");
+                _logger.Info($"Auto Backups: Skipped stash backup for {stashFileName}, no changes detected.");
                 return;
             }
         }
 
         string backupFilePath = Path.Combine(stashBackupFolder, stashFileName + DateTime.Now.ToString("_MM_dd--hh_mmtt") + ".d2i");
         File.Copy(stashFilePath, backupFilePath, true);
-        _logger.Error($"Auto Backups: Backed up {stashFileName} at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {stashBackupFolder}");
+        _logger.Info($"Auto Backups: Backed up {stashFileName} at {DateTime.Now.ToString("_MM_dd--hh_mmtt")} in {stashBackupFolder}");
     }
 
     private void BackupAllStashFiles(string savePath, string backupFolder)
@@ -3841,7 +3841,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         string tempHCFolder = Path.Combine(tempRootFolder, "Hardcore");
         string zipFilePath = Path.Combine(stashBackupFolder, $"SharedStash_{timestamp}.zip");
 
-        _logger.Error("BackupAllStashFiles: Starting backup process.");
+        _logger.Info("BackupAllStashFiles: Starting backup process.");
 
         Directory.CreateDirectory(tempSCFolder);
         Directory.CreateDirectory(tempHCFolder);
@@ -3854,7 +3854,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             string fileName = Path.GetFileName(filePath);
             string destPath = Path.Combine(tempSCFolder, fileName);
             File.Copy(filePath, destPath, true);
-            _logger.Error($"Backed up SC file: {fileName}");
+            _logger.Info($"Backed up SC file: {fileName}");
         }
 
         // Copy HC files
@@ -3864,14 +3864,14 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             string fileName = Path.GetFileName(filePath);
             string destPath = Path.Combine(tempHCFolder, fileName);
             File.Copy(filePath, destPath, true);
-            _logger.Error($"Backed up HC file: {fileName}");
+            _logger.Info($"Backed up HC file: {fileName}");
         }
 
         // Zip everything
         ZipFile.CreateFromDirectory(tempRootFolder, zipFilePath);
         Directory.Delete(tempRootFolder, true);
 
-        _logger.Error($"Auto Backups: Created zip archive {Path.GetFileName(zipFilePath)} with all stash files.");
+        _logger.Info($"Auto Backups: Created zip archive {Path.GetFileName(zipFilePath)} with all stash files.");
     }
 
 
@@ -4365,10 +4365,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         if (process != null)
         {
             InjectDLL(process.Id, "D2RHUD.dll");
-            _logger.Error("D2RHUD.dll has been loaded");
+            _logger.Info("D2RHUD.dll has been loaded");
             int skillIndex = await CheckSkillIndexAsync();
             EditMemory(process.Id, config.MemoryConfigs, skillIndex);
-            _logger.Error("Memory Editing tasks begun");
+            _logger.Info("Memory Editing tasks begun");
 
             if (UserSettings.MSIFix == true)
             {
@@ -4388,7 +4388,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             Console.ReadKey();
         }
 
-        _logger.Error($"\n\n--------------------\nMod Name: {ModInfo.Name}\nGame Path: {GamePath}\nSave Path: {SaveFilesFilePath}\nLaunch Arguments: {UserSettings.CurrentD2RArgs}\n\nAudio Language: {UserSettings.AudioLanguage}\nText Language: {UserSettings.TextLanguage}\nUI Theme: {UserSettings.UiTheme}\nWindow Mode: {UserSettings.WindowMode}\nHDR Fix: {UserSettings.HdrFix}\n\nFont: {UserSettings.Font}\nBackups: {UserSettings.AutoBackups}\nPersonalized Tabs: {UserSettings.PersonalizedStashTabs}\nExpanded Cube: {UserSettings.ExpandedCube}\nExpanded Inventory: {UserSettings.ExpandedInventory}\nExpanded Merc: {UserSettings.ExpandedMerc}\nExpanded Stash: {UserSettings.ExpandedStash}\nBuff Icons: {UserSettings.BuffIcons}\nMonster Display: {UserSettings.MonsterStatsDisplay}\nSkill Icons: {UserSettings.SkillIcons}\nMerc Identifier: {UserSettings.MercIcons}\nItem Levels: {UserSettings.ItemIlvls}\nRune Display: {UserSettings.RuneDisplay}\nHide Helmets: {UserSettings.HideHelmets}\nItem Display: {UserSettings.ItemIcons}\nSuper Telekinesis: {UserSettings.SuperTelekinesis}\nColor Dyes: {UserSettings.ColorDye}\nCinematic Subtitles: {UserSettings.CinematicSubs}\nRuneword Sorting: {UserSettings.RunewordSorting}\nMerged HUD: {UserSettings.HudDesign}\n--------------------");
+        _logger.Info($"\n\n--------------------\nMod Name: {ModInfo.Name}\nGame Path: {GamePath}\nSave Path: {SaveFilesFilePath}\nLaunch Arguments: {UserSettings.CurrentD2RArgs}\n\nAudio Language: {UserSettings.AudioLanguage}\nText Language: {UserSettings.TextLanguage}\nUI Theme: {UserSettings.UiTheme}\nWindow Mode: {UserSettings.WindowMode}\nHDR Fix: {UserSettings.HdrFix}\n\nFont: {UserSettings.Font}\nBackups: {UserSettings.AutoBackups}\nPersonalized Tabs: {UserSettings.PersonalizedStashTabs}\nExpanded Cube: {UserSettings.ExpandedCube}\nExpanded Inventory: {UserSettings.ExpandedInventory}\nExpanded Merc: {UserSettings.ExpandedMerc}\nExpanded Stash: {UserSettings.ExpandedStash}\nBuff Icons: {UserSettings.BuffIcons}\nMonster Display: {UserSettings.MonsterStatsDisplay}\nSkill Icons: {UserSettings.SkillIcons}\nMerc Identifier: {UserSettings.MercIcons}\nItem Levels: {UserSettings.ItemIlvls}\nRune Display: {UserSettings.RuneDisplay}\nHide Helmets: {UserSettings.HideHelmets}\nItem Display: {UserSettings.ItemIcons}\nSuper Telekinesis: {UserSettings.SuperTelekinesis}\nColor Dyes: {UserSettings.ColorDye}\nCinematic Subtitles: {UserSettings.CinematicSubs}\nRuneword Sorting: {UserSettings.RunewordSorting}\nMerged HUD: {UserSettings.HudDesign}\n--------------------");
     }
 
     public List<string> CloseMSIAfterburner(string processName) //Used to find path info and close MSI Afterburner
@@ -4434,8 +4434,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             {
                 try
                 {
-                    _logger.Error($"Closing process: {processName}");
-                    _logger.Error($"Executable Path: {process.MainModule.FileName}");
+                    _logger.Info($"Closing process: {processName}");
+                    _logger.Info($"Executable Path: {process.MainModule.FileName}");
                     process.Kill();
                 }
                 catch (AccessViolationException)
@@ -4614,7 +4614,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         if (hProcess == IntPtr.Zero)
         {
-            Console.WriteLine("Failed to open process for DLL injection.");
+            _logger.Error("Failed to open process for DLL injection.");
             return;
         }
 
@@ -4622,7 +4622,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         if (allocMemAddress == IntPtr.Zero)
         {
-            Console.WriteLine("Failed to allocate memory in the target process.");
+            _logger.Error("Failed to allocate memory in the target process.");
             CloseHandle(hProcess);
             return;
         }
@@ -4630,7 +4630,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         int bytesWritten;
         if (!WriteProcessMemory(hProcess, allocMemAddress, System.Text.Encoding.Default.GetBytes(dllPath), (uint)(dllPath.Length + 1), out bytesWritten))
         {
-            Console.WriteLine("Failed to write DLL path to target process.");
+            _logger.Error("Failed to write DLL path to target process.");
             CloseHandle(hProcess);
             return;
         }
@@ -4640,7 +4640,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         if (hLoadLibrary == IntPtr.Zero)
         {
-            Console.WriteLine("Failed to get address of LoadLibraryA.");
+            _logger.Error("Failed to get address of LoadLibraryA.");
             CloseHandle(hProcess);
             return;
         }
@@ -4648,9 +4648,9 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         IntPtr hThread = CreateRemoteThread(hProcess, IntPtr.Zero, 0, hLoadLibrary, allocMemAddress, 0, out _);
 
         if (hThread == IntPtr.Zero)
-            Console.WriteLine("Failed to create remote thread.");
+            _logger.Error("Failed to create remote thread.");
         else
-            Console.WriteLine("DLL injected successfully!");
+            _logger.Info("DLL injected successfully!");
 
         CloseHandle(hThread);
         CloseHandle(hProcess);

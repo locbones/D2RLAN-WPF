@@ -130,7 +130,7 @@
                         Style="{StaticResource SfButtonAdvNormalStyle}" />
                     <syncfusion:ButtonAdv
                         Grid.Column="2"
-                        cm:Message.Attach="[Event Click] = [Action OnPlayMod];"
+                        cm:Message.Attach="[Event Click] = [Action OnPlayModAsync];"
                         Background="#0d2905"
                         IconTemplate="{StaticResource RefreshIconTemplate}"
                         Label="{Binding Path=Play, Source={StaticResource Resources}}"
