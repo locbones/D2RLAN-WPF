@@ -14,6 +14,7 @@ using JetBrains.Annotations;
 using Syncfusion.Licensing;
 using ILog = log4net.ILog;
 using LogManager = log4net.LogManager;
+using D2RLAN.Properties;
 
 namespace D2RLAN.ViewModels.Drawers
 {
@@ -789,11 +790,13 @@ namespace D2RLAN.ViewModels.Drawers
                 await ShellViewModel.SaveUserSettings();
             }
 
-            if (SelectedDifficulty.SelectedShortenedLevel == 0)
-                await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/levels.txt", Helper.GetResourceByteArray2("CASC.levels.txt"));
-            else
-                await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/levels.txt", Helper.GetResourceByteArray2("CASC.levels-vnp.txt"));
-
+            if (Settings.Default.SelectedMod == "VNP-MP")
+            {
+                if (SelectedDifficulty.SelectedShortenedLevel == 1)
+                    await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/levels.txt", Helper.GetResourceByteArray2("CASC.levels-vnp.txt"));
+                else
+                    await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/global/excel/levels.txt", Helper.GetResourceByteArray2("CASC.levels.txt"));
+            }
         }
 
         #endregion
@@ -805,7 +808,7 @@ namespace D2RLAN.ViewModels.Drawers
 
         private int _selectedChampionPack = 0;
         private int _selectedExpRate = 0;
-        private int _selectedShortenedLevel = 0;
+        private int _selectedShortenedLevel;
         private int _actOneDensity;
         private int _actTwoDensity;
         private int _actThreeDensity;

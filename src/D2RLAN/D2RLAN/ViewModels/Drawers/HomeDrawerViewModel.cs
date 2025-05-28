@@ -622,7 +622,21 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     public async Task OnPlayModAsync()
     {
         if (!File.Exists("D2RHUD.dll"))
-            await DownloadD2RHUDZipAsync();
+        {
+            WebClient webClient = new();
+
+            string primaryLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
+            try
+            {
+                webClient.DownloadFile(primaryLink, @"D2RHUD.dll");
+            }
+            catch (WebException ex)
+            {
+                _logger.Error(ex.Message);
+                _logger.Error("An error occurred during the download: ");
+                return;
+            }
+        }
 
         if (ShellViewModel.ModInfo == null)
             return;
@@ -786,57 +800,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             }
         }
     }
-    public async Task DownloadD2RHUDZipAsync() //Download Expanded File Package
-    {
-        string url = "https://github.com/locbones/D2RHUD-2.4/archive/refs/heads/main.zip";
-        string savePath = "D2RHUD.zip";
-        string extractPathTemp = "./";
-
-        if (File.Exists(savePath))
-            File.Delete(savePath);
-
-        using (var client = new WebClient())
-        {
-            client.DownloadFileCompleted += (sender, e) =>
-            {
-                try
-                {
-                    if (e.Error == null)
-                    {
-                        if (Directory.Exists(extractPathTemp + "D2RHud-2.4-main"))
-                            Directory.Delete(extractPathTemp + "D2RHud-2.4-main", true);
-
-                        ZipFile.ExtractToDirectory(savePath, extractPathTemp);
-                        _logger.Info("Monster Stats: D2RHUD Downloaded and Extracted");
-
-                        File.Copy(extractPathTemp + "D2RHUD-2.4-main/x64/Release/D2RHUD.dll", "D2RHUD.dll", true);
-                        _logger.Info("Monster Stats: D2RHUD.dll copied to Launcher folder");
-
-                        File.Delete(savePath);
-                        Directory.Delete(extractPathTemp + "/D2Rhud-2.4-main", true);
-                        _logger.Info("Monster Stats: D2RHUD Cleanup Completed");
-                    }
-                    else
-                        MessageBox.Show($"An error occurred during download: {e.Error.Message}");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"An error occurred: {ex.Message}");
-                }
-            };
-
-            try
-            {
-                await client.DownloadFileTaskAsync(new Uri(url), savePath);
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred: {ex.Message}");
-            }
-        }
-    }
-
+    
     public void StashMigration()
     {
         string savePath = Path.Combine(GetSavePath(), $@"Diablo II Resurrected\Mods\{SelectedMod}");

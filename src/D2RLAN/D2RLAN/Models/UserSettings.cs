@@ -54,6 +54,8 @@ public class UserSettings : INotifyPropertyChanged
     private bool _CheatsActive;
     private bool _MSIFix;
     private bool _skipCinematics;
+    private int _shortenedLevels;
+    private int _lootFilter;
 
     #endregion
 
@@ -633,6 +635,32 @@ public class UserSettings : INotifyPropertyChanged
                 return;
             }
             _skipCinematics = value;
+            OnPropertyChanged();
+        }
+    }
+    public int ShortenedLevels
+    {
+        get => _shortenedLevels;
+        set
+        {
+            if (value == _shortenedLevels)
+            {
+                return;
+            }
+            _shortenedLevels = value;
+            OnPropertyChanged();
+        }
+    }
+    public int LootFilter
+    {
+        get => _lootFilter;
+        set
+        {
+            if (value == _lootFilter)
+            {
+                return;
+            }
+            _lootFilter = value;
             OnPropertyChanged();
         }
     }

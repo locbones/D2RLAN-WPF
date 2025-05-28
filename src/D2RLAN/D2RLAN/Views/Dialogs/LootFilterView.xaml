@@ -1,0 +1,51 @@
+﻿<Window
+    x:Class="D2RLAN.Views.Dialogs.LootFilterView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cm="http://caliburnmicro.com"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dialogs="clr-namespace:D2RLAN.ViewModels.Dialogs"
+    xmlns:local="clr-namespace:D2RLAN.Views.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+    Width="600"
+    Height="413"
+    d:DataContext="{d:DesignInstance Type=dialogs:LootFilterViewModel,
+                                 IsDesignTimeCreatable=True}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Image Source="pack://application:,,,/Resources/Images/StashSettingsBackground.png" Stretch="Fill" />
+
+        <!-- Outer Grid for Organizing Rows and Columns -->
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <!-- Row for Save Button -->
+            </Grid.RowDefinitions>
+
+            <!-- Header Label -->
+            <Label Grid.Row="0" Foreground="Goldenrod" Style="{StaticResource LabelNormalStyle}" Content="Currently Active Filter:" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,0" />
+            <ComboBox Grid.Row="1" Width="240" ItemsSource="{Binding FilterList}" SelectedItem="{Binding SelectedFilter, Mode=TwoWay}" SelectedIndex="{Binding SelectedFilterIndex, Mode=TwoWay}" DisplayMemberPath="Title" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" />
+
+            <syncfusion:ButtonAdv
+                Grid.Row="2" Grid.Column="0" cm:Message.Attach="[Event Click] = [Action OnLoadFilter];" Background="#FF142138" IconTemplate="{StaticResource AdditionIconTemplate}" Label="Load New Filter" Style="{StaticResource SfButtonAdvNormalStyle}" Height="30" MinHeight="30" HorizontalAlignment="Center" />
+
+            <!-- Labels and TextBoxes for Hotkeys -->
+            <Label Grid.Row="3" Foreground="CornflowerBlue" Content="{Binding SelectedFilterTitle}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontSize="16" />
+            <Label Grid.Row="4" Foreground="Green" Content="{Binding SelectedFilterType}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10,0,0" FontSize="16" />
+            <Rectangle Grid.Row="6" HorizontalAlignment="Center" Height="166" Stroke="WhiteSmoke" VerticalAlignment="Center" Width="500"/>
+            <ScrollViewer Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" Height="156" Width="490" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <TextBlock Text="{Binding SelectedFilterDescription}" TextWrapping="Wrap" Foreground="White" FontSize="14" Padding="5"/>
+            </ScrollViewer>
+
+
+        </Grid>
+
+    </Grid>
+</Window>

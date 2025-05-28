@@ -524,7 +524,7 @@
                         DisplayMemberPath="Key"
                         IsEnabled="{Binding ShortenedLevelsEnabled}"
                         ItemsSource="{Binding ShortenedLevels}"
-                        SelectedIndex="{Binding SelectedDifficulty.SelectedShortenedLevel}"
+                        SelectedIndex="{Binding SelectedDifficulty.SelectedShortenedLevel, Mode=TwoWay}"
                         SelectedValuePath="Value"
                         Style="{StaticResource ComboBoxStyle}" />
                 </StackPanel>

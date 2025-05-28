@@ -68,6 +68,10 @@
                     Style="{StaticResource NavigationItemGoldStyle}"
                     Tag="QoL Options" />
                 <syncfusion:NavigationItem
+                    Header="Loot Filter"
+                    Style="{StaticResource NavigationItemGoldStyle}"
+                    Tag="Loot Filter" />
+                <syncfusion:NavigationItem
                     Header="{Binding Path=Customizations, Source={StaticResource Resources}}"
                     IsEnabled="{Binding CustomizationsEnabled}"
                     Style="{StaticResource NavigationItemGoldStyle}"

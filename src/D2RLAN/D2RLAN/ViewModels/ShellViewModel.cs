@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.3.7";
+    private string appVersion = "1.3.8";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -200,6 +200,19 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     QoLOptionsDrawerViewModel vm = new QoLOptionsDrawerViewModel(this, _windowManager);
                     await vm.Initialize();
                     UserControl = new QoLOptionsDrawerView() { DataContext = vm };
+                    break;
+                }
+            case "LOOT FILTER":
+                {
+                    dynamic options = new ExpandoObject();
+                    options.ResizeMode = ResizeMode.NoResize;
+                    options.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+                    LootFilterViewModel vm = new LootFilterViewModel(this);
+
+                    if (await _windowManager.ShowDialogAsync(vm, null, options))
+                    {
+                    }
                     break;
                 }
             case "CUSTOMIZATIONS":
@@ -4497,15 +4510,14 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         if (hProcess == IntPtr.Zero)
         {
-            Console.WriteLine("Failed to open process for memory editing.");
+            _logger.Error("Failed to open process for memory editing.");
             return;
         }
 
         Process process = Process.GetProcessById(processId);
         IntPtr baseAddress = process.MainModule.BaseAddress;
 
-        if (debugLogging)
-            Console.WriteLine($"Base Address of {process.ProcessName}: 0x{baseAddress.ToString("X")}");
+        _logger.Info($"Memory Edits: Base Address of {process.ProcessName}: 0x{baseAddress.ToString("X")}");
 
         foreach (var entry in memoryConfigs)
         {
@@ -4523,7 +4535,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error editing memory: {ex.Message}");
+                _logger.Error($"Error editing memory: {ex.Message}");
             }
         }
 
