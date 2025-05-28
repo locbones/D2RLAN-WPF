@@ -133,6 +133,12 @@ public static class LuaFilterParser
 
             LoadFilterTitlesFromFolder(ShellViewModel.SelectedModDataFolder + @"\D2RLAN\Filters");
             SelectedFilterIndex = ShellViewModel.UserSettings.LootFilter;
+
+            if (!File.Exists(ShellViewModel.GamePath + "lootfilter.lua"))
+            {
+                File.WriteAllBytesAsync(ShellViewModel.GamePath + "lootfilter.lua", Helper.GetResourceByteArray2("lootfilter.lua"));
+                File.WriteAllBytesAsync(ShellViewModel.GamePath + "lootfilter_config.lua", Helper.GetResourceByteArray2("lootfilter_config.lua"));
+            }
         }
 
         #endregion
@@ -168,8 +174,9 @@ public static class LuaFilterParser
             }
         }
 
-        public void OnLoadFilter()
+        public async Task OnLoadFilter()
         {
+
             var openFileDialog = new OpenFileDialog
             {
                 Filter = "Lua files (*.lua)|*.lua",
