@@ -355,8 +355,6 @@ function ApplyFilter(Me, Item, Result)
     local area = Item.Area
     local difficulty = Me.Difficulty
 
-    print(tostring(difficultyMap[difficulty]))
-
     -- Dummy Set to hide items
     local HideAllItems = SSet(
     )

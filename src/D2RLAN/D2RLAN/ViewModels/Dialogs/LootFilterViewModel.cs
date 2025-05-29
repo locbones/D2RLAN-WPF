@@ -138,6 +138,7 @@ public static class LuaFilterParser
             {
                 File.WriteAllBytesAsync(ShellViewModel.GamePath + "lootfilter.lua", Helper.GetResourceByteArray2("lootfilter.lua"));
                 File.WriteAllBytesAsync(ShellViewModel.GamePath + "lootfilter_config.lua", Helper.GetResourceByteArray2("lootfilter_config.lua"));
+                File.WriteAllBytesAsync(ShellViewModel.GamePath + "lootfilter_guide.lua", Helper.GetResourceByteArray2("D2R_LootFilter_1.0.0.pdf"));
             }
         }
 
