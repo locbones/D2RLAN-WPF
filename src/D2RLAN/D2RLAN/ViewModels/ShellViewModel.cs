@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.3.8";
+    private string appVersion = "1.3.9";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -1165,6 +1165,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         string hudMonsterHealthHdDisabledJsonFilePath = Path.Combine(uiLayoutsPath, "hudmonsterhealthhd_disabled.json");
         string monsterStatsPath = Path.Combine(SelectedModDataFolder, "D2RLAN/Monster Stats");
         string outputPath = SelectedModDataFolder + "/D2RLAN/Monster Stats/MS_Assets.zip";
+        string ConfigFilePath = "config.json";
 
         if (!Directory.Exists(uiLayoutsPath))
             Directory.CreateDirectory(uiLayoutsPath);
@@ -1188,6 +1189,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 {
                     if (File.Exists(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json"))
                         File.Move(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json", SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd_disabled.json", true);
+
+                    string configFile = File.ReadAllText(ConfigFilePath);
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": true", "\"MonsterStatsDisplay\": false");
+                    File.WriteAllText(ConfigFilePath, configFile2);
 
                     break;
                 }
@@ -1213,6 +1218,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                         File.WriteAllText(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json", hudContents);
                     }
 
+                    string configFile = File.ReadAllText(ConfigFilePath);
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": true", "\"MonsterStatsDisplay\": false");
+                    File.WriteAllText(ConfigFilePath, configFile2);
+
                     break;
                 }
             case eMonsterHP.BasicP:
@@ -1233,6 +1242,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     hudContents = hudContents.Replace("MonHPBar_UniFull\"", "MonHPBar_UniSmallPer\"").Replace("MonHPBar_NormFull\"", "MonHPBar_NormSmallPer\"").Replace("MonHPBar_UniFullPer\"", "MonHPBar_UniSmallPer\"").Replace("MonHPBar_NormFullPer\"", "MonHPBar_NormSmallPer\"")
                             .Replace("MonHPBar_UniSmall\"", "MonHPBar_UniSmallPer\"").Replace("MonHPBar_NormSmall\"", "MonHPBar_NormSmallPer\"").Replace("\"y\": 115", "\"y\": 65").Replace("\"y\": 150", "\"y\": 100");
                     File.WriteAllText(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json", hudContents);
+
+                    string configFile = File.ReadAllText(ConfigFilePath);
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": true", "\"MonsterStatsDisplay\": false");
+                    File.WriteAllText(ConfigFilePath, configFile2);
 
                     break;
                 }
@@ -1255,6 +1268,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                             .Replace("MonHPBar_UniSmall\"", "MonHPBar_UniFull\"").Replace("MonHPBar_NormSmall\"", "MonHPBar_NormFull\"").Replace("\"y\": 65", "\"y\": 115").Replace("\"y\": 100", "\"y\": 150");
                     File.WriteAllText(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json", hudContents);
 
+                    string configFile = File.ReadAllText(ConfigFilePath);
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": false", "\"MonsterStatsDisplay\": true");
+                    File.WriteAllText(ConfigFilePath, configFile2);
+
                     break;
                 }
             case eMonsterHP.AdvancedP:
@@ -1275,6 +1292,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     hudContents = hudContents.Replace("MonHPBar_UniFull\"", "MonHPBar_UniFullPer\"").Replace("MonHPBar_NormFull\"", "MonHPBar_NormFullPer\"").Replace("MonHPBar_UniSmallPer\"", "MonHPBar_UniFullPer\"").Replace("MonHPBar_NormSmallPer\"", "MonHPBar_NormFullPer\"")
                             .Replace("MonHPBar_UniSmall\"", "MonHPBar_UniFullPer\"").Replace("MonHPBar_NormSmall\"", "MonHPBar_NormFullPer\"").Replace("\"y\": 65", "\"y\": 115").Replace("\"y\": 100", "\"y\": 150");
                     File.WriteAllText(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json", hudContents);
+
+                    string configFile = File.ReadAllText(ConfigFilePath);
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": false", "\"MonsterStatsDisplay\": true");
+                    File.WriteAllText(ConfigFilePath, configFile2);
 
                     break;
                 }

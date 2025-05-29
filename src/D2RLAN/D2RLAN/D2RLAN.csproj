@@ -175,7 +175,7 @@
     <None Remove="Resources\CASC\Subtitles\zhtw\d2x_intro.srt" />
     <None Remove="Resources\CASC\treasureclassex.txt" />
     <None Remove="Resources\CASC\weapons.txt" />
-    <None Remove="Resources\D2R_LootFilter_1.0.0.pdf" />
+    <None Remove="Resources\D2R_LootFilter_Guide.pdf" />
     <None Remove="Resources\DefaultUserSettings.json" />
     <None Remove="Resources\DefaultUserSettings.txt" />
     <None Remove="Resources\Fonts\0.otf" />
@@ -453,7 +453,7 @@
     <EmbeddedResource Include="Resources\CASC\Subtitles\zhtw\d2x_intro.srt" />
     <EmbeddedResource Include="Resources\CASC\treasureclassex.txt" />
     <EmbeddedResource Include="Resources\CASC\weapons.txt" />
-    <EmbeddedResource Include="Resources\D2R_LootFilter_1.0.0.pdf" />
+    <EmbeddedResource Include="Resources\D2R_LootFilter_Guide.pdf" />
     <EmbeddedResource Include="Resources\DefaultUserSettings.json" />
     <EmbeddedResource Include="Resources\Fonts\0.otf" />
     <EmbeddedResource Include="Resources\Fonts\1.otf" />
@@ -480,6 +480,7 @@
     <EmbeddedResource Include="Resources\Fonts\9.png" />
     <EmbeddedResource Include="Resources\Fonts\0.png" />
     <EmbeddedResource Include="Resources\lootfilter.lua" />
+    <EmbeddedResource Include="Resources\lootfilter_config_blank.lua" />
     <EmbeddedResource Include="Resources\lootfilter_config.lua" />
     <EmbeddedResource Include="Resources\Options\MonsterStats\D2RHUD_Config.txt" />
     <EmbeddedResource Include="Resources\Options\MonsterStats\MS_Assets.zip" />

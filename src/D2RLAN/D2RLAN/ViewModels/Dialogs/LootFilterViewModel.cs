@@ -131,14 +131,102 @@ public static class LuaFilterParser
             DisplayName = "Active Loot Filter Settings";
             ShellViewModel = shellViewModel;
 
-            LoadFilterTitlesFromFolder(ShellViewModel.SelectedModDataFolder + @"\D2RLAN\Filters");
+            LoadFilterTitlesFromFolder(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters"));
+
+            // Move "No Filter" to the top
+            if (FilterList != null)
+            {
+                var noFilter = FilterList.FirstOrDefault(f => f?.Title?.Equals("No Filter", StringComparison.OrdinalIgnoreCase) == true);
+                if (noFilter != null)
+                {
+                    FilterList.Remove(noFilter);
+                    FilterList.Insert(0, noFilter);
+                }
+            }
+
             SelectedFilterIndex = ShellViewModel.UserSettings.LootFilter;
 
-            if (!File.Exists(ShellViewModel.GamePath + "lootfilter.lua"))
+            string lootFilterPath = Path.Combine(ShellViewModel.GamePath, "lootfilter.lua");
+            string configPath = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
+            string configBlankPath = Path.Combine(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters"), "lootfilter_config_blank.lua");
+            string guidePath = Path.Combine(ShellViewModel.GamePath, "lootfilter_guide.pdf");
+
+            string expectedVersion = "0.0.0";
+            bool shouldReplace = true;
+
+            try
             {
-                File.WriteAllBytesAsync(ShellViewModel.GamePath + "lootfilter.lua", Helper.GetResourceByteArray2("lootfilter.lua"));
-                File.WriteAllBytesAsync(ShellViewModel.GamePath + "lootfilter_config.lua", Helper.GetResourceByteArray2("lootfilter_config.lua"));
-                File.WriteAllBytesAsync(ShellViewModel.GamePath + "lootfilter_guide.lua", Helper.GetResourceByteArray2("D2R_LootFilter_1.0.0.pdf"));
+                var embeddedBytes = Helper.GetResourceByteArray2("lootfilter.lua");
+                var embeddedText = System.Text.Encoding.UTF8.GetString(embeddedBytes);
+                var embeddedLines = embeddedText.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+                if (embeddedLines.Length >= 4)
+                {
+                    var match = Regex.Match(embeddedLines[3], @"local\s+version\s*=\s*""([^""]+)""");
+                    if (match.Success)
+                    {
+                        expectedVersion = match.Groups[1].Value;
+                    }
+                }
+            }
+            catch
+            {
+                // Keep default version on error
+            }
+
+            if (File.Exists(lootFilterPath))
+            {
+                try
+                {
+                    var versionLine = File.ReadLines(lootFilterPath).Skip(3).FirstOrDefault();
+                    if (!string.IsNullOrWhiteSpace(versionLine))
+                    {
+                        var match = Regex.Match(versionLine, @"local\s+version\s*=\s*""([^""]+)""");
+                        if (match.Success)
+                        {
+                            string currentVersion = match.Groups[1].Value;
+                            if (currentVersion == expectedVersion)
+                            {
+                                shouldReplace = false;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    shouldReplace = true; // Assume overwrite on read error
+                }
+            }
+
+            if (shouldReplace)
+            {
+                File.WriteAllBytesAsync(lootFilterPath, Helper.GetResourceByteArray2("lootfilter.lua"));
+                File.WriteAllBytesAsync(configPath, Helper.GetResourceByteArray2("lootfilter_config.lua"));
+                File.WriteAllBytesAsync(configBlankPath, Helper.GetResourceByteArray2("lootfilter_config_blank.lua"));
+                File.WriteAllBytesAsync(guidePath, Helper.GetResourceByteArray2("D2R_LootFilter_Guide.pdf"));
+
+                string filterFolder = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters");
+                FilterMetadata copiedFilterMetadata = null;
+
+                try
+                {
+                    copiedFilterMetadata = LuaFilterParser.ParseFilterMetadata(configBlankPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to parse metadata:\n" + ex.Message);
+                }
+
+                LoadFilterTitlesFromFolder(filterFolder);
+
+                if (!string.IsNullOrWhiteSpace(copiedFilterMetadata?.Title))
+                {
+                    var match = FilterList.FirstOrDefault(f => f?.Title?.Equals(copiedFilterMetadata.Title, StringComparison.OrdinalIgnoreCase) == true);
+                    if (match != null)
+                        SelectedFilter = match;
+                }
+
+                
             }
         }
 
