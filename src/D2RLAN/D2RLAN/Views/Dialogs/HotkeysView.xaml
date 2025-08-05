@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:D2RLAN.Views.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="600"
-    Height="413"
+    Height="441"
     d:DataContext="{d:DesignInstance Type=dialogs:HotkeysViewModel,
                                  IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
@@ -19,6 +19,7 @@
         <!-- Outer Grid for Organizing Rows and Columns -->
         <Grid Margin="10">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -77,6 +78,10 @@
             <Label Grid.Row="7" Grid.Column="0" Content="Clear Ground Items:" Foreground="#DD17BFF7" FontSize="16"/>
             <TextBox x:Name="kbBox6" Grid.Row="7" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding RemoveGroundItems, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="kbBox_PreviewKeyDown" />
 
+            <!-- Open Cube Panel -->
+            <Label Grid.Row="8" Grid.Column="0" Content="Open Cube Panel:" Foreground="#DD17BFF7" FontSize="16"/>
+            <TextBox x:Name="kbBox13" Grid.Row="8" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding OpenCubePanel, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="kbBox_PreviewKeyDown" />
+
             <!-- Custom Commands -->
             <Label Grid.Row="1" Grid.Column="0" Content="Built-In Commands" Foreground="#DD19D056" FontSize="16" Padding="5,5,5,5" Margin="60,0,0,0" Grid.ColumnSpan="3"/>
             <Label Grid.Row="1" Grid.Column="2" Content="Custom Commands (Editable)" Foreground="#DD19D056" FontSize="16" Padding="5,5,5,5" Margin="20,0,0,0" Grid.ColumnSpan="3"/>
@@ -98,12 +103,12 @@
             <TextBox x:Name="kbBox12" Grid.Row="7" Grid.Column="3" HorizontalContentAlignment="Center" Text="{Binding CustomCommand6, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="kbBox_PreviewKeyDown" />
             
             
-            <!-- Clear Ground Items -->
-            <Label Grid.Row="8" HorizontalContentAlignment="Center" Grid.Column="0" Content="Startup Commands:" Foreground="#DD19D056" FontSize="16" Grid.ColumnSpan="4"/>
-            <TextBox HorizontalContentAlignment="Center" Text="{Binding StartupCommands, UpdateSourceTrigger=PropertyChanged}"  Foreground="WhiteSmoke" FontSize="16" TextChanged="kbBox_TextChanged" BorderThickness="0,0,0,0" Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="4"/>
-            <Label Grid.Row="10" HorizontalContentAlignment="Center" Grid.Column="0" Content="" Foreground="DimGray" FontSize="12" Grid.ColumnSpan="4"/>
-            <Label Grid.Row="11" HorizontalContentAlignment="Center" Grid.Column="0" Content="Up to 6 player or cheat commands can be chosen - separated by commas, such as:" Foreground="DimGray" FontSize="12" Grid.ColumnSpan="4"/>
-            <Label Grid.Row="12" HorizontalContentAlignment="Center" Grid.Column="0" Content="/nopickup, /players 4, goto 109, /fps" Foreground="DimGray" FontSize="12" Grid.ColumnSpan="4"/>
+            <!-- Startup Commands -->
+            <Label Grid.Row="9" HorizontalContentAlignment="Center" Grid.Column="0" Content="Startup Commands:" Foreground="#DD19D056" FontSize="16" Grid.ColumnSpan="4"/>
+            <TextBox HorizontalContentAlignment="Center" Text="{Binding StartupCommands, UpdateSourceTrigger=PropertyChanged}"  Foreground="WhiteSmoke" FontSize="16" TextChanged="kbBox_TextChanged" BorderThickness="0,0,0,0" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="4"/>
+            <Label Grid.Row="11" HorizontalContentAlignment="Center" Grid.Column="0" Content="" Foreground="DimGray" FontSize="12" Grid.ColumnSpan="4"/>
+            <Label Grid.Row="12" HorizontalContentAlignment="Center" Grid.Column="0" Content="Up to 6 player or cheat commands can be chosen - separated by commas, such as:" Foreground="DimGray" FontSize="12" Grid.ColumnSpan="4"/>
+            <Label Grid.Row="13" HorizontalContentAlignment="Center" Grid.Column="0" Content="/nopickup, /players 4, goto 109, /fps" Foreground="DimGray" FontSize="12" Grid.ColumnSpan="4"/>
 
         </Grid>
     </Grid>

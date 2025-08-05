@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -131,6 +132,12 @@ public static class LuaFilterParser
             DisplayName = "Active Loot Filter Settings";
             ShellViewModel = shellViewModel;
 
+            InitializeAsync();
+        }
+
+
+        private async void InitializeAsync()
+        {
             LoadFilterTitlesFromFolder(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters"));
 
             // Move "No Filter" to the top
@@ -151,63 +158,75 @@ public static class LuaFilterParser
             string configBlankPath = Path.Combine(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters"), "lootfilter_config_blank.lua");
             string guidePath = Path.Combine(ShellViewModel.GamePath, "lootfilter_guide.pdf");
 
-            string expectedVersion = "0.0.0";
+            string remoteLootFilterUrl = "https://drive.google.com/uc?export=download&id=157sEJn8LSpNWwlwuEnrSPo23UULzJmNs";
+            string guideUrl = "https://drive.google.com/uc?export=download&id=1Rtypc8FRRn14rNtTpeXGEEYXaUoiV5lb";
+
+            string remoteVersion = "0.0.0";
             bool shouldReplace = true;
+
+            string tempLootFilterPath = Path.GetTempFileName();
+
+            using var client = new HttpClient();
 
             try
             {
-                var embeddedBytes = Helper.GetResourceByteArray2("lootfilter.lua");
-                var embeddedText = System.Text.Encoding.UTF8.GetString(embeddedBytes);
-                var embeddedLines = embeddedText.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+                await DownloadFileAsync(client, remoteLootFilterUrl, tempLootFilterPath);
 
-                if (embeddedLines.Length >= 4)
+                var tempVersionLine = File.ReadLines(tempLootFilterPath)
+                    .FirstOrDefault(line => Regex.IsMatch(line, @"local\s+version\s*=\s*""([^""]+)"""));
+                if (!string.IsNullOrWhiteSpace(tempVersionLine))
                 {
-                    var match = Regex.Match(embeddedLines[3], @"local\s+version\s*=\s*""([^""]+)""");
+                    var match = Regex.Match(tempVersionLine, @"local\s+version\s*=\s*""([^""]+)""");
                     if (match.Success)
                     {
-                        expectedVersion = match.Groups[1].Value;
+                        remoteVersion = match.Groups[1].Value;
                     }
                 }
-            }
-            catch
-            {
-                // Keep default version on error
-            }
 
-            if (File.Exists(lootFilterPath))
-            {
-                try
+                if (File.Exists(lootFilterPath))
                 {
-                    var versionLine = File.ReadLines(lootFilterPath).Skip(3).FirstOrDefault();
-                    if (!string.IsNullOrWhiteSpace(versionLine))
+                    var currentVersionLine = File.ReadLines(lootFilterPath)
+                        .FirstOrDefault(line => Regex.IsMatch(line, @"local\s+version\s*=\s*""([^""]+)"""));
+                    if (!string.IsNullOrWhiteSpace(currentVersionLine))
                     {
-                        var match = Regex.Match(versionLine, @"local\s+version\s*=\s*""([^""]+)""");
+                        var match = Regex.Match(currentVersionLine, @"local\s+version\s*=\s*""([^""]+)""");
                         if (match.Success)
                         {
                             string currentVersion = match.Groups[1].Value;
-                            if (currentVersion == expectedVersion)
-                            {
+                            if (currentVersion == remoteVersion)
                                 shouldReplace = false;
-                            }
                         }
                     }
                 }
-                catch
-                {
-                    shouldReplace = true; // Assume overwrite on read error
-                }
             }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to check remote loot filter version:\n{ex.Message}", "Version Check Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+            if (!File.Exists(configBlankPath))
+                shouldReplace = true;
 
             if (shouldReplace)
             {
-                File.WriteAllBytesAsync(lootFilterPath, Helper.GetResourceByteArray2("lootfilter.lua"));
-                File.WriteAllBytesAsync(configPath, Helper.GetResourceByteArray2("lootfilter_config.lua"));
-                File.WriteAllBytesAsync(configBlankPath, Helper.GetResourceByteArray2("lootfilter_config_blank.lua"));
-                File.WriteAllBytesAsync(guidePath, Helper.GetResourceByteArray2("D2R_LootFilter_Guide.pdf"));
-
                 string filterFolder = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters");
-                FilterMetadata copiedFilterMetadata = null;
+                Directory.CreateDirectory(filterFolder);
 
+                try
+                {
+                    await DownloadFileAsync(client, remoteLootFilterUrl, lootFilterPath);
+                    await DownloadFileAsync(client, guideUrl, guidePath);
+
+                    await File.WriteAllBytesAsync(configBlankPath, Helper.GetResourceByteArray2("lootfilter_config_blank.lua"));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to download one or more loot filter files:\n{ex.Message}", "Download Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                FilterMetadata copiedFilterMetadata = null;
                 try
                 {
                     copiedFilterMetadata = LuaFilterParser.ParseFilterMetadata(configBlankPath);
@@ -225,10 +244,24 @@ public static class LuaFilterParser
                     if (match != null)
                         SelectedFilter = match;
                 }
-
-                
             }
+
+            try
+            {
+                if (File.Exists(tempLootFilterPath))
+                    File.Delete(tempLootFilterPath);
+            }
+            catch { }
         }
+
+
+        private async Task DownloadFileAsync(HttpClient client, string url, string destinationPath)
+        {
+            var bytes = await client.GetByteArrayAsync(url);
+            await File.WriteAllBytesAsync(destinationPath, bytes);
+        }
+
+
 
         #endregion
 

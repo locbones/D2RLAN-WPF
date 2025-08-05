@@ -306,6 +306,10 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
 
             string modInstallPath = Path.Combine(ShellViewModel.BaseModsFolder, modName);
 
+
+            if (File.Exists(ShellViewModel.SelectedModDataFolder + @"\global\ui\layouts\bankexpansionlayouthd.json"))
+                File.Copy(ShellViewModel.SelectedModDataFolder + @"\global\ui\layouts\bankexpansionlayouthd.json", ShellViewModel.BaseModsFolder + "temp_bankexpansionlayouthd.json", true);
+
             //Delete current Mod folder if it exists
             if (Directory.Exists(modInstallPath))
             {
@@ -353,6 +357,12 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
             if (File.Exists(Path.Combine(ShellViewModel.BaseModsFolder, "MyUserSettings.json")))
                 File.Move(Path.Combine(ShellViewModel.BaseModsFolder, "MyUserSettings.json"), Path.Combine(modInstallPath, $@"{modName}.mpq\MyUserSettings.json"));
             ProgressStatus = "Installing Complete!";
+
+            if (File.Exists(ShellViewModel.BaseModsFolder + "temp_bankexpansionlayouthd.json"))
+            {
+                File.Copy(ShellViewModel.BaseModsFolder + "temp_bankexpansionlayouthd.json", ShellViewModel.SelectedModDataFolder + @"\global\ui\layouts\bankexpansionlayouthd.json", true);
+                File.Delete(ShellViewModel.BaseModsFolder + "temp_bankexpansionlayouthd.json");
+            }
 
             if (modName == "TCP")
             {

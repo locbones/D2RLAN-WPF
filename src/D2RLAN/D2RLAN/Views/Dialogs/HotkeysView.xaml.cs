@@ -133,6 +133,7 @@ namespace D2RLAN.Views.Dialogs
             else if (currentTextBox.Name == "kbBox10") textBoxIndex = 9;
             else if (currentTextBox.Name == "kbBox11") textBoxIndex = 10;
             else if (currentTextBox.Name == "kbBox12") textBoxIndex = 11;
+            else if (currentTextBox.Name == "kbBox13") textBoxIndex = 12;
 
             if (textBoxIndex == -1) return;
 
@@ -164,7 +165,7 @@ namespace D2RLAN.Views.Dialogs
                     break;
             }
 
-            if (textBoxIndex <= 5)
+            if (textBoxIndex <= 5 || textBoxIndex == 12)
             {
                 lines[textBoxIndex] = $"{lines[textBoxIndex].Split(':')[0]}: {virtualKeyCode}";
                 currentTextBox.Text = virtualKeyCode;

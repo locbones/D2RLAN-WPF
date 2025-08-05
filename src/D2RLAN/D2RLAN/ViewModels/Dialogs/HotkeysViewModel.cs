@@ -17,6 +17,7 @@ namespace D2RLAN.ViewModels.Dialogs
         public string ResetStats { get; set; }
         public string ResetSkills { get; set; }
         public string RemoveGroundItems { get; set; }
+        public string OpenCubePanel { get; set; }
         public string CustomCommand1 { get; set; }
         public string CustomCommand2 { get; set; }
         public string CustomCommand3 { get; set; }
@@ -94,6 +95,9 @@ namespace D2RLAN.ViewModels.Dialogs
                             break;
                         case "Remove Ground Items":
                             RemoveGroundItems = key == "NaN" ? "NaN" : key;
+                            break;
+                        case "Open Cube Panel":
+                            OpenCubePanel = key == "NaN" ? "NaN" : key;
                             break;
                         case "Custom Command 1":
                             CustomCommand1 = key == "NaN" ? "NaN" : key;

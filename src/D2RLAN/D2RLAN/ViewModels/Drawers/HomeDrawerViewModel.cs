@@ -1344,222 +1344,227 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     {
         if (string.IsNullOrEmpty(Settings.Default.SelectedMod))
         {
-            MessageBox.Show("Please select a mod first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            ShowError("Please select a mod first.");
             return;
         }
 
-        CheckingForUpdates = true;
-        ProgressBarIsIndeterminate = true;
-        ProgressStatus = "Checking for updates...";
-
+        SetStatus("Checking for updates...", true);
 
         string tempPath = Path.GetTempPath();
-        string tempModInfoPath = System.IO.Path.Combine(tempPath, "modinfo.json");
-        string version = string.Empty;
+        string tempModInfoPath = Path.Combine(tempPath, "modinfo.json");
 
-        if (!File.Exists(ShellViewModel.SelectedModVersionFilePath))
+        string version = await GetCurrentVersion();
+        if (version == null)
         {
-            if (ShellViewModel.ModInfo == null)
-            {
-                MessageBox.Show("Could not parse ModInfo.json!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                CheckingForUpdates = false;
-                return;
-            }
-
-            version = ShellViewModel.ModInfo.ModVersion;
-        }
-        else
-        {
-            version = await File.ReadAllTextAsync(ShellViewModel.SelectedModVersionFilePath);
+            SetStatus(null, false);
+            return;
         }
 
-        // Seting up the http client used to download the data
-        using HttpClient client = new HttpClient();
-        client.Timeout = TimeSpan.FromMinutes(5);
-
-        //Download remote modinfo.json
-        try
+        if (!await TryDownloadFile(ShellViewModel.ModInfo.ModConfigDownloadLink, tempModInfoPath))
         {
-            // Create a file stream to store the downloaded data.
-            // This really can be any type of writeable stream.
-            await using FileStream file = new FileStream(tempModInfoPath, FileMode.Create, FileAccess.Write, FileShare.None);
-
-            await Execute.OnUIThreadAsync(async () => { await client.DownloadAsync(ShellViewModel.ModInfo.ModConfigDownloadLink, file, null, CancellationToken.None); });
-
-            file.Close();
-            await file.DisposeAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex);
-            MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            SetStatus(null, false);
             return;
         }
 
         ModInfo tempModInfo = await Helper.ParseModInfo(tempModInfoPath);
-
         File.Delete(tempModInfoPath);
 
-        if (tempModInfo != null && SelectedMod != "MyCustomMod")
-        {
-            if (version == tempModInfo.ModVersion)
-            {
-                MessageBox.Show("No updates available.", "Update", MessageBoxButton.OK);
-                CheckingForUpdates = false;
-                return;
-            }
-
-            MessageBox.Show($"{Helper.GetCultureString("Version1")} {version}\n {Helper.GetCultureString("Version2")} {tempModInfo.ModVersion}",
-                            Resources.ResourceManager.GetString("VersionRdy"), MessageBoxButton.OK);
-
-            //Backup
-            if (MessageBox.Show($"{Helper.GetCultureString("ModUpdateRdy").Replace("\\n", Environment.NewLine)}", "Backup Option", MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
-            {
-                ProgressStatus = Helper.GetCultureString("UpdateBackup");
-
-                if (Directory.Exists(ShellViewModel.BaseSelectedModFolder))
-                {
-                    try
-                    {
-                        string backupPath = System.IO.Path.Combine(ShellViewModel.BaseModsFolder, $"{Settings.Default.SelectedMod}(Backup-{ShellViewModel.ModInfo.ModVersion.Replace(".", "-")})");
-                        if (Directory.Exists(backupPath))
-                            Directory.Delete(backupPath, true);
-
-                        await Task.Run(async () => { await Helper.CloneDirectory(ShellViewModel.BaseSelectedModFolder, backupPath); });
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error(ex);
-                        MessageBox.Show(Helper.GetCultureString("UpdateBackupError"));
-                    }
-
-                }
-                else
-                {
-                    MessageBox.Show(Helper.GetCultureString("UpdateBackupError"));
-                }
-            }
-
-            //Download Update
-            string tempUpdatePath = System.IO.Path.Combine(tempPath, "Update.zip");
-            ProgressBarIsIndeterminate = false;
-            ProgressStatus = Helper.GetCultureString("UpdateBegin");
-
-            try
-            {
-                Progress<double> progress = new Progress<double>();
-
-                progress.ProgressChanged += (sender, args) =>
-                {
-                    Execute.OnUIThread(() =>
-                    {
-                        if (args == -1)
-                        {
-                            DownloadProgress = 0;
-                            DownloadProgressString = string.Empty;
-                            ProgressBarIsIndeterminate = true;
-                            ProgressStatus = Helper.GetCultureString("UpdateProgressGHSize");
-                        }
-                        else
-                        {
-                            DownloadProgress = Math.Round(args, MidpointRounding.AwayFromZero);
-                            DownloadProgressString = $"{DownloadProgress}%";
-                        }
-                    });
-                };
-
-                if (File.Exists(tempUpdatePath))
-                    File.Delete(tempUpdatePath);
-
-                // Create a file stream to store the downloaded data.
-                // This really can be any type of writeable stream.
-                await using FileStream file = new FileStream(tempUpdatePath, FileMode.Create, FileAccess.Write, FileShare.None);
-
-                //TODO: Add cancellation token
-                await Execute.OnUIThreadAsync(async () => { await client.DownloadAsync(tempModInfo.ModDownloadLink, file, progress, CancellationToken.None); });
-
-                file.Close();
-                await file.DisposeAsync();
-
-                ProgressBarIsIndeterminate = true;
-                ProgressStatus = Helper.GetCultureString("UpdateProgress1");
-                DownloadProgressString = string.Empty;
-
-                string tempExtractedModFolderPath = System.IO.Path.Combine(tempPath, "UpdateDownload");
-
-                if (Directory.Exists(tempExtractedModFolderPath))
-                    Directory.Delete(tempExtractedModFolderPath, true);
-
-                await Task.Run(() =>
-                {
-                    ZipFile.ExtractToDirectory(tempUpdatePath, tempExtractedModFolderPath);
-                    return Task.CompletedTask;
-                });
-
-                string tempModDirPath = await Helper.FindFolderWithMpq(tempExtractedModFolderPath);
-                string tempParentDir = Path.GetDirectoryName(tempModDirPath);
-                string modInstallPath = System.IO.Path.Combine(ShellViewModel.BaseModsFolder, tempModInfo.Name);
-
-                string[] userSettings = null;
-
-                if (File.Exists(ShellViewModel.SelectedUserSettingsFilePath))
-                    userSettings = await File.ReadAllLinesAsync(ShellViewModel.SelectedUserSettingsFilePath);
-                else if (File.Exists(ShellViewModel.SelectedUserSettingsFilePath.Replace($"{Settings.Default.SelectedMod}.mpq/", "")))
-                    userSettings = await File.ReadAllLinesAsync(ShellViewModel.SelectedUserSettingsFilePath.Replace($"{Settings.Default.SelectedMod}.mpq/", ""));
-
-                //Delete current Mod folder if it exists
-                if (Directory.Exists(modInstallPath))
-                    Directory.Delete(modInstallPath, true);
-
-                //Clone mod into base mods folder.
-                await Task.Run(async () => { await Helper.CloneDirectory(tempParentDir, modInstallPath); });
-
-                if (userSettings != null)
-                {
-                    File.Create(ShellViewModel.SelectedUserSettingsFilePath).Close();
-                    await File.WriteAllTextAsync(ShellViewModel.SelectedUserSettingsFilePath, string.Join("\n", userSettings));
-                }
-
-                string versionPath = System.IO.Path.Combine(modInstallPath, "version.txt");
-                if (!File.Exists(versionPath))
-                    File.Create(versionPath).Close();
-
-                tempModInfoPath = System.IO.Path.Combine(tempModDirPath, "modinfo.json");
-
-                ModInfo modInfo = await Helper.ParseModInfo(tempModInfoPath);
-
-                if (modInfo != null)
-                    await File.WriteAllTextAsync(versionPath, modInfo.ModVersion);
-                else
-                    MessageBox.Show("Could not parse ModInfo.json!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                File.Delete(tempUpdatePath);
-                Directory.Delete(tempExtractedModFolderPath, true);
-
-                ProgressBarIsIndeterminate = false;
-                DownloadProgress = 100;
-                ProgressStatus = Helper.GetCultureString("UpdateProgressDone");
-                CheckingForUpdates = false;
-
-                await InitializeMods();
-
-                MessageBox.Show(Helper.GetCultureString("UpdateProgressDone"), "Update", MessageBoxButton.OK);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                CheckingForUpdates = false;
-                return;
-            }
-        }
-        else
+        if (tempModInfo == null || SelectedMod == "MyCustomMod")
         {
             MessageBox.Show("Mod Author hasn't added support for auto-updates yet!");
+            SetStatus(null, false);
+            return;
         }
-        CheckingForUpdates = false;
 
+        if (version == tempModInfo.ModVersion)
+        {
+            MessageBox.Show("No updates available.", "Update", MessageBoxButton.OK);
+            SetStatus(null, false);
+            return;
+        }
+
+        MessageBox.Show($"{Helper.GetCultureString("Version1")} {version}\n{Helper.GetCultureString("Version2")} {tempModInfo.ModVersion}",
+                        Resources.ResourceManager.GetString("VersionRdy"), MessageBoxButton.OK);
+
+        if (!await HandleBackup()) return;
+
+        string tempUpdatePath = Path.Combine(tempPath, "Update.zip");
+        SetStatus(Helper.GetCultureString("UpdateBegin"), false);
+
+        if (!await DownloadUpdate(tempModInfo.ModDownloadLink, tempUpdatePath)) return;
+
+        await ApplyUpdate(tempUpdatePath, tempModInfo);
+
+        MessageBox.Show(Helper.GetCultureString("UpdateProgressDone"), "Update", MessageBoxButton.OK);
+        await InitializeMods();
+
+        SetStatus(null, false);
     }
+
+    private void ShowError(string message) =>
+    MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+    private void SetStatus(string message, bool isIndeterminate)
+    {
+        ProgressStatus = message;
+        ProgressBarIsIndeterminate = isIndeterminate;
+        CheckingForUpdates = message != null;
+    }
+
+    private async Task<string> GetCurrentVersion()
+    {
+        if (!File.Exists(ShellViewModel.SelectedModVersionFilePath))
+        {
+            if (ShellViewModel.ModInfo == null)
+            {
+                ShowError("Could not parse ModInfo.json!");
+                return null;
+            }
+            return ShellViewModel.ModInfo.ModVersion;
+        }
+        return await File.ReadAllTextAsync(ShellViewModel.SelectedModVersionFilePath);
+    }
+
+    private async Task<bool> TryDownloadFile(string url, string outputPath)
+    {
+        try
+        {
+            using HttpClient client = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
+            await using var file = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+            await Execute.OnUIThreadAsync(() => client.DownloadAsync(url, file, null, CancellationToken.None));
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex);
+            ShowError(ex.Message);
+            return false;
+        }
+    }
+
+    private async Task<bool> HandleBackup()
+    {
+        if (MessageBox.Show(Helper.GetCultureString("ModUpdateRdy").Replace("\\n", Environment.NewLine), "Backup Option", MessageBoxButton.YesNoCancel) != MessageBoxResult.Yes)
+            return true;
+
+        SetStatus(Helper.GetCultureString("UpdateBackup"), true);
+
+        try
+        {
+            string backupPath = Path.Combine(ShellViewModel.BaseModsFolder,
+                $"{Settings.Default.SelectedMod}(Backup-{ShellViewModel.ModInfo.ModVersion.Replace(".", "-")})");
+
+            if (Directory.Exists(backupPath)) Directory.Delete(backupPath, true);
+            await Helper.CloneDirectory(ShellViewModel.BaseSelectedModFolder, backupPath);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex);
+            ShowError(Helper.GetCultureString("UpdateBackupError"));
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task<bool> DownloadUpdate(string downloadUrl, string outputPath)
+    {
+        try
+        {
+            if (File.Exists(outputPath)) File.Delete(outputPath);
+
+            Progress<double> progress = new Progress<double>(args =>
+            {
+                Execute.OnUIThread(() =>
+                {
+                    if (args == -1)
+                    {
+                        DownloadProgress = 0;
+                        DownloadProgressString = string.Empty;
+                        ProgressBarIsIndeterminate = true;
+                        ProgressStatus = Helper.GetCultureString("UpdateProgressGHSize");
+                    }
+                    else
+                    {
+                        DownloadProgress = Math.Round(args, MidpointRounding.AwayFromZero);
+                        DownloadProgressString = $"{DownloadProgress}%";
+                    }
+                });
+            });
+
+            using HttpClient client = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
+            await using var file = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+            await Execute.OnUIThreadAsync(() => client.DownloadAsync(downloadUrl, file, progress, CancellationToken.None));
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex);
+            ShowError(ex.Message);
+            SetStatus(null, false);
+            return false;
+        }
+    }
+
+    private async Task ApplyUpdate(string zipPath, ModInfo tempModInfo)
+    {
+        string tempPath = Path.GetTempPath();
+        string extractPath = Path.Combine(tempPath, "UpdateDownload");
+
+        if (Directory.Exists(extractPath)) Directory.Delete(extractPath, true);
+        ZipFile.ExtractToDirectory(zipPath, extractPath);
+
+        string modDir = await Helper.FindFolderWithMpq(extractPath);
+        string modInstallPath = Path.Combine(ShellViewModel.BaseModsFolder, tempModInfo.Name);
+        string[] userSettings = await TryLoadUserSettings();
+
+        if (File.Exists(ShellViewModel.SelectedModDataFolder + @"\global\ui\layouts\bankexpansionlayouthd.json"))
+            File.Copy(ShellViewModel.SelectedModDataFolder + @"\global\ui\layouts\bankexpansionlayouthd.json", ShellViewModel.BaseModsFolder + "temp_bankexpansionlayouthd.json", true);
+
+        if (Directory.Exists(modInstallPath)) Directory.Delete(modInstallPath, true);
+        await Helper.CloneDirectory(Path.GetDirectoryName(modDir), modInstallPath);
+
+        if (File.Exists(ShellViewModel.BaseModsFolder + "temp_bankexpansionlayouthd.json"))
+        {
+            File.Copy(ShellViewModel.BaseModsFolder + "temp_bankexpansionlayouthd.json", ShellViewModel.SelectedModDataFolder + @"\global\ui\layouts\bankexpansionlayouthd.json", true);
+            File.Delete(ShellViewModel.BaseModsFolder + "temp_bankexpansionlayouthd.json");
+        }
+           
+
+        if (userSettings != null)
+        {
+            File.WriteAllLines(ShellViewModel.SelectedUserSettingsFilePath, userSettings);
+        }
+
+        string versionPath = Path.Combine(modInstallPath, "version.txt");
+        if (!File.Exists(versionPath)) File.Create(versionPath).Close();
+
+        ModInfo newInfo = await Helper.ParseModInfo(Path.Combine(modDir, "modinfo.json"));
+        if (newInfo != null)
+            await File.WriteAllTextAsync(versionPath, newInfo.ModVersion);
+        else
+            ShowError("Could not parse ModInfo.json!");
+
+        File.Delete(zipPath);
+        Directory.Delete(extractPath, true);
+
+        SetStatus(Helper.GetCultureString("UpdateProgressDone"), false);
+        DownloadProgress = 100;
+    }
+
+    private async Task<string[]> TryLoadUserSettings()
+    {
+        string path = ShellViewModel.SelectedUserSettingsFilePath;
+
+        if (File.Exists(path)) return await File.ReadAllLinesAsync(path);
+
+        string altPath = path.Replace($"{Settings.Default.SelectedMod}.mpq/", "");
+        if (File.Exists(altPath)) return await File.ReadAllLinesAsync(altPath);
+
+        return null;
+    }
+
+
     [UsedImplicitly]
     public async void OnDownloadMod()
     {

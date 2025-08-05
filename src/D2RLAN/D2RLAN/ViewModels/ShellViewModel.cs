@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.3.9";
+    private string appVersion = "1.4.7";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4205,8 +4205,46 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             LauncherHasUpdate = true;
         }
 
+        
+        if (newVersions[2] != CalculateMD5("D2RHUD.dll"))
+        {
+            string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
+            try
+            {
+                File.Delete("D2RHUD.dll");
+                webClient.DownloadFile(hudLink, "D2RHUD.dll");
+                _logger.Error("D2RHUD Out-Of-Date. Downloading latest from Github.");
+            }
+            catch (WebException ex)
+            {
+                _logger.Error(ex.Message);
+                _logger.Error("An error occurred during the download: ");
+                return;
+            }
+        }
+        
+        
+        
+
         File.Delete(@"..\MyVersions_Temp.txt");
     }
+
+    public static string CalculateMD5(string filePath)
+    {
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException("The specified file does not exist.", filePath);
+
+        using (var md5 = MD5.Create())
+        using (var stream = File.OpenRead(filePath))
+        {
+            byte[] hashBytes = md5.ComputeHash(stream);
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in hashBytes)
+                sb.Append(b.ToString("x2"));
+            return sb.ToString();
+        }
+    }
+
     [UsedImplicitly]
     public async void OnUpdateLauncher() //User has decided to update D2RLAN; prep external updater program for update
     {
@@ -4362,7 +4400,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
     #region ---TCP/Memory Functions---
 
-    public async Task ApplyTCPPatch() //Load config and Inject D2RHUD.dll, special rules for RMD
+    public async Task ApplyTCPPatch()
     {
         string configPath = "config.json";
         var config = LoadConfig(configPath);
@@ -4377,44 +4415,68 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         string arguments = UserSettings.CurrentD2RArgs;
 
         if (HomeDrawerViewModel.ImageRNG == 10)
-            arguments = UserSettings.CurrentD2RArgs + " -cheats";
-
-        if (ModInfo.Name == "RMD-MP" && HomeDrawerViewModel.ImageRNG != 10)
+            arguments += " -cheats";
+        else if (ModInfo.Name == "RMD-MP")
             arguments = arguments.Replace(" -cheats", "");
 
         List<string> MSIPath = null;
 
-        if (UserSettings.MSIFix == true)
+        if (UserSettings.MSIFix)
         {
-            //Close MSI Afterburner and Riva Tuner to allow Monster Stats Display to load correctly; restarted after game launch
-            MSIPath = CloseMSIAfterburner("MSIAfterburner"); //Special Function to retrieve MSI path info; don't need others
+            MSIPath = CloseMSIAfterburner("MSIAfterburner");
             CloseRivaTuner("RTSS");
             CloseRivaTuner("RTSSHooksLoader64");
             CloseRivaTuner("EncoderServer");
             await Task.Delay(1000);
         }
 
-        Process process = LaunchProcess(processName, arguments); //Start the game
+        Process process = LaunchProcess(processName, arguments);
 
         if (process != null)
         {
-            InjectDLL(process.Id, "D2RHUD.dll");
-            _logger.Info("D2RHUD.dll has been loaded");
+            // Wait for main module to be ready
+            int waitTime = 0;
+            while (process.MainModule == null && waitTime < 10000)
+            {
+                await Task.Delay(500);
+                process.Refresh();
+                waitTime += 500;
+            }
+
+            if (process.MainModule == null)
+            {
+                _logger.Error("Process main module not available in time.");
+                return;
+            }
+
+            // Inject all DLLs from config
+            if (config.DLLsToLoad != null)
+            {
+                foreach (var dll in config.DLLsToLoad)
+                {
+                    InjectDLL(process.Id, dll);
+                    _logger.Info($"{dll} injection attempted");
+                }
+            }
+
             int skillIndex = await CheckSkillIndexAsync();
             EditMemory(process.Id, config.MemoryConfigs, skillIndex);
             _logger.Info("Memory Editing tasks begun");
 
-            if (UserSettings.MSIFix == true)
+            if (UserSettings.MSIFix && MSIPath != null)
             {
-                foreach (string path in MSIPath)
+                foreach (var path in MSIPath)
                 {
                     await Task.Delay(1000);
-                    Process.Start(path); //Restart MSI Afterburner (which restarts Riva Tuner)
+                    Process.Start(path);
                 }
-            }     
+            }
         }
+
         else
+        {
             _logger.Error("Failed to launch the process.");
+        }
 
         if (debugLogging)
         {
@@ -4424,6 +4486,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         _logger.Info($"\n\n--------------------\nMod Name: {ModInfo.Name}\nGame Path: {GamePath}\nSave Path: {SaveFilesFilePath}\nLaunch Arguments: {UserSettings.CurrentD2RArgs}\n\nAudio Language: {UserSettings.AudioLanguage}\nText Language: {UserSettings.TextLanguage}\nUI Theme: {UserSettings.UiTheme}\nWindow Mode: {UserSettings.WindowMode}\nHDR Fix: {UserSettings.HdrFix}\n\nFont: {UserSettings.Font}\nBackups: {UserSettings.AutoBackups}\nPersonalized Tabs: {UserSettings.PersonalizedStashTabs}\nExpanded Cube: {UserSettings.ExpandedCube}\nExpanded Inventory: {UserSettings.ExpandedInventory}\nExpanded Merc: {UserSettings.ExpandedMerc}\nExpanded Stash: {UserSettings.ExpandedStash}\nBuff Icons: {UserSettings.BuffIcons}\nMonster Display: {UserSettings.MonsterStatsDisplay}\nSkill Icons: {UserSettings.SkillIcons}\nMerc Identifier: {UserSettings.MercIcons}\nItem Levels: {UserSettings.ItemIlvls}\nRune Display: {UserSettings.RuneDisplay}\nHide Helmets: {UserSettings.HideHelmets}\nItem Display: {UserSettings.ItemIcons}\nSuper Telekinesis: {UserSettings.SuperTelekinesis}\nColor Dyes: {UserSettings.ColorDye}\nCinematic Subtitles: {UserSettings.CinematicSubs}\nRuneword Sorting: {UserSettings.RunewordSorting}\nMerged HUD: {UserSettings.HudDesign}\n--------------------");
     }
+
 
     public List<string> CloseMSIAfterburner(string processName) //Used to find path info and close MSI Afterburner
     {
@@ -4498,7 +4561,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             rowCount = lines.Length;
         }
         if (!File.Exists(filePath) && ModInfo.Name == "RMD-MP")
-            rowCount = 718;
+            rowCount = 741;
 
         return rowCount;
     }
@@ -4634,6 +4697,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     public class Config
     {
         public bool MonsterStatsDisplay { get; set; }
+        public List<string> DLLsToLoad { get; set; }
         public List<MemoryConfig> MemoryConfigs { get; set; }
     }
 
@@ -4641,53 +4705,85 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
     #region ---Helper Functions---
 
-    static void InjectDLL(int processId, string dllPath)
+    static void InjectDLL(int processId, string dllPath, int maxRetries = 5, int retryDelay = 1000)
     {
-        IntPtr hProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_WRITE, false, processId);
-
-        if (hProcess == IntPtr.Zero)
+        if (!File.Exists(dllPath))
         {
-            _logger.Error("Failed to open process for DLL injection.");
+            _logger.Error($"DLL file not found: {dllPath}");
             return;
         }
 
-        IntPtr allocMemAddress = VirtualAllocEx(hProcess, IntPtr.Zero, (uint)((dllPath.Length + 1) * Marshal.SizeOf<char>()), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-
-        if (allocMemAddress == IntPtr.Zero)
+        for (int attempt = 1; attempt <= maxRetries; attempt++)
         {
-            _logger.Error("Failed to allocate memory in the target process.");
-            CloseHandle(hProcess);
-            return;
+            try
+            {
+                IntPtr hProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_WRITE, false, processId);
+
+                if (hProcess == IntPtr.Zero)
+                {
+                    _logger.Warn($"Attempt {attempt}: Failed to open process.");
+                    Thread.Sleep(retryDelay);
+                    continue;
+                }
+
+                IntPtr allocMemAddress = VirtualAllocEx(hProcess, IntPtr.Zero,
+                    (uint)((dllPath.Length + 1) * Marshal.SizeOf<char>()), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+
+                if (allocMemAddress == IntPtr.Zero)
+                {
+                    _logger.Warn($"Attempt {attempt}: Failed to allocate memory.");
+                    CloseHandle(hProcess);
+                    Thread.Sleep(retryDelay);
+                    continue;
+                }
+
+                int bytesWritten;
+                if (!WriteProcessMemory(hProcess, allocMemAddress, Encoding.Default.GetBytes(dllPath),
+                    (uint)(dllPath.Length + 1), out bytesWritten))
+                {
+                    _logger.Warn($"Attempt {attempt}: Failed to write to process memory.");
+                    CloseHandle(hProcess);
+                    Thread.Sleep(retryDelay);
+                    continue;
+                }
+
+                IntPtr hKernel32 = GetModuleHandle("kernel32.dll");
+                IntPtr hLoadLibrary = GetProcAddress(hKernel32, "LoadLibraryA");
+
+                if (hLoadLibrary == IntPtr.Zero)
+                {
+                    _logger.Warn($"Attempt {attempt}: Failed to get LoadLibraryA.");
+                    CloseHandle(hProcess);
+                    Thread.Sleep(retryDelay);
+                    continue;
+                }
+
+                IntPtr hThread = CreateRemoteThread(hProcess, IntPtr.Zero, 0, hLoadLibrary, allocMemAddress, 0, out _);
+
+                if (hThread == IntPtr.Zero)
+                {
+                    _logger.Warn($"Attempt {attempt}: Failed to create remote thread.");
+                    CloseHandle(hProcess);
+                    Thread.Sleep(retryDelay);
+                    continue;
+                }
+
+                _logger.Info($"DLL injection successful on attempt {attempt}.");
+                CloseHandle(hThread);
+                CloseHandle(hProcess);
+                return;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Attempt {attempt}: Exception during injection - {ex.Message}");
+            }
+
+            Thread.Sleep(retryDelay);
         }
 
-        int bytesWritten;
-        if (!WriteProcessMemory(hProcess, allocMemAddress, System.Text.Encoding.Default.GetBytes(dllPath), (uint)(dllPath.Length + 1), out bytesWritten))
-        {
-            _logger.Error("Failed to write DLL path to target process.");
-            CloseHandle(hProcess);
-            return;
-        }
-
-        IntPtr hKernel32 = GetModuleHandle("kernel32.dll");
-        IntPtr hLoadLibrary = GetProcAddress(hKernel32, "LoadLibraryA");
-
-        if (hLoadLibrary == IntPtr.Zero)
-        {
-            _logger.Error("Failed to get address of LoadLibraryA.");
-            CloseHandle(hProcess);
-            return;
-        }
-
-        IntPtr hThread = CreateRemoteThread(hProcess, IntPtr.Zero, 0, hLoadLibrary, allocMemAddress, 0, out _);
-
-        if (hThread == IntPtr.Zero)
-            _logger.Error("Failed to create remote thread.");
-        else
-            _logger.Info("DLL injected successfully!");
-
-        CloseHandle(hThread);
-        CloseHandle(hProcess);
+        _logger.Error($"DLL injection failed after {maxRetries} attempts.");
     }
+
     static Config LoadConfig(string configPath)
     {
         try
