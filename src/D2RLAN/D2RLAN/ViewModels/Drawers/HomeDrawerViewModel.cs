@@ -809,6 +809,12 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         string prefixSC = Path.Combine(savePath, "Stash_SC");
         string prefixHC = Path.Combine(savePath, "Stash_HC");
 
+        if (!File.Exists(saveFileSC))
+        {
+            File.WriteAllBytesAsync(saveFileSC, Helper.GetResourceByteArray2("SharedStashSoftCoreV2.d2i"));
+            File.WriteAllBytesAsync(saveFileSC, Helper.GetResourceByteArray2("SharedStashSoftCoreV2.d2i"));
+        }
+
         ProcessStashFile(saveFileSC, prefixSC);
         ProcessStashFile(saveFileHC, prefixHC);
     }

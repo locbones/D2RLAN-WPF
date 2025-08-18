@@ -18,6 +18,9 @@ namespace D2RLAN.ViewModels.Dialogs
         public string ResetSkills { get; set; }
         public string RemoveGroundItems { get; set; }
         public string OpenCubePanel { get; set; }
+        public string TZForwardPanel { get; set; }
+        public string TZBackwardPanel { get; set; }
+        public string TZStatTogglePanel { get; set; }
         public string CustomCommand1 { get; set; }
         public string CustomCommand2 { get; set; }
         public string CustomCommand3 { get; set; }
@@ -56,7 +59,11 @@ namespace D2RLAN.ViewModels.Dialogs
                 return;
 
             var lines = File.ReadAllLines(ConfigPath);
+
+            // Regex for standard commands (key + optional command in quotes)
             var regex = new Regex(@"^(?<name>[\w\s]+):\s(?<key>VK_\w+|NaN)(,\s""(?<command>.*)"")?$");
+
+            // Regex for startup commands
             var startupRegex = new Regex(@"^Startup Commands:\s(?<command>.*)$");
 
             foreach (var line in lines)
@@ -69,6 +76,29 @@ namespace D2RLAN.ViewModels.Dialogs
                     continue;
                 }
 
+                // Special handling for Toggle Stat Adjustments Display
+                if (line.StartsWith("Toggle Stat Adjustments Display:"))
+                {
+                    // Split at the first comma
+                    int commaIndex = line.IndexOf(',');
+                    if (commaIndex > 0)
+                    {
+                        // Extract boolean and key
+                        string beforeComma = line.Substring(0, commaIndex).Trim(); // "Toggle Stat Adjustments Display: true"
+                        string afterComma = line.Substring(commaIndex + 1).Trim(); // "VK_F7"
+
+                        // Extract the boolean value
+                        int colonIndex = beforeComma.IndexOf(':');
+                        string boolText = colonIndex >= 0 ? beforeComma.Substring(colonIndex + 1).Trim() : "false";
+                        bool showStatAdjusts = boolText.Equals("true", StringComparison.OrdinalIgnoreCase);
+
+                        // Store key
+                        TZStatTogglePanel = afterComma;
+                        continue;
+                    }
+                }
+
+                // Standard regex match
                 var match = regex.Match(line);
                 if (match.Success)
                 {
@@ -96,9 +126,6 @@ namespace D2RLAN.ViewModels.Dialogs
                         case "Remove Ground Items":
                             RemoveGroundItems = key == "NaN" ? "NaN" : key;
                             break;
-                        case "Open Cube Panel":
-                            OpenCubePanel = key == "NaN" ? "NaN" : key;
-                            break;
                         case "Custom Command 1":
                             CustomCommand1 = key == "NaN" ? "NaN" : key;
                             CustomCommandC1 = command;
@@ -123,11 +150,22 @@ namespace D2RLAN.ViewModels.Dialogs
                             CustomCommand6 = key == "NaN" ? "NaN" : key;
                             CustomCommandC6 = command;
                             break;
+                        case "Open Cube Panel":
+                            OpenCubePanel = key == "NaN" ? "NaN" : key;
+                            break;
+                        case "Cycle TZ Forward":
+                            TZForwardPanel = key == "NaN" ? "NaN" : key;
+                            break;
+                        case "Cycle TZ Backward":
+                            TZBackwardPanel = key == "NaN" ? "NaN" : key;
+                            break;
                     }
                 }
             }
+
             NotifyOfPropertyChange(string.Empty);
         }
+
 
         #endregion
     }

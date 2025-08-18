@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.4.7";
+    private string appVersion = "1.5.2";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4204,7 +4204,6 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             LauncherUpdateString = $"D2RLAN Update Ready! ({newVersions[0]})";
             LauncherHasUpdate = true;
         }
-
         
         if (newVersions[2] != CalculateMD5("D2RHUD.dll"))
         {
@@ -4222,9 +4221,6 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 return;
             }
         }
-        
-        
-        
 
         File.Delete(@"..\MyVersions_Temp.txt");
     }
@@ -4403,6 +4399,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     public async Task ApplyTCPPatch()
     {
         string configPath = "config.json";
+
+        if (File.Exists(SelectedModDataFolder + "/D2RLAN/config_override.json"))
+            File.Copy(SelectedModDataFolder + "/D2RLAN/config_override.json", "config.json", true);
+
         var config = LoadConfig(configPath);
 
         if (config == null)
@@ -4611,11 +4611,11 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 {
                     foreach (var address in entry.Addresses)
                     {
-                        ProcessAddress(baseAddress, hProcess, address, entry.Length, entry.Values);
+                        ProcessAddress(baseAddress, hProcess, address, entry.Length, entry.Type, entry.Values);
                     }
                 }
                 else if (!string.IsNullOrEmpty(entry.Address))
-                    ProcessAddress(baseAddress, hProcess, entry.Address, entry.Length, entry.Values);
+                    ProcessAddress(baseAddress, hProcess, entry.Address, entry.Length, entry.Type, entry.Values);
             }
             catch (Exception ex)
             {
@@ -4624,29 +4624,30 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         }
 
         //Force-enable cheats for the below "QoL" functions
-        ProcessAddress(baseAddress, hProcess, "1803258", 1, "01"); //Identify All
-        ProcessAddress(baseAddress, hProcess, "18034C8", 1, "01"); //Reset Skills Only
-        ProcessAddress(baseAddress, hProcess, "18034F8", 1, "01"); //Reset Stats Only
-        ProcessAddress(baseAddress, hProcess, "1803588", 1, "01"); //Force Save
-        ProcessAddress(baseAddress, hProcess, "1803888", 1, "01"); //Clear Ground Items
+        ProcessAddress(baseAddress, hProcess, "1803258", 1, "Hex", "01"); //Identify All
+        ProcessAddress(baseAddress, hProcess, "18034C8", 1, "Hex", "01"); //Reset Skills Only
+        ProcessAddress(baseAddress, hProcess, "18034F8", 1, "Hex", "01"); //Reset Stats Only
+        ProcessAddress(baseAddress, hProcess, "1803588", 1, "Hex", "01"); //Force Save
+        ProcessAddress(baseAddress, hProcess, "1803888", 1, "Hex", "01"); //Clear Ground Items
 
         //Memory edits needed to hotfix controller crashing when viewing icons above the retail index range. This may not be all possible edits needed; but no known issues currently.
         if (skillIndex != 369)
         {
-            ProcessAddress(baseAddress, hProcess, "B4CBB", 2, BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "CAEE3", 2, BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "CB7DF", 2, BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));           
-            ProcessAddress(baseAddress, hProcess, "CD2CD", 2, BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "CD642", 2, BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));           
-            ProcessAddress(baseAddress, hProcess, "111ED5", 2, BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));           
-            ProcessAddress(baseAddress, hProcess, "111F39", 2, BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "111F9D", 2, BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "112002", 2, BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", ""));
+            ProcessAddress(baseAddress, hProcess, "B4CBB", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));
+            ProcessAddress(baseAddress, hProcess, "CAEE3", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));
+            ProcessAddress(baseAddress, hProcess, "CB7DF", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));           
+            ProcessAddress(baseAddress, hProcess, "CD2CD", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));
+            ProcessAddress(baseAddress, hProcess, "CD642", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));           
+            ProcessAddress(baseAddress, hProcess, "111ED5", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));           
+            ProcessAddress(baseAddress, hProcess, "111F39", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", ""));
+            ProcessAddress(baseAddress, hProcess, "111F9D", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", ""));
+            ProcessAddress(baseAddress, hProcess, "112002", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", ""));
         }
         CloseHandle(hProcess);
     }
-    static void ProcessAddress(IntPtr baseAddress, IntPtr hProcess, string address, int length, string values) //Process and convert addresses found from user config file
+    static void ProcessAddress(IntPtr baseAddress, IntPtr hProcess, string address, int length, string type, string values)
     {
+        // Convert the address string to a numeric offset
         long offset = Convert.ToInt64(address, 16);
         IntPtr effectiveAddress = IntPtr.Add(baseAddress, (int)offset);
 
@@ -4656,6 +4657,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             Console.WriteLine($"Calculated Effective Address: 0x{effectiveAddress.ToString("X")}");
         }
 
+        // Read current bytes for debugging
         byte[] currentBytes = new byte[length];
         int bytesRead = 0;
 
@@ -4667,31 +4669,57 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         else
             Console.WriteLine($"Failed to read memory at address 0x{effectiveAddress.ToString("X")}");
 
+        // Convert values based on type
         byte[] valueBytes;
+        if (type.Equals("Integer", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!int.TryParse(values, out int intValue))
+            {
+                MessageBox.Show($"Invalid integer value: {values}");
+                return;
+            }
 
-        if (values.Equals("80", StringComparison.OrdinalIgnoreCase))
-            valueBytes = Convert.FromHexString(values);
-        else if (int.TryParse(values, out int intValue))
-            valueBytes = BitConverter.GetBytes(intValue);
+            byte[] tempBytes = BitConverter.GetBytes(intValue);
+            // Only take the number of bytes specified by Length
+            valueBytes = tempBytes.Take(length).ToArray();
+        }
+
+        else if (type.Equals("Hex", StringComparison.OrdinalIgnoreCase))
+        {
+            try
+            {
+                valueBytes = Convert.FromHexString(values.Replace(" ", ""));
+            }
+            catch
+            {
+                MessageBox.Show($"Invalid hex string: {values}");
+                return;
+            }
+        }
         else
-            valueBytes = Convert.FromHexString(values);
+        {
+            MessageBox.Show($"Unknown type: {type}. Expected 'Integer' or 'Hex'.");
+            return;
+        }
 
+        // Write the bytes to memory
         int bytesWritten = 0;
-
         if (WriteProcessMemory(hProcess, effectiveAddress, valueBytes, valueBytes.Length, ref bytesWritten))
         {
             if (debugLogging)
-                Console.WriteLine($"Written values {values} to address 0x{effectiveAddress.ToString("X")}");
+                MessageBox.Show($"Written values {values} (type: {type}) to address 0x{effectiveAddress.ToString("X")}");
         }
         else
-            Console.WriteLine($"Failed to write to address 0x{effectiveAddress.ToString("X")}");
+            MessageBox.Show($"Failed to write to address 0x{effectiveAddress.ToString("X")}");
     }
+
     public class MemoryConfig
     {
         public string Description { get; set; }
         public string Address { get; set; }
         public List<string> Addresses { get; set; }
         public int Length { get; set; }
+        public string Type { get; set; }
         public string Values { get; set; }
     }
     public class Config
@@ -4797,7 +4825,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading config: {ex.Message}");
+            MessageBox.Show($"Error loading config: {ex.Message}");
             return null;
         }
     }

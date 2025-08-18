@@ -134,6 +134,9 @@ namespace D2RLAN.Views.Dialogs
             else if (currentTextBox.Name == "kbBox11") textBoxIndex = 10;
             else if (currentTextBox.Name == "kbBox12") textBoxIndex = 11;
             else if (currentTextBox.Name == "kbBox13") textBoxIndex = 12;
+            else if (currentTextBox.Name == "kbBox14") textBoxIndex = 13;
+            else if (currentTextBox.Name == "kbBox15") textBoxIndex = 14;
+            else if (currentTextBox.Name == "kbBox16") textBoxIndex = 15;
 
             if (textBoxIndex == -1) return;
 
@@ -165,13 +168,14 @@ namespace D2RLAN.Views.Dialogs
                     break;
             }
 
-            if (textBoxIndex <= 5 || textBoxIndex == 12)
+            if (textBoxIndex <= 5 || textBoxIndex == 12 || textBoxIndex == 13 || textBoxIndex == 14)
             {
+                // Standard commands and special-case index 12
                 lines[textBoxIndex] = $"{lines[textBoxIndex].Split(':')[0]}: {virtualKeyCode}";
                 currentTextBox.Text = virtualKeyCode;
                 currentTextBox.SelectionStart = currentTextBox.Text.Length;
             }
-            else // For custom commands (index 6 and above)
+            else if (textBoxIndex != 12 && textBoxIndex != 13 && textBoxIndex != 14 && textBoxIndex != 15) // For custom commands excluding index 12
             {
                 var existingLine = lines[textBoxIndex];
                 var parts = existingLine.Split(new[] { ':' }, 2);
@@ -186,7 +190,23 @@ namespace D2RLAN.Views.Dialogs
                     currentTextBox.Text = virtualKeyCode;
                     currentTextBox.SelectionStart = currentTextBox.Text.Length;
                 }
+                MessageBox.Show(textBoxIndex.ToString());
             }
+            else if (textBoxIndex == 15) // Special case for Toggle Stat Adjustments Display
+            {
+                var existingLine = lines[textBoxIndex];
+                int colonIndex = existingLine.IndexOf(':');
+                if (colonIndex < 0) return;
+                string label = existingLine.Substring(0, colonIndex).Trim();
+                string rest = existingLine.Substring(colonIndex + 1).Trim();
+                int commaIndex = rest.IndexOf(',');
+                if (commaIndex < 0) return;
+                string boolPart = rest.Substring(0, commaIndex).Trim();
+                lines[textBoxIndex] = $"{label}: {boolPart}, {virtualKeyCode}";
+                currentTextBox.Text = $"{virtualKeyCode}";
+                currentTextBox.SelectionStart = currentTextBox.Text.Length;
+            }
+
 
             e.Handled = true;
             File.WriteAllLines(filePath, lines);
