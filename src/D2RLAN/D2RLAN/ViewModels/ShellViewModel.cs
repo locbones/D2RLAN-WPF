@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.5.2";
+    private string appVersion = "1.5.3";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4565,6 +4565,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         return rowCount;
     }
+
     static Process LaunchProcess(string processName, string arguments) //Start the game
     {
         try
@@ -4578,7 +4579,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             };
 
             Process process = Process.Start(startInfo);
-            process.WaitForInputIdle();
+            process.WaitForInputIdle(5000);
             return process;
         }
         catch (Exception ex)
@@ -4732,6 +4733,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     #endregion
 
     #region ---Helper Functions---
+
 
     static void InjectDLL(int processId, string dllPath, int maxRetries = 5, int retryDelay = 1000)
     {

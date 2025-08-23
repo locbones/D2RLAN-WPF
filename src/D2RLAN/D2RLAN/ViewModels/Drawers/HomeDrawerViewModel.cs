@@ -1570,7 +1570,6 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         return null;
     }
 
-
     [UsedImplicitly]
     public async void OnDownloadMod()
     {
@@ -1605,13 +1604,54 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 
         if (MessageBox.Show(createModDesc, Helper.GetCultureString("Create"), MessageBoxButton.YesNo) == MessageBoxResult.Yes)
         {
-            if (!Directory.Exists(System.IO.Path.Combine(ShellViewModel.BaseModsFolder, "MyCustomMod/MyCustomMod.mpq/data/global")))
+            string modBasePath = System.IO.Path.Combine(ShellViewModel.BaseModsFolder, "MyCustomMod/MyCustomMod.mpq");
+            string globalPath = System.IO.Path.Combine(modBasePath, "data/global");
+
+            if (!Directory.Exists(globalPath))
             {
-                Directory.CreateDirectory(System.IO.Path.Combine(ShellViewModel.BaseModsFolder, "MyCustomMod/MyCustomMod.mpq/data/global"));
-                await File.WriteAllBytesAsync(System.IO.Path.Combine(ShellViewModel.BaseModsFolder, "MyCustomMod/MyCustomMod.mpq/modinfo.json"), await Helper.GetResourceByteArray("modinfo_blank.json"));
+                Directory.CreateDirectory(globalPath);
+
+                // Write a blank modinfo.json
+                string modInfoPath = System.IO.Path.Combine(modBasePath, "modinfo.json");
+                await File.WriteAllBytesAsync(modInfoPath, await Helper.GetResourceByteArray("modinfo_blank.json"));
+
+                // Download zip to a temp file
+                string zipUrl = "https://www.dropbox.com/scl/fi/5f6qur522odxkwyrhbi0t/D2RLAN_TCP_Files.zip?rlkey=g6zegauq8ifmp55kavmrcxeix&st=ox96h9ti&dl=1";
+                string tempZipPath = Path.GetTempFileName();
+
+                using (HttpClient client = new HttpClient())
+                {
+                    byte[] zipBytes = await client.GetByteArrayAsync(zipUrl);
+                    await File.WriteAllBytesAsync(tempZipPath, zipBytes);
+                }
+
+                // Extract zip into mod directory
+                using (ZipArchive archive = ZipFile.OpenRead(tempZipPath))
+                {
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                        if (entry.FullName.StartsWith("Mods/TCP/TCP.mpq/data/", StringComparison.OrdinalIgnoreCase))
+                        {
+                            string relativePath = entry.FullName.Substring("Mods/TCP/TCP.mpq/data/".Length + 1);
+
+                            if (string.IsNullOrEmpty(relativePath))
+                                continue; // skip root folder entry
+
+                            string destinationPath = Path.Combine(modBasePath, relativePath);
+                            Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+
+                            if (!entry.FullName.EndsWith("/")) // skip directories
+                                entry.ExtractToFile(destinationPath, overwrite: true);
+                        }
+                    }
+                }
+
+                //Cleanup and Clone Saves from retail
+                File.Delete(tempZipPath);
                 Settings.Default.SelectedMod = "MyCustomMod";
                 Settings.Default.Save();
                 CloneDirectory(System.IO.Path.Combine(GetSavePath(), @"Diablo II Resurrected"), System.IO.Path.Combine(GetSavePath(), @"Diablo II Resurrected\Mods\MyCustomMod"));
+
                 await InitializeMods();
             }
             else
