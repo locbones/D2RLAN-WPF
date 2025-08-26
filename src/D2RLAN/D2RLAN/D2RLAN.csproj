@@ -177,6 +177,7 @@
     <None Remove="Resources\CASC\weapons.txt" />
     <None Remove="Resources\DefaultUserSettings.json" />
     <None Remove="Resources\DefaultUserSettings.txt" />
+    <None Remove="Resources\desecratedzones.json" />
     <None Remove="Resources\Fonts\0.otf" />
     <None Remove="Resources\Fonts\0.png" />
     <None Remove="Resources\Fonts\1.otf" />
@@ -452,6 +453,7 @@
     <EmbeddedResource Include="Resources\CASC\treasureclassex.txt" />
     <EmbeddedResource Include="Resources\CASC\weapons.txt" />
     <EmbeddedResource Include="Resources\DefaultUserSettings.json" />
+    <EmbeddedResource Include="Resources\desecratedzones.json" />
     <EmbeddedResource Include="Resources\Fonts\0.otf" />
     <EmbeddedResource Include="Resources\Fonts\1.otf" />
     <EmbeddedResource Include="Resources\Fonts\1.png" />

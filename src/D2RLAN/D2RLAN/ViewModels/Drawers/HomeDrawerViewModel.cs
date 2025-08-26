@@ -645,7 +645,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         await ApplyCinematicSkip();
         await ShellViewModel.ApplyModSettings();
         GetD2RArgs();
-        StashMigration();
+        await StashMigration();
 
         ShellViewModel.DisableBNetConnection();
 
@@ -801,7 +801,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         }
     }
     
-    public void StashMigration()
+    public async Task StashMigration()
     {
         string savePath = Path.Combine(GetSavePath(), $@"Diablo II Resurrected\Mods\{SelectedMod}");
         string saveFileSC = Path.Combine(savePath, "SharedStashSoftCoreV2.d2i");
@@ -811,8 +811,33 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 
         if (!File.Exists(saveFileSC))
         {
-            File.WriteAllBytesAsync(saveFileSC, Helper.GetResourceByteArray2("SharedStashSoftCoreV2.d2i"));
-            File.WriteAllBytesAsync(saveFileSC, Helper.GetResourceByteArray2("SharedStashSoftCoreV2.d2i"));
+            await File.WriteAllBytesAsync(saveFileSC, Helper.GetResourceByteArray2("SharedStashSoftCoreV2.d2i"));
+            await File.WriteAllBytesAsync(saveFileSC, Helper.GetResourceByteArray2("SharedStashSoftCoreV2.d2i"));
+        }
+
+        //Unlock / create SharedStash
+        int tabsToAdd = 0;
+
+        //Check if stash is unlocked already and unlock if not
+        byte[] data = await File.ReadAllBytesAsync(saveFileSC);
+        string bitString = BitConverter.ToString(data).Replace("-", string.Empty);
+
+        if (Regex.Matches(bitString, "4A4D").Count == 3) //Retail tab count
+        {
+            tabsToAdd = 4;
+            string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
+            await File.WriteAllBytesAsync(saveFileSC, Helper.StringToByteArray(bitString + hexString));
+            _logger.Error("Startup: Stash Tabs Unlocked (156) - Softcore");
+        }
+        //Repeat for the hardcore stash
+        byte[] data2 = await File.ReadAllBytesAsync(saveFileHC); //read file
+        string bitString2 = BitConverter.ToString(data2).Replace("-", string.Empty);
+        if (Regex.Matches(bitString2, "4A4D").Count == 3)
+        {
+            tabsToAdd = 4;
+            string hexString = String.Concat(Enumerable.Repeat(TAB_BYTE_CODE, tabsToAdd));
+            await File.WriteAllBytesAsync(saveFileHC, Helper.StringToByteArray(bitString2 + hexString));
+            _logger.Error("Startup: Stash Tabs Unlocked (156) - Hardcore");
         }
 
         ProcessStashFile(saveFileSC, prefixSC);
@@ -1606,6 +1631,8 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         {
             string modBasePath = System.IO.Path.Combine(ShellViewModel.BaseModsFolder, "MyCustomMod/MyCustomMod.mpq");
             string globalPath = System.IO.Path.Combine(modBasePath, "data/global");
+            string hdglobalPath = System.IO.Path.Combine(modBasePath, "data/hd/global/excel");
+            string layoutPath = System.IO.Path.Combine(modBasePath, "data/global");
 
             if (!Directory.Exists(globalPath))
             {
@@ -1614,6 +1641,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                 // Write a blank modinfo.json
                 string modInfoPath = System.IO.Path.Combine(modBasePath, "modinfo.json");
                 await File.WriteAllBytesAsync(modInfoPath, await Helper.GetResourceByteArray("modinfo_blank.json"));
+                await File.WriteAllBytesAsync(hdglobalPath, await Helper.GetResourceByteArray("desecratedzones.json"));
 
                 // Download zip to a temp file
                 string zipUrl = "https://www.dropbox.com/scl/fi/5f6qur522odxkwyrhbi0t/D2RLAN_TCP_Files.zip?rlkey=g6zegauq8ifmp55kavmrcxeix&st=ox96h9ti&dl=1";

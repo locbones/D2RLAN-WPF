@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.5.3";
+    private string appVersion = "1.5.5";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4205,6 +4205,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             LauncherHasUpdate = true;
         }
         
+        /*
         if (newVersions[2] != CalculateMD5("D2RHUD.dll"))
         {
             string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
@@ -4221,6 +4222,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 return;
             }
         }
+        */
 
         File.Delete(@"..\MyVersions_Temp.txt");
     }
