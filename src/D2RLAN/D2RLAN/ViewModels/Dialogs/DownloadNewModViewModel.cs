@@ -156,105 +156,151 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
 
     private async Task GetAvailableMods()
     {
-        try
+        if (!File.Exists(ShellViewModel.GamePath + "/D2R_Installer.exe"))
         {
-            // Create credentials
-            ServiceAccountCredential serviceAccountCredential = new(new ServiceAccountCredential.Initializer(_serviceAccountEmail)
-            {
-                Scopes = new[] { SheetsService.Scope.Spreadsheets }
-            }.FromPrivateKey(_privateKey));
+            Mods.Clear();
 
-            // Create Google Sheets service
-            SheetsService sheetsService = new SheetsService(new BaseClientService.Initializer
-            {
-                HttpClientInitializer = serviceAccountCredential,
-                ApplicationName = "D2RLaunch"
-            });
+            var tcpEntry = new KeyValuePair<string, string>("TCP Files (Install First)", "https://www.dropbox.com/scl/fi/qbvgssix2s2jrlnq5jxzc/0828_270idx.zip?rlkey=fclmo9v31do993d933s5yifhk&st=lrcsoo1z&dl=1");
+            Mods.Add(tcpEntry);
 
-            // Define spreadsheetId and ranges
-            string spreadsheetId = "1ICm2wxCTrQrgRxPJshj1WPA10-slATymYLm7WYkmkis";
-            string columnDRange = "Sheet1!D10:D";
-            string columnGRange = "Sheet1!G10:G";
-
-            // Fetch values from Google Sheets for column D
-            SpreadsheetsResource.ValuesResource.GetRequest request =
-                sheetsService.Spreadsheets.Values.Get(spreadsheetId, columnDRange);
-
-            ValueRange response = await request.ExecuteAsync();
-            IList<IList<object>> dValues = response.Values;
-
-            // Fetch values from Google Sheets for column G
-            SpreadsheetsResource.ValuesResource.GetRequest request2 =
-                sheetsService.Spreadsheets.Values.Get(spreadsheetId, columnGRange);
-
-            response = await request2.ExecuteAsync();
-            IList<IList<object>> gValues = response.Values;
-
-            if (dValues.Count != gValues.Count)
-            {
-                System.Windows.MessageBox.Show("The number of items in column D does not match the number of items in column G.\nPlease notify an admin.", "Column Mismatch!", MessageBoxButton.OK, MessageBoxImage.Error);
-                _logger.Error("The number of items in column D does not match the number of items in column G.");
-                return;
-            }
-
-            for (int i = 0; i < dValues.Count; i++)
-            {
-                Mods.Add(new KeyValuePair<string, string>(dValues[i][0].ToString(), gValues[i][0].ToString()));
-            }
-
+            // Assign as the first and only selection
+            SelectedMod = tcpEntry;
+            return;
         }
-        catch (Exception ex)
+        else
         {
-            System.Windows.MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            _logger.Error(ex);
+            try
+            {
+                // Create credentials
+                ServiceAccountCredential serviceAccountCredential = new(new ServiceAccountCredential.Initializer(_serviceAccountEmail)
+                {
+                    Scopes = new[] { SheetsService.Scope.Spreadsheets }
+                }.FromPrivateKey(_privateKey));
+
+                // Create Google Sheets service
+                SheetsService sheetsService = new SheetsService(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = serviceAccountCredential,
+                    ApplicationName = "D2RLaunch"
+                });
+
+                // Define spreadsheetId and ranges
+                string spreadsheetId = "1ICm2wxCTrQrgRxPJshj1WPA10-slATymYLm7WYkmkis";
+                string columnDRange = "Sheet1!D10:D";
+                string columnGRange = "Sheet1!G10:G";
+
+                // Fetch values from Google Sheets for column D
+                SpreadsheetsResource.ValuesResource.GetRequest request =
+                    sheetsService.Spreadsheets.Values.Get(spreadsheetId, columnDRange);
+
+                ValueRange response = await request.ExecuteAsync();
+                IList<IList<object>> dValues = response.Values;
+
+                // Fetch values from Google Sheets for column G
+                SpreadsheetsResource.ValuesResource.GetRequest request2 =
+                    sheetsService.Spreadsheets.Values.Get(spreadsheetId, columnGRange);
+
+                response = await request2.ExecuteAsync();
+                IList<IList<object>> gValues = response.Values;
+
+                if (dValues.Count != gValues.Count)
+                {
+                    System.Windows.MessageBox.Show(
+                        "The number of items in column D does not match the number of items in column G.\nPlease notify an admin.",
+                        "Column Mismatch!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    _logger.Error("The number of items in column D does not match the number of items in column G.");
+                    return;
+                }
+
+                Mods.Clear();
+                for (int i = 0; i < dValues.Count; i++)
+                {
+                    Mods.Add(new KeyValuePair<string, string>(
+                        dValues[i][0].ToString(),
+                        gValues[i][0].ToString()));
+                }
+
+                // Automatically assign first entry to SelectedMod
+                if (Mods.Count > 0)
+                    SelectedMod = Mods[0];
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _logger.Error(ex);
+            }
         }
     }
+
     [UsedImplicitly]
     public async void OnInstallMod()
     {
-        ModDownloadLink = ModDownloadLink.TrimEnd();
+        if (SelectedMod.Key != "TCP Files (Install First)")
+            ModDownloadLink = ModDownloadLink.TrimEnd();
+
         string tempPath = Path.GetTempPath();
         string tempFile = Path.Combine(tempPath, "NewModDownload.zip");
         string tempExtractedModFolderPath = Path.Combine(tempPath, "NewModDownload");
         SevenZipExtractor.SetLibraryPath("7z.dll");
 
-        if (tempFile.Contains(".zip"))
-            tempFile = "NewModDownload.7z";
+      //  if (tempFile.Contains(".zip"))
+           // tempFile = "NewModDownload.7z";
 
         try
         {
-            Progress<double> progress = new Progress<double>();
-
-            progress.ProgressChanged += (sender, args) =>
-            {
-                Execute.OnUIThread(() =>
-                {
-                    if (args == -1)
-                    {
-                        DownloadProgress = 0;
-                        DownloadProgressString = string.Empty;
-                        ProgressBarIsIndeterminate = true;
-                    }
-                    else
-                    {
-                        DownloadProgress = Math.Round(args, MidpointRounding.AwayFromZero);
-                        DownloadProgressString = $"{DownloadProgress}%";
-                    }
-                });
-            };
-
             using HttpClient client = new HttpClient();
-            client.Timeout = TimeSpan.FromMinutes(5);
-            await using FileStream file = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+            client.Timeout = TimeSpan.FromMinutes(30);
+
+            // Get file size from headers
+            var response = await client.GetAsync(SelectedMod.Value, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var contentLength = response.Content.Headers.ContentLength ?? -1L;
+
+            await using var httpStream = await response.Content.ReadAsStreamAsync();
+            await using var file = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+
+            byte[] buffer = new byte[81920];
+            long totalRead = 0;
+            int read;
+            var sw = Stopwatch.StartNew();
+
+            ProgressBarIsIndeterminate = false;
             ProgressStatus = "Downloading mod...";
 
-            await Execute.OnUIThreadAsync(async () =>
+            while ((read = await httpStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
-                await client.DownloadAsync(ModDownloadLink, file, progress, CancellationToken.None);
-            });
+                await file.WriteAsync(buffer, 0, read);
+                totalRead += read;
+
+                if (contentLength > 0)
+                {
+                    double progress = (double)totalRead / contentLength * 100.0;
+
+                    // Speed (bytes/sec)
+                    double speed = totalRead / sw.Elapsed.TotalSeconds;
+                    string speedStr = $"{speed / 1024d / 1024d:0.00} MB/s";
+
+                    // Time remaining
+                    double remainingSeconds = (contentLength - totalRead) / speed;
+                    string timeRemaining = remainingSeconds > 0
+                        ? $"{TimeSpan.FromSeconds(remainingSeconds):mm\\:ss}"
+                        : "--:--";
+
+                    // Update UI
+                    Execute.OnUIThread(() =>
+                    {
+                        DownloadProgress = Math.Round(progress, MidpointRounding.AwayFromZero);
+                        DownloadProgressString =
+                            $"{DownloadProgress}%  " +
+                            $"({totalRead / 1024d / 1024d:0} / {contentLength / 1024d / 1024d:0} MB)  " +
+                            $"{speedStr}  ETA: {timeRemaining}";
+                    });
+                }
+            }
 
             file.Close();
             client.Dispose();
+            sw.Stop();
 
             ProgressStatus = "Extracting mod...";
             DownloadProgressString = string.Empty;
@@ -364,13 +410,7 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                 File.Delete(ShellViewModel.BaseModsFolder + "temp_bankexpansionlayouthd.json");
             }
 
-            if (modName == "TCP")
-            {
-                MessageBox.Show($"Base Files have been downloaded!\nGame Installer will launch in a few seconds...", "Mod Installed!", MessageBoxButton.OK, MessageBoxImage.None);
-                Process.Start(ShellViewModel.GamePath + "/D2R_Installer.exe");
-            }
-            else
-                MessageBox.Show($"{modName} has been installed!", "Mod Installed!", MessageBoxButton.OK, MessageBoxImage.None);
+            MessageBox.Show($"{modName} has been installed!", "Mod Installed!", MessageBoxButton.OK, MessageBoxImage.None);
 
 
             //We installed a custom mod from a direct link. 
@@ -397,7 +437,11 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
     public async void OnModInstallSelectionChanged()
     {
         if (!string.IsNullOrEmpty(SelectedMod.Value))
-            ModDownloadLink = SelectedMod.Value;
+        {
+            if (SelectedMod.Key != "TCP Files (Install First)")
+                ModDownloadLink = SelectedMod.Value;
+        }
+            
     }
     void CleanupTempFiles(string filePath, string dirPath)
     {

@@ -10,7 +10,7 @@
     Title="{Binding Title}"
     Width="900"
     Height="700"
-    MinWidth="900"
+    MinWidth="1000"
     d:DataContext="{d:DesignInstance Type=viewModels:ShellViewModel,
                                      IsDesignTimeCreatable=True}"
     d:DesignHeight="800"

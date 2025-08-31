@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -12,7 +13,9 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using D2RLAN.Models;
 using D2RLAN.ViewModels.Drawers;
+using D2RLAN.Views.Drawers;
 using Microsoft.Win32;
+using Syncfusion.UI.Xaml.NavigationDrawer;
 
 namespace D2RLAN.ViewModels.Dialogs
 {
@@ -24,6 +27,7 @@ namespace D2RLAN.ViewModels.Dialogs
         public string Description { get; set; }
         public string FilePath { get; set; }
     }
+
 
 public static class LuaFilterParser
 {
@@ -76,19 +80,7 @@ public static class LuaFilterParser
                 {
                     _selectedFilter = value;
 
-                    try
-                    {
-                        if (!string.IsNullOrWhiteSpace(_selectedFilter?.FilePath) && File.Exists(_selectedFilter?.FilePath))
-                        {
-                            string destinationPath = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
-                            File.Copy(_selectedFilter?.FilePath, destinationPath, true);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Failed to apply selected filter:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-
+                    // Only notify bindings, don't apply yet
                     NotifyOfPropertyChange(() => SelectedFilter);
                     NotifyOfPropertyChange(() => SelectedFilterTitle);
                     NotifyOfPropertyChange(() => SelectedFilterType);
@@ -114,6 +106,20 @@ public static class LuaFilterParser
                     ShellViewModel.UserSettings.LootFilter = value;
                     NotifyOfPropertyChange(() => SelectedFilterIndex);
                     SaveSettingsAsync();
+                }
+            }
+        }
+
+        private string _lootFilterVersion;
+        public string LootFilterVersion
+        {
+            get => _lootFilterVersion;
+            set
+            {
+                if (_lootFilterVersion != value)
+                {
+                    _lootFilterVersion = value;
+                    NotifyOfPropertyChange(() => LootFilterVersion);
                 }
             }
         }
@@ -162,6 +168,7 @@ public static class LuaFilterParser
             string guideUrl = "https://drive.google.com/uc?export=download&id=1Rtypc8FRRn14rNtTpeXGEEYXaUoiV5lb";
 
             string remoteVersion = "0.0.0";
+            string currentVersion = null;
             bool shouldReplace = true;
 
             string tempLootFilterPath = Path.GetTempFileName();
@@ -170,6 +177,7 @@ public static class LuaFilterParser
 
             try
             {
+                // --- Get remote version ---
                 await DownloadFileAsync(client, remoteLootFilterUrl, tempLootFilterPath);
 
                 var tempVersionLine = File.ReadLines(tempLootFilterPath)
@@ -178,11 +186,10 @@ public static class LuaFilterParser
                 {
                     var match = Regex.Match(tempVersionLine, @"local\s+version\s*=\s*""([^""]+)""");
                     if (match.Success)
-                    {
                         remoteVersion = match.Groups[1].Value;
-                    }
                 }
 
+                // --- Get local version (if exists) ---
                 if (File.Exists(lootFilterPath))
                 {
                     var currentVersionLine = File.ReadLines(lootFilterPath)
@@ -192,17 +199,24 @@ public static class LuaFilterParser
                         var match = Regex.Match(currentVersionLine, @"local\s+version\s*=\s*""([^""]+)""");
                         if (match.Success)
                         {
-                            string currentVersion = match.Groups[1].Value;
+                            currentVersion = match.Groups[1].Value;
                             if (currentVersion == remoteVersion)
                                 shouldReplace = false;
                         }
                     }
                 }
-            }
 
+                // --- Update label binding ---
+                if (currentVersion != null)
+                    LootFilterVersion = currentVersion;
+                else
+                    LootFilterVersion = "N/A";
+            }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to check remote loot filter version:\n{ex.Message}", "Version Check Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                LootFilterVersion = "Loot Filter version check failed";
+                MessageBox.Show($"Failed to check remote loot filter version:\n{ex.Message}", "Version Check Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             if (!File.Exists(configBlankPath))
@@ -219,10 +233,14 @@ public static class LuaFilterParser
                     await DownloadFileAsync(client, guideUrl, guidePath);
 
                     await File.WriteAllBytesAsync(configBlankPath, Helper.GetResourceByteArray2("lootfilter_config_blank.lua"));
+
+                    // since we replaced, update LootFilterVersion
+                    LootFilterVersion = remoteVersion;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Failed to download one or more loot filter files:\n{ex.Message}", "Download Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Failed to download one or more loot filter files:\n{ex.Message}", "Download Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -253,6 +271,7 @@ public static class LuaFilterParser
             }
             catch { }
         }
+
 
 
         private async Task DownloadFileAsync(HttpClient client, string url, string destinationPath)
@@ -344,6 +363,51 @@ public static class LuaFilterParser
                 }
 
                 MessageBox.Show($"The specified loot filter:\n{selectedFilePath}\nhas been loaded!", "Filter Loaded", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        public void OnApplyFilter()
+        {
+            if (SelectedFilter == null)
+            {
+                MessageBox.Show("Please select a filter before applying.", "No Filter Selected",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(SelectedFilter.FilePath) && File.Exists(SelectedFilter.FilePath))
+                {
+                    string destinationPath = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
+                    File.Copy(SelectedFilter.FilePath, destinationPath, true);
+
+                    MessageBox.Show($"\"{SelectedFilter.Title}\" has been applied!",
+                        "Filter Applied", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to apply selected filter:\n" + ex.Message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        public void OnOpenFilter()
+        {
+            var path = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
+
+            if (File.Exists(path))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    Arguments = path,
+                    FileName = "explorer.exe"
+                };
+                Process.Start(startInfo);
+            }
+            else
+            {
+                MessageBox.Show($"{ShellViewModel.SelectedModDataFolder} Directory does not exist!");
             }
         }
 

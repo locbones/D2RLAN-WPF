@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Net;
 using System.Text;
+using MySqlX.XDevAPI;
 
 namespace D2RLAN.ViewModels.Drawers;
 
@@ -638,6 +639,29 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             }
         }
 
+        if (!File.Exists("../D2R/lootfilter.lua"))
+        {
+            string remoteLootFilterUrl = "https://drive.google.com/uc?export=download&id=157sEJn8LSpNWwlwuEnrSPo23UULzJmNs";
+            string guideUrl = "https://drive.google.com/uc?export=download&id=1Rtypc8FRRn14rNtTpeXGEEYXaUoiV5lb";
+            using var client = new HttpClient();
+
+            try
+            {
+                // --- Get Loot Filter ---
+                await DownloadFileAsync(client, remoteLootFilterUrl, "../D2R/lootfilter.lua");
+                await DownloadFileAsync(client, guideUrl, "../D2R/lootfilter_guide.pdf");
+
+                if (File.Exists(ShellViewModel.SelectedModDataFolder + "/D2RLAN/Filters/lootfilter_default.lua"))
+                    File.Copy(ShellViewModel.SelectedModDataFolder + "/D2RLAN/Filters/lootfilter_default.lua", "../D2R/lootfilter_config.lua");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to download one or more loot filter files:\n{ex.Message}", "Download Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+        }
+
         if (ShellViewModel.ModInfo == null)
             return;
 
@@ -656,6 +680,13 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             await File.WriteAllBytesAsync(ShellViewModel.GamePath + "/Exocet.otf", font);
         }
     }
+
+    private async Task DownloadFileAsync(HttpClient client, string url, string destinationPath)
+    {
+        var bytes = await client.GetByteArrayAsync(url);
+        await File.WriteAllBytesAsync(destinationPath, bytes);
+    }
+
     public string GetD2RArgs()
     {
         string args = string.Empty;

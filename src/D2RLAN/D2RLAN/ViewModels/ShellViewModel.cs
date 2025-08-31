@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.5.5";
+    private string appVersion = "1.5.9";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -3877,6 +3877,13 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         _logger.Info("BackupAllStashFiles: Starting backup process.");
 
+        // If the zip file already exists, skip the backup
+        if (File.Exists(zipFilePath))
+        {
+            _logger.Warn($"Backup skipped: Zip file already exists: {Path.GetFileName(zipFilePath)}");
+            return;
+        }
+
         Directory.CreateDirectory(tempSCFolder);
         Directory.CreateDirectory(tempHCFolder);
         Directory.CreateDirectory(stashBackupFolder);
@@ -3907,6 +3914,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         _logger.Info($"Auto Backups: Created zip archive {Path.GetFileName(zipFilePath)} with all stash files.");
     }
+
 
 
     public string GetSavePath()
@@ -4205,7 +4213,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             LauncherHasUpdate = true;
         }
         
-        /*
+        
         if (newVersions[2] != CalculateMD5("D2RHUD.dll"))
         {
             string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
@@ -4222,7 +4230,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 return;
             }
         }
-        */
+        
 
         File.Delete(@"..\MyVersions_Temp.txt");
     }

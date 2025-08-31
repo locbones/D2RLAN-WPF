@@ -26,6 +26,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <!-- Row for Save Button -->
             </Grid.RowDefinitions>
 
@@ -33,16 +35,55 @@
             <Label Grid.Row="0" Foreground="Goldenrod" Style="{StaticResource LabelNormalStyle}" Content="Currently Active Filter:" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,0" />
             <ComboBox Grid.Row="1" Width="240" ItemsSource="{Binding FilterList}" SelectedItem="{Binding SelectedFilter, Mode=TwoWay}" SelectedIndex="{Binding SelectedFilterIndex, Mode=TwoWay}" DisplayMemberPath="Title" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" />
 
-            <syncfusion:ButtonAdv
-                Grid.Row="2" Grid.Column="0" cm:Message.Attach="[Event Click] = [Action OnLoadFilter];" Background="#FF142138" IconTemplate="{StaticResource AdditionIconTemplate}" Label="Load New Filter" Style="{StaticResource SfButtonAdvNormalStyle}" Height="30" MinHeight="30" HorizontalAlignment="Center" />
+
+
 
             <!-- Labels and TextBoxes for Hotkeys -->
-            <Label Grid.Row="3" Foreground="CornflowerBlue" Content="{Binding SelectedFilterTitle}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontSize="16" />
-            <Label Grid.Row="4" Foreground="Green" Content="{Binding SelectedFilterType}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10,0,0" FontSize="16" />
-            <Rectangle Grid.Row="6" HorizontalAlignment="Center" Height="166" Stroke="WhiteSmoke" VerticalAlignment="Center" Width="500"/>
-            <ScrollViewer Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" Height="156" Width="490" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Label Grid.Row="2" Foreground="CornflowerBlue" Content="{Binding SelectedFilterTitle}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontSize="16" />
+            <Label Grid.Row="3" Foreground="Green" Content="{Binding SelectedFilterType}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10,0,0" FontSize="16" />
+            <Rectangle Grid.Row="4" HorizontalAlignment="Center" Height="166" Stroke="WhiteSmoke" VerticalAlignment="Center" Width="500" />
+            <ScrollViewer Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Height="156" Width="490" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <TextBlock Text="{Binding SelectedFilterDescription}" TextWrapping="Wrap" Foreground="White" FontSize="14" Padding="5"/>
             </ScrollViewer>
+
+            <Grid Grid.Row="5" Margin="30,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140" />
+                    <ColumnDefinition Width="230" />
+                    <ColumnDefinition Width="140" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="30" MinHeight="30" Width="210" TextAlignment="Center">
+                    <Run Text="Logic Version: " Foreground="Goldenrod" FontSize="16"/>
+                    <Run Text="{Binding LootFilterVersion}" Foreground="Gray" FontSize="16"/>
+                </TextBlock>
+
+                <syncfusion:ButtonAdv Grid.Column="0" cm:Message.Attach="[Event Click] = [Action OnApplyFilter];" Background="#FF14381D" IconTemplate="{StaticResource AdditionIconTemplate}" Label="Apply Filter" Style="{StaticResource SfButtonAdvNormalStyle}" Height="30" MinHeight="30" Margin="10,0,0,0" />
+                <syncfusion:ButtonAdv Grid.Column="2" cm:Message.Attach="[Event Click] = [Action OnLoadFilter];" Background="#FF142138" IconTemplate="{StaticResource AdditionIconTemplate}" Label="Load Filter" Style="{StaticResource SfButtonAdvNormalStyle}" Height="30" MinHeight="30" Margin="10,0,0,0" />
+            </Grid>
+
+
+            <Button Grid.Row="7"
+        Width="160"
+        Height="40"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="Transparent"
+        BorderBrush="Transparent"
+        Cursor="Hand"
+        cm:Message.Attach="[Event Click] = [Action OnOpenFilter]">
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Image Source="pack://application:,,,/Resources/Icons/Icon_Files.png"
+               Width="20" Height="20" Margin="0,0,5,0"/>
+                    <TextBlock Text="Open Filter"
+                   Foreground="CornflowerBlue"
+                   VerticalAlignment="Center"
+                   FontSize="14"/>
+                </StackPanel>
+            </Button>
+
+
+
 
 
         </Grid>
