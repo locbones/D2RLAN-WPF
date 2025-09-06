@@ -33,6 +33,8 @@ using System.Runtime.InteropServices;
 using System.Net;
 using System.Text;
 using MySqlX.XDevAPI;
+using System.Drawing;
+using System.Windows.Media;
 
 namespace D2RLAN.ViewModels.Drawers;
 
@@ -665,20 +667,27 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         if (ShellViewModel.ModInfo == null)
             return;
 
+        
+
         await ApplyHdrFix();
         await ApplyCinematicSkip();
-        await ShellViewModel.ApplyModSettings();
-        GetD2RArgs();
+        await ShellViewModel.ApplyModSettings();     
+        GetD2RArgs();     
         await StashMigration();
-
         ShellViewModel.DisableBNetConnection();
 
         //Add Exocet Font to D2R base Folder for Monster Stat Display (mod agnostic)
-        if (!File.Exists(ShellViewModel.GamePath + "/Exocet.otf"))
+        if (!File.Exists(ShellViewModel.GamePath + "Exocet.otf"))
         {
             byte[] font = await Helper.GetResourceByteArray($"Fonts.0.otf");
-            await File.WriteAllBytesAsync(ShellViewModel.GamePath + "/Exocet.otf", font);
+            await File.WriteAllBytesAsync(ShellViewModel.GamePath + "Exocet.otf", font);
         }
+
+        if (ShellViewModel.UserSettings.TextLanguage == 6)
+            await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/hd/ui/fonts/exocetblizzardot-medium.otf", await Helper.GetResourceByteArray($"Fonts.retail.otf"));
+        else
+            await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/hd/ui/fonts/exocetblizzardot-medium.otf", await Helper.GetResourceByteArray($"Fonts.0.otf"));
+
     }
 
     private async Task DownloadFileAsync(HttpClient client, string url, string destinationPath)
@@ -841,11 +850,10 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         string prefixHC = Path.Combine(savePath, "Stash_HC");
 
         if (!File.Exists(saveFileSC))
-        {
             await File.WriteAllBytesAsync(saveFileSC, Helper.GetResourceByteArray2("SharedStashSoftCoreV2.d2i"));
-            await File.WriteAllBytesAsync(saveFileSC, Helper.GetResourceByteArray2("SharedStashSoftCoreV2.d2i"));
-        }
-
+        if (!File.Exists(saveFileHC))
+            await File.WriteAllBytesAsync(saveFileHC, Helper.GetResourceByteArray2("SharedStashHardCoreV2.d2i"));
+        
         //Unlock / create SharedStash
         int tabsToAdd = 0;
 
@@ -870,12 +878,12 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             await File.WriteAllBytesAsync(saveFileHC, Helper.StringToByteArray(bitString2 + hexString));
             _logger.Error("Startup: Stash Tabs Unlocked (156) - Hardcore");
         }
-
-        ProcessStashFile(saveFileSC, prefixSC);
-        ProcessStashFile(saveFileHC, prefixHC);
+        
+        await ProcessStashFile(saveFileSC, prefixSC);
+        await ProcessStashFile(saveFileHC, prefixHC);
     }
 
-    private void ProcessStashFile(string inputFilePath, string outputFilePrefix)
+    private async Task ProcessStashFile(string inputFilePath, string outputFilePrefix)
     {
         if (!File.Exists(inputFilePath))
             return;

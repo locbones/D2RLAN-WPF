@@ -478,6 +478,9 @@
     <EmbeddedResource Include="Resources\Fonts\9.otf" />
     <EmbeddedResource Include="Resources\Fonts\9.png" />
     <EmbeddedResource Include="Resources\Fonts\0.png" />
+    <EmbeddedResource Include="Resources\Fonts\retail.otf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\lootfilter_config_blank.lua" />
     <EmbeddedResource Include="Resources\Options\MonsterStats\D2RHUD_Config.txt" />
     <EmbeddedResource Include="Resources\Options\MonsterStats\MS_Assets.zip" />
