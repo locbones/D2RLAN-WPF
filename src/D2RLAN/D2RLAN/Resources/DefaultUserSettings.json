@@ -15,5 +15,8 @@
   "HideHelmets": 0,
   "PersonalizedTabs": 0,
   "HdrFix": true,
-  "SkillIcons": 0
+  "SkillIcons": 0,
+  "DataHash": "",
+  "DataHashPass": false
+
 }

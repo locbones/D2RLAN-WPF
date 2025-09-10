@@ -56,6 +56,8 @@ public class UserSettings : INotifyPropertyChanged
     private bool _skipCinematics;
     private int _shortenedLevels;
     private int _lootFilter;
+    private string _dataHash;
+    private bool _dataHashPass;
 
     #endregion
 
@@ -661,6 +663,31 @@ public class UserSettings : INotifyPropertyChanged
                 return;
             }
             _lootFilter = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string DataHash
+    {
+        get => _dataHash;
+        set
+        {
+            if (value == _dataHash) return;
+            _dataHash = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool DataHashPass
+    {
+        get => _dataHashPass;
+        set
+        {
+            if (value == _dataHashPass)
+            {
+                return;
+            }
+            _dataHashPass = value;
             OnPropertyChanged();
         }
     }

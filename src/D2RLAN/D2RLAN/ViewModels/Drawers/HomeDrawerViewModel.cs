@@ -35,6 +35,7 @@ using System.Text;
 using MySqlX.XDevAPI;
 using System.Drawing;
 using System.Windows.Media;
+using System.Security.Cryptography;
 
 namespace D2RLAN.ViewModels.Drawers;
 
@@ -624,71 +625,127 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     [UsedImplicitly]
     public async Task OnPlayModAsync()
     {
-        if (!File.Exists("D2RHUD.dll"))
+        try
         {
-            WebClient webClient = new();
+            // --- Ensure D2RHUD.dll exists ---
+            if (!File.Exists("D2RHUD.dll"))
+            {
+                string hudUrl = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
+                using var client = new HttpClient();
 
-            string primaryLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
-            try
-            {
-                webClient.DownloadFile(primaryLink, @"D2RHUD.dll");
+                try
+                {
+                    _logger.Info("D2RHUD.dll not found. Downloading latest version...");
+                    await DownloadFileAsync(client, hudUrl, "D2RHUD.dll");
+                    _logger.Info("D2RHUD.dll downloaded successfully.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Failed to download D2RHUD.dll: {ex.Message}");
+                    MessageBox.Show("Could not download D2RHUD.dll. Please check your connection and try again.",
+                        "Download Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
             }
-            catch (WebException ex)
+
+            // --- Ensure lootfilter.lua exists ---
+            if (!File.Exists($@"{ShellViewModel.GamePath}lootfilter.lua") || !File.Exists($@"{ShellViewModel.GamePath}lootfilter_config.lua"))
             {
-                _logger.Error(ex.Message);
-                _logger.Error("An error occurred during the download: ");
+                string lootFilterUrl = "https://drive.google.com/uc?export=download&id=157sEJn8LSpNWwlwuEnrSPo23UULzJmNs";
+                string guideUrl = "https://drive.google.com/uc?export=download&id=1Rtypc8FRRn14rNtTpeXGEEYXaUoiV5lb";
+                using var client = new HttpClient();
+
+                try
+                {
+                    _logger.Info("Loot filter not found. Downloading required files...");
+
+                    // Download core files into game folder
+                    await DownloadFileAsync(client, lootFilterUrl, $@"{ShellViewModel.GamePath}lootfilter.lua");
+                    await DownloadFileAsync(client, guideUrl, $@"{ShellViewModel.GamePath}lootfilter_guide.pdf");
+                    await File.WriteAllBytesAsync($@"{ShellViewModel.GamePath}lootfilter_config.lua", Helper.GetResourceByteArray2("lootfilter_config_blank.lua"));
+
+                    // Ensure required mod directories exist
+                    string filtersDir = Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN", "Filters");
+                    Directory.CreateDirectory(filtersDir);
+
+                    // Copy default filter if available
+                    string defaultFilter = Path.Combine(filtersDir, "lootfilter_default.lua");
+                    if (File.Exists(defaultFilter))
+                    {
+                        File.Copy(defaultFilter, $@"{ShellViewModel.GamePath}lootfilter_config.lua", overwrite: true);
+                        _logger.Info("Default loot filter config copied.");
+                    }
+
+                    _logger.Info("Loot filter files downloaded successfully.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Failed to download loot filter files: {ex.Message}");
+                    MessageBox.Show($"Failed to download one or more loot filter files:\n{ex.Message}", "Download Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
+
+            // --- Ensure ModInfo is available ---
+            if (ShellViewModel.ModInfo == null)
+            {
+                _logger.Warn("ModInfo is null. Aborting OnPlayModAsync.");
                 return;
             }
-        }
 
-        if (!File.Exists("../D2R/lootfilter.lua"))
-        {
-            string remoteLootFilterUrl = "https://drive.google.com/uc?export=download&id=157sEJn8LSpNWwlwuEnrSPo23UULzJmNs";
-            string guideUrl = "https://drive.google.com/uc?export=download&id=1Rtypc8FRRn14rNtTpeXGEEYXaUoiV5lb";
-            using var client = new HttpClient();
-
+            // --- Apply Mod Fixes and Settings ---
             try
             {
-                // --- Get Loot Filter ---
-                await DownloadFileAsync(client, remoteLootFilterUrl, "../D2R/lootfilter.lua");
-                await DownloadFileAsync(client, guideUrl, "../D2R/lootfilter_guide.pdf");
-
-                if (File.Exists(ShellViewModel.SelectedModDataFolder + "/D2RLAN/Filters/lootfilter_default.lua"))
-                    File.Copy(ShellViewModel.SelectedModDataFolder + "/D2RLAN/Filters/lootfilter_default.lua", "../D2R/lootfilter_config.lua");
+                await ApplyHdrFix();
+                await ApplyCinematicSkip();
+                _logger.Info("Applying mod settings...");
+                await ShellViewModel.ApplyModSettings();
+                _logger.Info("Generating D2R launch arguments...");
+                GetD2RArgs();
+                await StashMigration();
+                _logger.Info("Disabling Battle.net connection...");
+                ShellViewModel.DisableBNetConnection();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to download one or more loot filter files:\n{ex.Message}", "Download Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                _logger.Error($"Error applying mod fixes/settings: {ex.Message}");
                 return;
             }
+
+            // --- Install Exocet font ---
+            try
+            {
+                string fontPath = Path.Combine(ShellViewModel.GamePath, "Exocet.otf");
+                if (!File.Exists(fontPath))
+                {
+                    _logger.Info("Installing Exocet.otf font into game folder...");
+                    byte[] font = await Helper.GetResourceByteArray("Fonts.0.otf");
+                    await File.WriteAllBytesAsync(fontPath, font);
+                }
+
+                string targetFontPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "hd/ui/fonts/exocetblizzardot-medium.otf");
+                byte[] fontBytes = ShellViewModel.UserSettings.TextLanguage == 6
+                    ? await Helper.GetResourceByteArray("Fonts.retail.otf")
+                    : await Helper.GetResourceByteArray("Fonts.0.otf");
+
+                await File.WriteAllBytesAsync(targetFontPath, fontBytes);
+                _logger.Info("Localized Exocet font installed successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Failed to install Exocet fonts: {ex.Message}");
+            }
         }
-
-        if (ShellViewModel.ModInfo == null)
-            return;
-
-        
-
-        await ApplyHdrFix();
-        await ApplyCinematicSkip();
-        await ShellViewModel.ApplyModSettings();     
-        GetD2RArgs();     
-        await StashMigration();
-        ShellViewModel.DisableBNetConnection();
-
-        //Add Exocet Font to D2R base Folder for Monster Stat Display (mod agnostic)
-        if (!File.Exists(ShellViewModel.GamePath + "Exocet.otf"))
+        catch (Exception ex)
         {
-            byte[] font = await Helper.GetResourceByteArray($"Fonts.0.otf");
-            await File.WriteAllBytesAsync(ShellViewModel.GamePath + "Exocet.otf", font);
+            _logger.Error($"Unexpected error in OnPlayModAsync: {ex.Message}");
+            MessageBox.Show($"An unexpected error occurred:\n{ex.Message}", "Error",
+                MessageBoxButton.OK, MessageBoxImage.Error);
         }
-
-        if (ShellViewModel.UserSettings.TextLanguage == 6)
-            await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/hd/ui/fonts/exocetblizzardot-medium.otf", await Helper.GetResourceByteArray($"Fonts.retail.otf"));
-        else
-            await File.WriteAllBytesAsync(ShellViewModel.SelectedModDataFolder + "/hd/ui/fonts/exocetblizzardot-medium.otf", await Helper.GetResourceByteArray($"Fonts.0.otf"));
-
     }
+
 
     private async Task DownloadFileAsync(HttpClient client, string url, string destinationPath)
     {
@@ -768,6 +825,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                 return "";
         }
     }
+
     private void ExtendDiabloWindowToFullScreen()
     {
         Process[] processes = Process.GetProcesses();
@@ -1417,6 +1475,11 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             ShowError("Please select a mod first.");
             return;
         }
+        if (Settings.Default.SelectedMod == "TCP" || Settings.Default.SelectedMod == "MyCustomMod")
+        {
+            ShowError("This mod is user-controlled and does not update.");
+            return;
+        }
 
         SetStatus("Checking for updates...", true);
 
@@ -1699,7 +1762,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                     {
                         if (entry.FullName.StartsWith("Mods/TCP/TCP.mpq/data/", StringComparison.OrdinalIgnoreCase))
                         {
-                            string relativePath = entry.FullName.Substring("Mods/TCP/TCP.mpq/data/".Length + 1);
+                            string relativePath = entry.FullName.Substring("Mods/TCP/TCP.mpq/data/".Length);
 
                             if (string.IsNullOrEmpty(relativePath))
                                 continue; // skip root folder entry

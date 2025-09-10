@@ -48,7 +48,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.6.0";
+    private string appVersion = "1.6.6";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -172,6 +172,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         CultureResources.ChangeCulture(culture);
 
         GamePath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName + @"\D2R\";
+
+        if (!Directory.Exists(GamePath))
+            Directory.CreateDirectory(GamePath);
+
         Settings.Default.InstallPath = GamePath;
         DiabloInstallDetected = true;
 
@@ -1567,155 +1571,51 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 }
         }
     }
-    private async Task ConfigureItemILvls() //Show Item Levels
+    private async Task ConfigureItemILvls()
     {
-        string excelPath = System.IO.Path.Combine(SelectedModDataFolder, "global/excel");
-        string armorTxtPath = System.IO.Path.Combine(excelPath, "armor.txt");
-        string miscTxtPath = System.IO.Path.Combine(excelPath, "misc.txt");
-        string weaponsTxtPath = System.IO.Path.Combine(excelPath, "weapons.txt");
-        string[] files = new string[] { "armor.txt", "misc.txt", "weapons.txt" };
+        string filterFile = $@"{GamePath}lootfilter_config.lua";
+        string filterBlankPath = Path.Combine(Path.Combine(SelectedModDataFolder, @"D2RLAN\Filters"), "lootfilter_config_blank.lua");
+        string filterILvlsOn = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\n            suffix = \" {white}({ilvl})\",";
+        string filterILvlsOn2 = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" {white}({ilvl})\",";
+        string filterILvlsOff = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\n            --Disabled by D2RLAN suffix = \" {white}({ilvl})\",";
+        string filterILvlsNew = "        { --Display item levels for weapons, armors, charms, jewels, rings and amulets in white, to the right of item name, (x)\r\n            codes = \"allitems\",\r\n            location = { \"onground\", \"onplayer\", \"equipped\", \"atvendor\" },\r\n            itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" {white}({ilvl})\",\r\n        },";
 
+        if (!File.Exists(filterFile))
+            await File.WriteAllBytesAsync(filterBlankPath, Helper.GetResourceByteArray2("lootfilter_config_blank.lua"));
 
-        if (ModInfo.Name == "RMD-MP")
+        string luaText = await File.ReadAllTextAsync(filterFile);
+
+        if (UserSettings.ItemIlvls == 1) // Remove rule
         {
-            armorTxtPath = System.IO.Path.Combine(excelPath, "armor.bin");
-            miscTxtPath = System.IO.Path.Combine(excelPath, "misc.bin");
-            weaponsTxtPath = System.IO.Path.Combine(excelPath, "weapons.bin");
-            files = new string[] { "armor.bin", "misc.bin", "weapons.bin" };
+            if (luaText.Contains(filterILvlsOn) || luaText.Contains(filterILvlsOn2))
+            {
+                luaText = luaText.Replace(filterILvlsOn, filterILvlsOff);
+                luaText = luaText.Replace(filterILvlsOn2, filterILvlsOff);
+            }
         }
-        else
+        else if (UserSettings.ItemIlvls == 2) // Add rule
         {
-            armorTxtPath = System.IO.Path.Combine(excelPath, "armor.txt");
-            miscTxtPath = System.IO.Path.Combine(excelPath, "misc.txt");
-            weaponsTxtPath = System.IO.Path.Combine(excelPath, "weapons.txt");
-            files = new string[] { "armor.txt", "misc.txt", "weapons.txt" };
-        }
-        eEnabledDisabledModify itemLvls = (eEnabledDisabledModify)UserSettings.ItemIlvls;
 
-        switch (itemLvls)
-        {
-            case eEnabledDisabledModify.NoChange:
-                return;
-
-            case eEnabledDisabledModify.Disabled:
+            if (luaText.Contains(filterILvlsOff))
+                luaText = luaText.Replace(filterILvlsOff, filterILvlsOn);
+            else
+            {
+                //Entry doesn't exist yet
+                if (!luaText.Contains("--Display item levels for weapons, armors, charms, jewels, rings and amulets in white, to the right of item name"))
                 {
-                    //search the defined files
-                    foreach (string file in files)
+                    int rulesIndex = luaText.IndexOf("rules = {");
+                    if (rulesIndex != -1)
                     {
-                        if (!Directory.Exists(excelPath))
-                            Directory.CreateDirectory(excelPath);
-
-                        if (ModInfo.Name == "RMD-MP")
-                        {
-                            if (File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "Off", "armor.bin")))
-                                File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "Off", "armor.bin"), System.IO.Path.Combine(SelectedModDataFolder, "global", "excel", "armor.bin"), true);
-
-                            if (File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "Off", "misc.bin")))
-                                File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "Off", "misc.bin"), System.IO.Path.Combine(SelectedModDataFolder, "global", "excel", "misc.bin"), true);
-
-                            if (File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "Off", "weapons.bin")))
-                                File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "Off", "weapons.bin"), System.IO.Path.Combine(SelectedModDataFolder, "global", "excel", "weapons.bin"), true);
-                        }
-                        else
-                        {
-                            if (!File.Exists(armorTxtPath))
-                                await File.WriteAllBytesAsync(armorTxtPath, await Helper.GetResourceByteArray("CASC.armor.txt"));
-                            if (!File.Exists(miscTxtPath))
-                                await File.WriteAllBytesAsync(miscTxtPath, await Helper.GetResourceByteArray("CASC.misc.txt"));
-                            if (!File.Exists(weaponsTxtPath))
-                                await File.WriteAllBytesAsync(weaponsTxtPath, await Helper.GetResourceByteArray("CASC.weapons.txt"));
-
-                            string filePath = System.IO.Path.Combine(excelPath, file);
-
-                            if (!File.Exists(filePath))
-                                continue;
-
-                            string[] lines = await File.ReadAllLinesAsync(filePath);
-
-                            if (lines.Length == 0)
-                                continue;
-
-                            string[] headers = lines[0].Split('\t'); //split by tab-delimited format
-                            int showLevelIndex = Array.IndexOf(headers, "ShowLevel"); //make an array from the 'ShowLevel' entries
-
-                            //search through 'ShowLevel' entries further
-                            for (int i = 1; i < lines.Length; i++)
-                            {
-                                string[] columns = lines[i].Split('\t');
-                                //check if entries match the dropdown index of 0 or 1
-                                if (columns.Length > showLevelIndex && columns[showLevelIndex] != (UserSettings.ItemIlvls - 1).ToString())
-                                {
-
-                                    columns[showLevelIndex] = (UserSettings.ItemIlvls - 1).ToString();
-                                    lines[i] = string.Join("\t", columns); //replace the 0 or 1 values as dropdown indicates
-                                }
-                            }
-                            //We done boys
-                            File.WriteAllLines(filePath, lines);
-                        }
+                        int insertIndex = luaText.IndexOf('{', rulesIndex) + 1;
+                        luaText = luaText.Insert(insertIndex, "\n" + filterILvlsNew);
                     }
-                    break;
                 }
-            case eEnabledDisabledModify.Enabled:
-                {
-                    //search the defined files
-                    foreach (string file in files)
-                    {
-                        if (!Directory.Exists(excelPath))
-                            Directory.CreateDirectory(excelPath);
-
-                        if (ModInfo.Name == "RMD-MP")
-                        {
-                            if (File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "On", "armor.bin")))
-                                File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "On", "armor.bin"), System.IO.Path.Combine(SelectedModDataFolder, "global", "excel", "armor.bin"), true);
-
-                            if (File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "On", "misc.bin")))
-                                File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "On", "misc.bin"), System.IO.Path.Combine(SelectedModDataFolder, "global", "excel", "misc.bin"), true);
-
-                            if (File.Exists(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "On", "weapons.bin")))
-                                File.Copy(System.IO.Path.Combine(SelectedModDataFolder, "D2RLAN", "Show iLvls", "On", "weapons.bin"), System.IO.Path.Combine(SelectedModDataFolder, "global", "excel", "weapons.bin"), true);
-                        }
-                        else
-                        {
-                            if (!File.Exists(armorTxtPath))
-                                await File.WriteAllBytesAsync(armorTxtPath, await Helper.GetResourceByteArray("CASC.armor.txt"));
-                            if (!File.Exists(miscTxtPath))
-                                await File.WriteAllBytesAsync(miscTxtPath, await Helper.GetResourceByteArray("CASC.misc.txt"));
-                            if (!File.Exists(weaponsTxtPath))
-                                await File.WriteAllBytesAsync(weaponsTxtPath, await Helper.GetResourceByteArray("CASC.weapons.txt"));
-
-                            string filePath = System.IO.Path.Combine(excelPath, file);
-
-                            if (!File.Exists(filePath))
-                                continue;
-
-                            string[] lines = await File.ReadAllLinesAsync(filePath);
-
-                            if (lines.Length == 0)
-                                continue;
-
-                            string[] headers = lines[0].Split('\t'); //split by tab-delimited format
-                            int showLevelIndex = Array.IndexOf(headers, "ShowLevel"); //make an array from the 'ShowLevel' entries
-
-                            //search through 'ShowLevel' entries further
-                            for (int i = 1; i < lines.Length; i++)
-                            {
-                                string[] columns = lines[i].Split('\t');
-                                //check if entries match the dropdown index of 0 or 1
-                                if (columns.Length > showLevelIndex && columns[showLevelIndex] != UserSettings.ItemIlvls.ToString())
-                                {
-                                    columns[showLevelIndex] = UserSettings.ItemIlvls.ToString();
-                                    lines[i] = string.Join("\t", columns); //replace the 0 or 1 values as dropdown indicates
-                                }
-                            }
-                            //We done boys
-                            File.WriteAllLines(filePath, lines);
-                        }
-                    }
-                    break;
-                }
+            }  
         }
+
+        await File.WriteAllTextAsync(filterFile, luaText);
     }
+
     private async Task ConfigureMercIcons() //Merc Icons
     {
         eMercIdentifier mercIdentifier = (eMercIdentifier)UserSettings.MercIcons;
@@ -4163,77 +4063,153 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
     #region ---Update Functions---
 
-    private async Task CheckForLauncherUpdates() //Performed after loading to check for D2RLAN upgrades
+    private async Task CheckForLauncherUpdates()
     {
-        WebClient webClient = new();
+        using WebClient webClient = new();
 
-        if (File.Exists(@"..\MyVersions_Temp.txt"))
-            File.Delete(@"..\MyVersions_Temp.txt");
+        string tempFile = @"..\MyVersions_Temp.txt";
+        if (File.Exists(tempFile))
+            File.Delete(tempFile);
 
-        //Download the most recent version info file to compare values
-        if (!File.Exists(@"..\MyVersions_Temp.txt"))
+        string primaryLink = "https://drive.google.com/uc?export=download&id=1c6KaTa4V782rVX0jEa8I5HLxYdrhvl7q";
+        string backupLink = "https://d2filesdrop.s3.us-east-2.amazonaws.com/MyVersions-TCP.txt";
+
+        try
         {
-            string primaryLink = "https://drive.google.com/uc?export=download&id=1c6KaTa4V782rVX0jEa8I5HLxYdrhvl7q";
-            string backupLink = "https://d2filesdrop.s3.us-east-2.amazonaws.com/MyVersions-TCP.txt";
-
-            try
+            webClient.DownloadFile(primaryLink, tempFile);
+        }
+        catch (WebException ex)
+        {
+            if (ex.Response is HttpWebResponse response &&
+                ((int)response.StatusCode == 429 || (int)response.StatusCode == 500))
             {
-                webClient.DownloadFile(primaryLink, @"..\MyVersions_Temp.txt");
-            }
-            catch (WebException ex)
-            {
-                if (ex.Response is HttpWebResponse response && ((int)response.StatusCode == 429 || (int)response.StatusCode == 500))
+                try
                 {
-                    try
-                    {
-                        webClient.DownloadFile(backupLink, @"..\MyVersions_Temp.txt");
-                    }
-                    catch (WebException)
-                    {
-                        _logger.Error("Backup download link for MyVersions_Temp.txt failed.");
-                        return;
-                    }
+                    webClient.DownloadFile(backupLink, tempFile);
                 }
-                else
+                catch (WebException)
                 {
-                    _logger.Error(ex.Message);
-                    _logger.Error("An error occurred during the download: ");
+                    _logger.Error("Backup download link for MyVersions_Temp.txt failed.");
                     return;
                 }
             }
+            else
+            {
+                _logger.Error(ex.Message);
+                _logger.Error("An error occurred during the download.");
+                return;
+            }
         }
 
-        //Read downloaded file and parse entries for comparison
-        string[] newVersions = await File.ReadAllLinesAsync(@"..\MyVersions_Temp.txt");
+        if (!File.Exists(tempFile))
+        {
+            _logger.Error("MyVersions_Temp.txt not found after download.");
+            return;
+        }
 
-        //If parsed entry does not match appVersion member value, display Update Ready Notification
-        if (newVersions[0] != appVersion && (newVersions[0].Length <= 5))
+        string[] newVersions = await File.ReadAllLinesAsync(tempFile);
+
+        if (newVersions.Length < 4)
+        {
+            _logger.Error("Downloaded MyVersions_Temp.txt does not have expected number of lines.");
+            return;
+        }
+
+        // --- Check app version ---
+        if (!string.IsNullOrEmpty(appVersion) &&
+            newVersions[0] != appVersion &&
+            newVersions[0].Length <= 5)
         {
             LauncherUpdateString = $"D2RLAN Update Ready! ({newVersions[0]})";
             LauncherHasUpdate = true;
         }
-        
-        
-        if (newVersions[2] != CalculateMD5("D2RHUD.dll"))
+
+        // --- Check HUD DLL ---
+        try
         {
-            string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
-            try
+            if (newVersions[2] != CalculateMD5("D2RHUD.dll"))
             {
+                string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
                 File.Delete("D2RHUD.dll");
                 webClient.DownloadFile(hudLink, "D2RHUD.dll");
-                _logger.Error("D2RHUD Out-Of-Date. Downloading latest from Github.");
-            }
-            catch (WebException ex)
-            {
-                _logger.Error(ex.Message);
-                _logger.Error("An error occurred during the download: ");
-                return;
+                _logger.Info("D2RHUD Out-Of-Date. Downloaded latest from Github.");
             }
         }
-        
+        catch (Exception ex)
+        {
+            _logger.Error("Error checking HUD DLL: " + ex.Message);
+        }
 
-        File.Delete(@"..\MyVersions_Temp.txt");
+        // --- Data integrity check ---
+        if (UserSettings != null && newVersions[3] != UserSettings.DataHash)
+        {
+            UserSettings.DataHashPass = false;
+
+            if (UserSettings.DataHash == null)
+                MessageBox.Show("Performing one-time data integrity check...");
+            else
+                MessageBox.Show("Game Data Integrity Check Failed!\nAttempting to re-validate installed files...");
+
+            string dataHash = GetFolderMd5("../D2R/data/data");
+            UserSettings.DataHash = dataHash;
+
+            _logger.Error($"DATA INTEGRITY: expected {newVersions[3]}, got {dataHash}");
+
+            if (newVersions[3] == dataHash)
+            {
+                UserSettings.DataHashPass = true;
+                MessageBox.Show("Game Data Integrity Check Succeeded!");
+            }
+            else
+            {
+                UserSettings.DataHashPass = false;
+                MessageBox.Show("Game Data Integrity Check Still Failed! Please reinstall base files.");
+            }
+        }
     }
+
+
+    public static string GetFolderMd5(string folderPath, bool recursive = true)
+    {
+        if (!Directory.Exists(folderPath))
+            throw new DirectoryNotFoundException($"The folder '{folderPath}' does not exist.");
+
+        var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+        var files = Directory.GetFiles(folderPath, "*", searchOption);
+        Array.Sort(files, StringComparer.OrdinalIgnoreCase);
+
+        using (var md5 = MD5.Create())
+        {
+            byte[] buffer = new byte[1024 * 1024]; // 1 MB buffer
+
+            foreach (var file in files)
+            {
+                // Skip file named "shmem" (case-insensitive)
+                if (string.Equals(Path.GetFileName(file), "shmem", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                // Include relative path in hash
+                string relativePath = Path.GetRelativePath(folderPath, file);
+                byte[] pathBytes = Encoding.UTF8.GetBytes(relativePath.ToLowerInvariant());
+                md5.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
+
+                // Stream file contents
+                using (var stream = new FileStream(
+                    file, FileMode.Open, FileAccess.Read, FileShare.Read, buffer.Length, FileOptions.SequentialScan))
+                {
+                    int bytesRead;
+                    while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        md5.TransformBlock(buffer, 0, bytesRead, buffer, 0);
+                    }
+                }
+            }
+
+            md5.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+            return BitConverter.ToString(md5.Hash).Replace("-", "").ToLowerInvariant();
+        }
+    }
+
 
     public static string CalculateMD5(string filePath)
     {
@@ -4494,7 +4470,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             Console.ReadKey();
         }
 
-        _logger.Info($"\n\n--------------------\nMod Name: {ModInfo.Name}\nGame Path: {GamePath}\nSave Path: {SaveFilesFilePath}\nLaunch Arguments: {UserSettings.CurrentD2RArgs}\n\nAudio Language: {UserSettings.AudioLanguage}\nText Language: {UserSettings.TextLanguage}\nUI Theme: {UserSettings.UiTheme}\nWindow Mode: {UserSettings.WindowMode}\nHDR Fix: {UserSettings.HdrFix}\n\nFont: {UserSettings.Font}\nBackups: {UserSettings.AutoBackups}\nPersonalized Tabs: {UserSettings.PersonalizedStashTabs}\nExpanded Cube: {UserSettings.ExpandedCube}\nExpanded Inventory: {UserSettings.ExpandedInventory}\nExpanded Merc: {UserSettings.ExpandedMerc}\nExpanded Stash: {UserSettings.ExpandedStash}\nBuff Icons: {UserSettings.BuffIcons}\nMonster Display: {UserSettings.MonsterStatsDisplay}\nSkill Icons: {UserSettings.SkillIcons}\nMerc Identifier: {UserSettings.MercIcons}\nItem Levels: {UserSettings.ItemIlvls}\nRune Display: {UserSettings.RuneDisplay}\nHide Helmets: {UserSettings.HideHelmets}\nItem Display: {UserSettings.ItemIcons}\nSuper Telekinesis: {UserSettings.SuperTelekinesis}\nColor Dyes: {UserSettings.ColorDye}\nCinematic Subtitles: {UserSettings.CinematicSubs}\nRuneword Sorting: {UserSettings.RunewordSorting}\nMerged HUD: {UserSettings.HudDesign}\n--------------------");
+        _logger.Info($"\n\n--------------------\nMod Name: {ModInfo.Name}\nGame Path: {GamePath}\nSave Path: {SaveFilesFilePath}\nLaunch Arguments: {UserSettings.CurrentD2RArgs}\n\nAudio Language: {UserSettings.AudioLanguage}\nText Language: {UserSettings.TextLanguage}\nUI Theme: {UserSettings.UiTheme}\nWindow Mode: {UserSettings.WindowMode}\nHDR Fix: {UserSettings.HdrFix}\n\nFont: {UserSettings.Font}\nBackups: {UserSettings.AutoBackups}\nPersonalized Tabs: {UserSettings.PersonalizedStashTabs}\nExpanded Cube: {UserSettings.ExpandedCube}\nExpanded Inventory: {UserSettings.ExpandedInventory}\nExpanded Merc: {UserSettings.ExpandedMerc}\nExpanded Stash: {UserSettings.ExpandedStash}\nBuff Icons: {UserSettings.BuffIcons}\nMonster Display: {UserSettings.MonsterStatsDisplay}\nSkill Icons: {UserSettings.SkillIcons}\nMerc Identifier: {UserSettings.MercIcons}\nItem Levels: {UserSettings.ItemIlvls}\nRune Display: {UserSettings.RuneDisplay}\nHide Helmets: {UserSettings.HideHelmets}\nItem Display: {UserSettings.ItemIcons}\nSuper Telekinesis: {UserSettings.SuperTelekinesis}\nColor Dyes: {UserSettings.ColorDye}\nCinematic Subtitles: {UserSettings.CinematicSubs}\nRuneword Sorting: {UserSettings.RunewordSorting}\nMerged HUD: {UserSettings.HudDesign}\nData Integrity: {UserSettings.DataHashPass}\n--------------------");
     }
 
 
