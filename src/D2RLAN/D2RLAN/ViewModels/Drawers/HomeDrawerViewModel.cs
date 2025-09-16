@@ -675,7 +675,6 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                         File.Copy(defaultFilter, $@"{ShellViewModel.GamePath}lootfilter_config.lua", overwrite: true);
                         _logger.Info("Default loot filter config copied.");
                     }
-
                     _logger.Info("Loot filter files downloaded successfully.");
                 }
                 catch (Exception ex)
@@ -685,6 +684,14 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
+            }
+
+            // Copy override rules if available
+            string overrideRules = Path.Combine(Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN", "Filters"), "override_rules.lua");
+            if (File.Exists(overrideRules))
+            {
+                File.Copy(overrideRules, $@"{ShellViewModel.GamePath}override_rules.lua", overwrite: true);
+                _logger.Info("Override rules copied.");
             }
 
 
@@ -737,6 +744,21 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             {
                 _logger.Error($"Failed to install Exocet fonts: {ex.Message}");
             }
+
+            //Beacon Startup
+            if (ShellViewModel.UserSettings.BeaconStartup == 0)
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "Beacon.exe",
+                    WindowStyle = ProcessWindowStyle.Minimized,
+                    UseShellExecute = true
+                };
+                Process.Start(startInfo);
+            }
+            if (ShellViewModel.UserSettings.BeaconStartup == 1)
+                Process.Start("Beacon.exe");
+
         }
         catch (Exception ex)
         {

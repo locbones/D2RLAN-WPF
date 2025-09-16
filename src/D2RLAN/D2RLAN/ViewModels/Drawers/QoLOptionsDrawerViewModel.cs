@@ -41,6 +41,7 @@ public class QoLOptionsDrawerViewModel : INotifyPropertyChanged
     private ObservableCollection<KeyValuePair<string, eHudDesign>> _hudDesigns = new();
     private ObservableCollection<KeyValuePair<string, eCinematicSubs>> _cinematicSubs = new();
     private ObservableCollection<KeyValuePair<string, eEnabledDisabledModify>> _enabledDisabledModifyOptions = new();
+    private ObservableCollection<KeyValuePair<string, eBeaconStartup>> _BeaconStartup = new();
 
     #endregion
 
@@ -118,6 +119,11 @@ public class QoLOptionsDrawerViewModel : INotifyPropertyChanged
         foreach (eEnabledDisabledModify enabledDisabledModifySetting in Enum.GetValues<eEnabledDisabledModify>())
         {
             EnabledDisabledModifyOptions.Add(new KeyValuePair<string, eEnabledDisabledModify>(enabledDisabledModifySetting.GetAttributeOfType<DisplayAttribute>().Name, enabledDisabledModifySetting));
+        }
+
+        foreach (eBeaconStartup beaconStartupSetting in Enum.GetValues<eBeaconStartup>())
+        {
+            BeaconStartup.Add(new KeyValuePair<string, eBeaconStartup>(beaconStartupSetting.GetAttributeOfType<DisplayAttribute>().Name, beaconStartupSetting));
         }
     }
 
@@ -270,6 +276,18 @@ public class QoLOptionsDrawerViewModel : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+
+    public ObservableCollection<KeyValuePair<string, eBeaconStartup>> BeaconStartup
+    {
+        get => _BeaconStartup;
+        set
+        {
+            if (Equals(value, _BeaconStartup)) return;
+            _BeaconStartup = value;
+            OnPropertyChanged();
+        }
+    }
+
     public event PropertyChangedEventHandler PropertyChanged;
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
 

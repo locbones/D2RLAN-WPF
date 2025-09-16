@@ -58,6 +58,7 @@ public class UserSettings : INotifyPropertyChanged
     private int _lootFilter;
     private string _dataHash;
     private bool _dataHashPass;
+    private int _BeaconStartup;
 
     #endregion
 
@@ -688,6 +689,20 @@ public class UserSettings : INotifyPropertyChanged
                 return;
             }
             _dataHashPass = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public int BeaconStartup
+    {
+        get => _BeaconStartup;
+        set
+        {
+            if (value == _BeaconStartup)
+            {
+                return;
+            }
+            _BeaconStartup = value;
             OnPropertyChanged();
         }
     }

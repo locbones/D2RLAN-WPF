@@ -26,43 +26,47 @@ namespace D2RLAN.ViewModels.Dialogs
         public string Type { get; set; }
         public string Description { get; set; }
         public string FilePath { get; set; }
+        public string RepoPath { get; set; }
     }
 
 
-public static class LuaFilterParser
-{
-    public static FilterMetadata ParseFilterMetadata(string filePath)
+    public static class LuaFilterParser
     {
-        if (!File.Exists(filePath))
-            throw new FileNotFoundException("Lua file not found.", filePath);
-
-        string[] lines = File.ReadAllLines(filePath);
-
-        var metadata = new FilterMetadata();
-
-        foreach (var line in lines)
+        public static FilterMetadata ParseFilterMetadata(string filePath)
         {
-            if (line.StartsWith("--- Filter Title:"))
-                metadata.Title = line.Substring(17).Trim();
-            else if (line.StartsWith("--- Filter Type:"))
-                metadata.Type = line.Substring(16).Trim();
-            else if (line.StartsWith("--- Filter Description:"))
-                metadata.Description = line.Substring(23).Trim();
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException("Lua file not found.", filePath);
 
-            if (!string.IsNullOrEmpty(metadata.Title) &&
-                !string.IsNullOrEmpty(metadata.Type) &&
-                !string.IsNullOrEmpty(metadata.Description))
+            string[] lines = File.ReadAllLines(filePath);
+            var metadata = new FilterMetadata();
+
+            foreach (var line in lines)
             {
-                break;
-            }
-        }
+                if (line.StartsWith("--- Filter Title:"))
+                    metadata.Title = line.Substring(17).Trim();
+                else if (line.StartsWith("--- Filter Type:"))
+                    metadata.Type = line.Substring(16).Trim();
+                else if (line.StartsWith("--- Filter Description:"))
+                    metadata.Description = line.Substring(23).Trim();
+                else if (line.StartsWith("--- Filter Link:"))
+                    metadata.RepoPath = line.Substring(16).Trim();
 
-        return metadata;
+                if (!string.IsNullOrEmpty(metadata.Title) &&
+                    !string.IsNullOrEmpty(metadata.Type) &&
+                    !string.IsNullOrEmpty(metadata.Description) &&
+                    !string.IsNullOrEmpty(metadata.RepoPath))
+                {
+                    break;
+                }
+            }
+
+            return metadata;
+        }
     }
-}
+
+
 
     #endregion
-
 
     public class LootFilterViewModel : Screen
     {
@@ -79,12 +83,11 @@ public static class LuaFilterParser
                 if (_selectedFilter != value)
                 {
                     _selectedFilter = value;
-
-                    // Only notify bindings, don't apply yet
                     NotifyOfPropertyChange(() => SelectedFilter);
                     NotifyOfPropertyChange(() => SelectedFilterTitle);
                     NotifyOfPropertyChange(() => SelectedFilterType);
                     NotifyOfPropertyChange(() => SelectedFilterDescription);
+                    _ = UpdateSelectedFilterAsync();
                 }
             }
         }
@@ -141,7 +144,6 @@ public static class LuaFilterParser
             InitializeAsync();
         }
 
-
         private async void InitializeAsync()
         {
             LoadFilterTitlesFromFolder(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters"));
@@ -163,16 +165,12 @@ public static class LuaFilterParser
             string configPath = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
             string configBlankPath = Path.Combine(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters"), "lootfilter_config_blank.lua");
             string guidePath = Path.Combine(ShellViewModel.GamePath, "lootfilter_guide.pdf");
-
             string remoteLootFilterUrl = "https://drive.google.com/uc?export=download&id=157sEJn8LSpNWwlwuEnrSPo23UULzJmNs";
             string guideUrl = "https://drive.google.com/uc?export=download&id=1Rtypc8FRRn14rNtTpeXGEEYXaUoiV5lb";
-
             string remoteVersion = "0.0.0";
             string currentVersion = null;
             bool shouldReplace = true;
-
             string tempLootFilterPath = Path.GetTempFileName();
-
             using var client = new HttpClient();
 
             try
@@ -180,8 +178,7 @@ public static class LuaFilterParser
                 // --- Get remote version ---
                 await DownloadFileAsync(client, remoteLootFilterUrl, tempLootFilterPath);
 
-                var tempVersionLine = File.ReadLines(tempLootFilterPath)
-                    .FirstOrDefault(line => Regex.IsMatch(line, @"local\s+version\s*=\s*""([^""]+)"""));
+                var tempVersionLine = File.ReadLines(tempLootFilterPath).FirstOrDefault(line => Regex.IsMatch(line, @"local\s+version\s*=\s*""([^""]+)"""));
                 if (!string.IsNullOrWhiteSpace(tempVersionLine))
                 {
                     var match = Regex.Match(tempVersionLine, @"local\s+version\s*=\s*""([^""]+)""");
@@ -215,8 +212,7 @@ public static class LuaFilterParser
             catch (Exception ex)
             {
                 LootFilterVersion = "Loot Filter version check failed";
-                MessageBox.Show($"Failed to check remote loot filter version:\n{ex.Message}", "Version Check Error",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Failed to check remote loot filter version:\n{ex.Message}", "Version Check Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             if (!File.Exists(configBlankPath))
@@ -231,7 +227,6 @@ public static class LuaFilterParser
                 {
                     await DownloadFileAsync(client, remoteLootFilterUrl, lootFilterPath);
                     await DownloadFileAsync(client, guideUrl, guidePath);
-
                     await File.WriteAllBytesAsync(configBlankPath, Helper.GetResourceByteArray2("lootfilter_config_blank.lua"));
 
                     // since we replaced, update LootFilterVersion
@@ -239,8 +234,7 @@ public static class LuaFilterParser
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Failed to download one or more loot filter files:\n{ex.Message}", "Download Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Failed to download one or more loot filter files:\n{ex.Message}", "Download Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -272,15 +266,11 @@ public static class LuaFilterParser
             catch { }
         }
 
-
-
         private async Task DownloadFileAsync(HttpClient client, string url, string destinationPath)
         {
             var bytes = await client.GetByteArrayAsync(url);
             await File.WriteAllBytesAsync(destinationPath, bytes);
         }
-
-
 
         #endregion
 
@@ -317,7 +307,6 @@ public static class LuaFilterParser
 
         public async Task OnLoadFilter()
         {
-
             var openFileDialog = new OpenFileDialog
             {
                 Filter = "Lua files (*.lua)|*.lua",
@@ -333,14 +322,10 @@ public static class LuaFilterParser
             {
                 string selectedFilePath = openFileDialog.FileName;
                 string fileName = Path.GetFileName(selectedFilePath);
-                string renamedFileName = fileName.Equals("lootfilter_config.lua", StringComparison.OrdinalIgnoreCase)
-                    ? "custom_lootfilter_config.lua"
-                    : fileName;
-
+                string renamedFileName = fileName.Equals("lootfilter_config.lua", StringComparison.OrdinalIgnoreCase) ? "custom_lootfilter_config.lua" : fileName;
                 string filterFolder = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters");
                 Directory.CreateDirectory(filterFolder);
                 string destinationPath = Path.Combine(filterFolder, renamedFileName);
-
                 File.Copy(selectedFilePath, destinationPath, true);
                 FilterMetadata copiedFilterMetadata = null;
 
@@ -370,8 +355,7 @@ public static class LuaFilterParser
         {
             if (SelectedFilter == null)
             {
-                MessageBox.Show("Please select a filter before applying.", "No Filter Selected",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please select a filter before applying.", "No Filter Selected", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -382,14 +366,12 @@ public static class LuaFilterParser
                     string destinationPath = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
                     File.Copy(SelectedFilter.FilePath, destinationPath, true);
 
-                    MessageBox.Show($"\"{SelectedFilter.Title}\" has been applied!",
-                        "Filter Applied", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"\"{SelectedFilter.Title}\" has been applied!", "Filter Applied", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to apply selected filter:\n" + ex.Message, "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Failed to apply selected filter:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         public void OnOpenFilter()
@@ -406,10 +388,70 @@ public static class LuaFilterParser
                 Process.Start(startInfo);
             }
             else
-            {
                 MessageBox.Show($"{ShellViewModel.SelectedModDataFolder} Directory does not exist!");
+        }
+
+        private async Task UpdateSelectedFilterAsync()
+        {
+            if (SelectedFilter == null || string.IsNullOrWhiteSpace(SelectedFilter.RepoPath))
+                return;
+
+            string filterFolder = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters");
+            Directory.CreateDirectory(filterFolder);
+            string localFilterPath = Path.Combine(filterFolder, Path.GetFileName(SelectedFilter.FilePath));
+            using var client = new HttpClient();
+
+            try
+            {
+                // Download remote filter to temp file
+                string tempPath = Path.GetTempFileName();
+                var remoteBytes = await client.GetByteArrayAsync(SelectedFilter.RepoPath);
+                await File.WriteAllBytesAsync(tempPath, remoteBytes);
+
+                // Determine if replacement is needed
+                bool shouldReplace = true;
+                if (File.Exists(localFilterPath))
+                {
+                    var localBytes = await File.ReadAllBytesAsync(localFilterPath);
+                    if (localBytes.Length == remoteBytes.Length && localBytes.SequenceEqual(remoteBytes))
+                        shouldReplace = false;
+                }
+
+                if (!shouldReplace)
+                {
+                    File.Delete(tempPath);
+                    return; // No update needed
+                }
+
+                // Replace local file with remote version
+                File.Copy(tempPath, localFilterPath, overwrite: true);
+                File.Delete(tempPath);
+
+                // Remember previous selection
+                string previousTitle = SelectedFilter.Title;
+                LoadFilterTitlesFromFolder(filterFolder);
+
+                // Try to re-select the previous filter or the newly added one
+                var matchFilter = FilterList.FirstOrDefault(f => f?.Title.Equals(previousTitle, StringComparison.OrdinalIgnoreCase) == true);
+
+                if (matchFilter == null)
+                    matchFilter = FilterList.FirstOrDefault(f => f?.FilePath == localFilterPath);
+
+                if (matchFilter != null)
+                    SelectedFilter = matchFilter;
+
+                // Inform the player
+                MessageBox.Show($"A more recent version of '{SelectedFilter.Title}' is available!\nPress the Apply button to use it.", "Filter Update Available", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to update filter '{SelectedFilter?.Title ?? "Unknown"}':\n{ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
+
+
 
 
         #endregion

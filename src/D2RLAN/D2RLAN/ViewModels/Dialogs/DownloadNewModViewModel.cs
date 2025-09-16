@@ -527,6 +527,17 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
 
                 await TryCloseAsync(true);
             }
+            else
+            {
+                ProgressStatus = "Install Complete!";
+                MessageBox.Show($"TCP Base Files have been installed!", "Base Files Installed!", MessageBoxButton.OK, MessageBoxImage.None);
+
+                // We installed a custom mod from a direct link 
+                if (string.IsNullOrEmpty(SelectedMod.Key))
+                    SelectedMod = new KeyValuePair<string, string>("TCP", "DirectDownload");
+
+                await TryCloseAsync(true);
+            }
             
         }
         catch (Exception ex)

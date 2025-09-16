@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace D2RLAN.Views.Dialogs
 {
@@ -114,103 +115,87 @@ namespace D2RLAN.Views.Dialogs
 
         private void kbBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            var currentTextBox = sender as System.Windows.Controls.TextBox;
-            if (currentTextBox == null) return;
+            if (sender is not System.Windows.Controls.TextBox currentTextBox) return;
 
             string filePath = "D2RLAN_Config.txt";
             List<string> lines = new List<string>(File.ReadAllLines(filePath));
             int textBoxIndex = -1;
 
-            if (currentTextBox.Name == "kbBox1") textBoxIndex = 0;
-            else if (currentTextBox.Name == "kbBox2") textBoxIndex = 1;
-            else if (currentTextBox.Name == "kbBox3") textBoxIndex = 2;
-            else if (currentTextBox.Name == "kbBox4") textBoxIndex = 3;
-            else if (currentTextBox.Name == "kbBox5") textBoxIndex = 4;
-            else if (currentTextBox.Name == "kbBox6") textBoxIndex = 5;
-            else if (currentTextBox.Name == "kbBox7") textBoxIndex = 6;
-            else if (currentTextBox.Name == "kbBox8") textBoxIndex = 7;
-            else if (currentTextBox.Name == "kbBox9") textBoxIndex = 8;
-            else if (currentTextBox.Name == "kbBox10") textBoxIndex = 9;
-            else if (currentTextBox.Name == "kbBox11") textBoxIndex = 10;
-            else if (currentTextBox.Name == "kbBox12") textBoxIndex = 11;
-            else if (currentTextBox.Name == "kbBox13") textBoxIndex = 12;
-            else if (currentTextBox.Name == "kbBox14") textBoxIndex = 13;
-            else if (currentTextBox.Name == "kbBox15") textBoxIndex = 14;
-            else if (currentTextBox.Name == "kbBox16") textBoxIndex = 15;
+            // Map TextBox name → index
+            if (currentTextBox.Name.StartsWith("kbBox") &&
+                int.TryParse(currentTextBox.Name["kbBox".Length..], out int idx))
+            {
+                textBoxIndex = idx - 1;
+            }
 
             if (textBoxIndex == -1) return;
+            currentTextBox.Clear();
 
-            string virtualKeyCode = "VK_" + e.Key.ToString().ToUpper();
-            int virtualKey = KeyInterop.VirtualKeyFromKey(e.Key);
+            // Build modifiers
+            List<string> modifiers = new List<string>();
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) modifiers.Add("CTRL");
+            if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt) modifiers.Add("ALT");
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift) modifiers.Add("SHIFT");
+            if ((Keyboard.Modifiers & ModifierKeys.Windows) == ModifierKeys.Windows) modifiers.Add("WIN");
 
-            if (virtualKey == 0x2D)
+            // Get main key
+            string mainKey = e.Key.ToString().ToUpper();
+            mainKey = e.Key switch
             {
-                virtualKeyCode = "VK_INSERT";
-            }
-            else if (virtualKey == 0x2E)
-            {
-                virtualKeyCode = "VK_DELETE";
-            }
+                Key.Insert => "INSERT",
+                Key.Delete => "DELETE",
+                Key.Home => "HOME",
+                Key.PageUp => "PRIOR",
+                Key.PageDown => "NEXT",
+                Key.End => "END",
+                _ => mainKey
+            };
 
-            switch (e.Key)
-            {
-                case Key.Home:
-                    virtualKeyCode = "VK_HOME";
-                    break;
-                case Key.PageUp:
-                    virtualKeyCode = "VK_PRIOR";
-                    break;
-                case Key.PageDown:
-                    virtualKeyCode = "VK_NEXT";
-                    break;
-                case Key.End:
-                    virtualKeyCode = "VK_END";
-                    break;
-            }
+            string virtualKeyCode = "VK_" + string.Join(" + VK_", modifiers.Append(mainKey));
 
-            if (textBoxIndex <= 5 || textBoxIndex == 12 || textBoxIndex == 13 || textBoxIndex == 14)
+            // Update lines based on index
+            if (textBoxIndex <= 5 || (textBoxIndex >= 12 && textBoxIndex <= 16))
             {
-                // Standard commands and special-case index 12
+                // Simple VK keys
                 lines[textBoxIndex] = $"{lines[textBoxIndex].Split(':')[0]}: {virtualKeyCode}";
-                currentTextBox.Text = virtualKeyCode;
-                currentTextBox.SelectionStart = currentTextBox.Text.Length;
             }
-            else if (textBoxIndex != 12 && textBoxIndex != 13 && textBoxIndex != 14 && textBoxIndex != 15) // For custom commands excluding index 12
+            else if (textBoxIndex >= 6 && textBoxIndex <= 11)
             {
-                var existingLine = lines[textBoxIndex];
-                var parts = existingLine.Split(new[] { ':' }, 2);
-
+                // Custom commands
+                var parts = lines[textBoxIndex].Split(new[] { ':' }, 2);
                 if (parts.Length > 1)
                 {
                     var commandParts = parts[1].Split(new[] { ',' }, 2);
-                    string commandId = parts[0].Trim();
                     string commandName = commandParts.Length > 1 ? commandParts[1].Trim() : "";
-
-                    lines[textBoxIndex] = $"{commandId}: {virtualKeyCode}, {commandName}";
-                    currentTextBox.Text = virtualKeyCode;
-                    currentTextBox.SelectionStart = currentTextBox.Text.Length;
+                    lines[textBoxIndex] = $"{parts[0].Trim()}: {virtualKeyCode}, {commandName}";
                 }
-                MessageBox.Show(textBoxIndex.ToString());
             }
-            else if (textBoxIndex == 15) // Special case for Toggle Stat Adjustments Display
+            else if (textBoxIndex == 17)
             {
-                var existingLine = lines[textBoxIndex];
-                int colonIndex = existingLine.IndexOf(':');
-                if (colonIndex < 0) return;
-                string label = existingLine.Substring(0, colonIndex).Trim();
-                string rest = existingLine.Substring(colonIndex + 1).Trim();
-                int commaIndex = rest.IndexOf(',');
-                if (commaIndex < 0) return;
-                string boolPart = rest.Substring(0, commaIndex).Trim();
-                lines[textBoxIndex] = $"{label}: {boolPart}, {virtualKeyCode}";
-                currentTextBox.Text = $"{virtualKeyCode}";
-                currentTextBox.SelectionStart = currentTextBox.Text.Length;
+                // Toggle Stat Adjustments Display (boolean + key)
+                var parts = lines[textBoxIndex].Split(new[] { ':' }, 2);
+                if (parts.Length > 1)
+                {
+                    string left = parts[0].Trim();
+                    string right = parts[1].Trim();
+                    int commaIndex = right.IndexOf(',');
+                    if (commaIndex >= 0)
+                    {
+                        string boolPart = right[..commaIndex].Trim();
+                        lines[textBoxIndex] = $"{left}: {boolPart}, {virtualKeyCode}";
+                    }
+                }
             }
 
+            currentTextBox.Text = virtualKeyCode;
+            currentTextBox.SelectionStart = currentTextBox.Text.Length;
 
-            e.Handled = true;
             File.WriteAllLines(filePath, lines);
+            e.Handled = true;
         }
+
+
+
 
         private void kbBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -264,7 +249,5 @@ namespace D2RLAN.Views.Dialogs
             // Write updated lines back to the file
             File.WriteAllLines(filePath, lines);
         }
-
-
     }
 }

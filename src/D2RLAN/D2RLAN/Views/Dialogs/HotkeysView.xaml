@@ -91,7 +91,12 @@
             <Label Grid.Row="10" Grid.Column="0" Content="Cycle TZ Backward:" Foreground="#DD17BFF7" FontSize="16"/>
             <TextBox x:Name="kbBox15" Grid.Row="10" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding TZBackwardPanel, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="kbBox_PreviewKeyDown" />
             <Label Grid.Row="11" Grid.Column="0" Content="Toggle TZ Stat Display:" Foreground="#DD17BFF7" FontSize="16"/>
-            <TextBox x:Name="kbBox16" Grid.Row="11" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding TZStatTogglePanel, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="kbBox_PreviewKeyDown" />
+            <TextBox x:Name="kbBox18" Grid.Row="11" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding TZStatTogglePanel, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="kbBox_PreviewKeyDown" />
+
+            <Label Grid.Row="10" Grid.Column="2" HorizontalContentAlignment="Center" Content="Reload Game/Filter:" Foreground="#DD17BFF7" FontSize="16"/>
+            <TextBox x:Name="kbBox16" Grid.Row="10" Grid.Column="3" HorizontalContentAlignment="Center" Text="{Binding ReloadGameFilter, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="kbBox_PreviewKeyDown" />
+            <Label Grid.Row="11" Grid.Column="2" HorizontalContentAlignment="Center" Content="Cycle Filter Level:" Foreground="#DD17BFF7" FontSize="16"/>
+            <TextBox x:Name="kbBox17" Grid.Row="11" Grid.Column="3" HorizontalContentAlignment="Center" Text="{Binding CycleFilterLevel, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="kbBox_PreviewKeyDown" />
 
             <!-- Custom Commands -->
             <Label Grid.Row="1" Grid.Column="0" Content="Built-In Commands" Foreground="#DD19D056" FontSize="16" Padding="5,5,5,5" Margin="60,0,0,0" Grid.ColumnSpan="3"/>

@@ -21,6 +21,8 @@ namespace D2RLAN.ViewModels.Dialogs
         public string TZForwardPanel { get; set; }
         public string TZBackwardPanel { get; set; }
         public string TZStatTogglePanel { get; set; }
+        public string ReloadGameFilter { get; set; }
+        public string CycleFilterLevel { get; set; }
         public string CustomCommand1 { get; set; }
         public string CustomCommand2 { get; set; }
         public string CustomCommand3 { get; set; }
@@ -61,13 +63,14 @@ namespace D2RLAN.ViewModels.Dialogs
             var lines = File.ReadAllLines(ConfigPath);
 
             // Regex for standard commands (key + optional command in quotes)
-            var regex = new Regex(@"^(?<name>[\w\s]+):\s(?<key>VK_\w+|NaN)(,\s""(?<command>.*)"")?$");
+            var regex = new Regex(@"^(?<name>[\w\s]+):\s(?<key>VK_[\w\s\+]+|NaN)(,\s""(?<command>.*)"")?$");
 
             // Regex for startup commands
             var startupRegex = new Regex(@"^Startup Commands:\s(?<command>.*)$");
 
             foreach (var line in lines)
             {
+                // Startup commands
                 var startupMatch = startupRegex.Match(line);
                 if (startupMatch.Success)
                 {
@@ -76,23 +79,19 @@ namespace D2RLAN.ViewModels.Dialogs
                     continue;
                 }
 
-                // Special handling for Toggle Stat Adjustments Display
+                // Toggle Stat Adjustments Display
                 if (line.StartsWith("Toggle Stat Adjustments Display:"))
                 {
-                    // Split at the first comma
                     int commaIndex = line.IndexOf(',');
                     if (commaIndex > 0)
                     {
-                        // Extract boolean and key
                         string beforeComma = line.Substring(0, commaIndex).Trim(); // "Toggle Stat Adjustments Display: true"
-                        string afterComma = line.Substring(commaIndex + 1).Trim(); // "VK_F7"
+                        string afterComma = line.Substring(commaIndex + 1).Trim();  // "VK_CTRL + VK_RETURN"
 
-                        // Extract the boolean value
                         int colonIndex = beforeComma.IndexOf(':');
                         string boolText = colonIndex >= 0 ? beforeComma.Substring(colonIndex + 1).Trim() : "false";
                         bool showStatAdjusts = boolText.Equals("true", StringComparison.OrdinalIgnoreCase);
 
-                        // Store key
                         TZStatTogglePanel = afterComma;
                         continue;
                     }
@@ -100,71 +99,40 @@ namespace D2RLAN.ViewModels.Dialogs
 
                 // Standard regex match
                 var match = regex.Match(line);
-                if (match.Success)
-                {
-                    var name = match.Groups["name"].Value;
-                    var key = match.Groups["key"].Value;
-                    var command = match.Groups["command"].Value;
+                if (!match.Success) continue;
 
-                    switch (name)
-                    {
-                        case "Transmute":
-                            Transmute = key == "NaN" ? "NaN" : key;
-                            break;
-                        case "Identify Items":
-                            IdentifyItems = key == "NaN" ? "NaN" : key;
-                            break;
-                        case "Force Save":
-                            ForceSave = key == "NaN" ? "NaN" : key;
-                            break;
-                        case "Reset Stats":
-                            ResetStats = key == "NaN" ? "NaN" : key;
-                            break;
-                        case "Reset Skills":
-                            ResetSkills = key == "NaN" ? "NaN" : key;
-                            break;
-                        case "Remove Ground Items":
-                            RemoveGroundItems = key == "NaN" ? "NaN" : key;
-                            break;
-                        case "Custom Command 1":
-                            CustomCommand1 = key == "NaN" ? "NaN" : key;
-                            CustomCommandC1 = command;
-                            break;
-                        case "Custom Command 2":
-                            CustomCommand2 = key == "NaN" ? "NaN" : key;
-                            CustomCommandC2 = command;
-                            break;
-                        case "Custom Command 3":
-                            CustomCommand3 = key == "NaN" ? "NaN" : key;
-                            CustomCommandC3 = command;
-                            break;
-                        case "Custom Command 4":
-                            CustomCommand4 = key == "NaN" ? "NaN" : key;
-                            CustomCommandC4 = command;
-                            break;
-                        case "Custom Command 5":
-                            CustomCommand5 = key == "NaN" ? "NaN" : key;
-                            CustomCommandC5 = command;
-                            break;
-                        case "Custom Command 6":
-                            CustomCommand6 = key == "NaN" ? "NaN" : key;
-                            CustomCommandC6 = command;
-                            break;
-                        case "Open Cube Panel":
-                            OpenCubePanel = key == "NaN" ? "NaN" : key;
-                            break;
-                        case "Cycle TZ Forward":
-                            TZForwardPanel = key == "NaN" ? "NaN" : key;
-                            break;
-                        case "Cycle TZ Backward":
-                            TZBackwardPanel = key == "NaN" ? "NaN" : key;
-                            break;
-                    }
+                var name = match.Groups["name"].Value;
+                var key = match.Groups["key"].Value;
+                var command = match.Groups["command"].Value;
+
+                // Assign multi-key or NaN to properties
+                key = string.IsNullOrWhiteSpace(key) ? "NaN" : key;
+
+                switch (name)
+                {
+                    case "Transmute": Transmute = key; break;
+                    case "Identify Items": IdentifyItems = key; break;
+                    case "Force Save": ForceSave = key; break;
+                    case "Reset Stats": ResetStats = key; break;
+                    case "Reset Skills": ResetSkills = key; break;
+                    case "Remove Ground Items": RemoveGroundItems = key; break;
+                    case "Custom Command 1": CustomCommand1 = key; CustomCommandC1 = command; break;
+                    case "Custom Command 2": CustomCommand2 = key; CustomCommandC2 = command; break;
+                    case "Custom Command 3": CustomCommand3 = key; CustomCommandC3 = command; break;
+                    case "Custom Command 4": CustomCommand4 = key; CustomCommandC4 = command; break;
+                    case "Custom Command 5": CustomCommand5 = key; CustomCommandC5 = command; break;
+                    case "Custom Command 6": CustomCommand6 = key; CustomCommandC6 = command; break;
+                    case "Open Cube Panel": OpenCubePanel = key; break;
+                    case "Cycle TZ Forward": TZForwardPanel = key; break;
+                    case "Cycle TZ Backward": TZBackwardPanel = key; break;
+                    case "Reload Game or Filter": ReloadGameFilter = key; break;
+                    case "Cycle Filter Level": CycleFilterLevel = key; break;
                 }
             }
 
             NotifyOfPropertyChange(string.Empty);
         }
+
 
 
         #endregion
