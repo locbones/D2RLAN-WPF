@@ -16,6 +16,8 @@ using D2RLAN.ViewModels.Drawers;
 using D2RLAN.Views.Drawers;
 using Microsoft.Win32;
 using Syncfusion.UI.Xaml.NavigationDrawer;
+using ILog = log4net.ILog;
+using LogManager = log4net.LogManager;
 
 namespace D2RLAN.ViewModels.Dialogs
 {
@@ -127,6 +129,20 @@ namespace D2RLAN.ViewModels.Dialogs
             }
         }
 
+        private bool _filterUpdates;
+        public bool FilterUpdates
+        {
+            get => _filterUpdates;
+            set
+            {
+                if (_filterUpdates != value)
+                {
+                    _filterUpdates = value;
+                    NotifyOfPropertyChange(() => FilterUpdates);
+                }
+            }
+        }
+
         private async void SaveSettingsAsync()
         {
             await ShellViewModel.SaveUserSettings();
@@ -136,6 +152,8 @@ namespace D2RLAN.ViewModels.Dialogs
 
         #region ---Window/Loaded Handlers---
 
+        private ILog _logger = LogManager.GetLogger(typeof(LootFilterViewModel));
+
         public LootFilterViewModel(ShellViewModel shellViewModel)
         {
             DisplayName = "Active Loot Filter Settings";
@@ -144,8 +162,12 @@ namespace D2RLAN.ViewModels.Dialogs
             InitializeAsync();
         }
 
-        private async void InitializeAsync()
+        private bool _isInitialized = false;
+        public async Task InitializeAsync()
         {
+            if (_isInitialized) return; // Prevent double initialization
+            _isInitialized = true;
+
             LoadFilterTitlesFromFolder(Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters"));
 
             // Move "No Filter" to the top
@@ -160,6 +182,7 @@ namespace D2RLAN.ViewModels.Dialogs
             }
 
             SelectedFilterIndex = ShellViewModel.UserSettings.LootFilter;
+            FilterUpdates = ShellViewModel.UserSettings.FilterUpdates;
 
             string lootFilterPath = Path.Combine(ShellViewModel.GamePath, "lootfilter.lua");
             string configPath = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
@@ -412,6 +435,9 @@ namespace D2RLAN.ViewModels.Dialogs
                 bool shouldReplace = true;
                 if (File.Exists(localFilterPath))
                 {
+                    if (ShellViewModel.UserSettings.FilterUpdates)
+                        localFilterPath = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
+
                     var localBytes = await File.ReadAllBytesAsync(localFilterPath);
                     if (localBytes.Length == remoteBytes.Length && localBytes.SequenceEqual(remoteBytes))
                         shouldReplace = false;
@@ -425,7 +451,11 @@ namespace D2RLAN.ViewModels.Dialogs
 
                 // Replace local file with remote version
                 File.Copy(tempPath, localFilterPath, overwrite: true);
+                if (ShellViewModel.UserSettings.FilterUpdates)
+                    File.Copy(localFilterPath, Path.Combine(filterFolder, Path.GetFileName(SelectedFilter.FilePath)), overwrite: true);
                 File.Delete(tempPath);
+
+                _logger.Info($"{SelectedFilter.Title} has been updated from Github!");
 
                 // Remember previous selection
                 string previousTitle = SelectedFilter.Title;
@@ -440,8 +470,12 @@ namespace D2RLAN.ViewModels.Dialogs
                 if (matchFilter != null)
                     SelectedFilter = matchFilter;
 
+                if (ShellViewModel.UserSettings.FilterUpdates)
+                    File.Copy(SelectedFilter.FilePath, Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua"), true);
+
                 // Inform the player
-                MessageBox.Show($"A more recent version of '{SelectedFilter.Title}' is available!\nPress the Apply button to use it.", "Filter Update Available", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (!ShellViewModel.UserSettings.FilterUpdates)
+                    MessageBox.Show($"A more recent version of '{SelectedFilter.Title}' is available!\nPress the Apply button to use it.", "Filter Update Available", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -450,9 +484,21 @@ namespace D2RLAN.ViewModels.Dialogs
         }
 
 
+        public async Task CheckForUpdatesAsync()
+        {
+            FilterMetadata copiedFilterMetadata = null;
+            copiedFilterMetadata = LuaFilterParser.ParseFilterMetadata(Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua"));
 
 
+            if (FilterUpdates)
+            {
+                var match = FilterList.FirstOrDefault(f => f?.Title?.Equals(copiedFilterMetadata.Title, StringComparison.OrdinalIgnoreCase) == true);
+                if (match != null)
+                    SelectedFilter = match;
 
+                await InitializeAsync();
+            }
+        }
 
         #endregion
     }

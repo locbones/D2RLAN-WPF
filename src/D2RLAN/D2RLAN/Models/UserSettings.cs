@@ -59,6 +59,7 @@ public class UserSettings : INotifyPropertyChanged
     private string _dataHash;
     private bool _dataHashPass;
     private int _BeaconStartup;
+    private bool _filterUpdates;
 
     #endregion
 
@@ -703,6 +704,20 @@ public class UserSettings : INotifyPropertyChanged
                 return;
             }
             _BeaconStartup = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool FilterUpdates
+    {
+        get => _filterUpdates;
+        set
+        {
+            if (value == _filterUpdates)
+            {
+                return;
+            }
+            _filterUpdates = value;
             OnPropertyChanged();
         }
     }

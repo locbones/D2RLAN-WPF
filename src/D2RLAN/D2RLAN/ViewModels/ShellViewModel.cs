@@ -36,6 +36,7 @@ using MemoryEditor;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
+using D2RLAN.Views.Dialogs;
 
 
 namespace D2RLAN.ViewModels;
@@ -48,7 +49,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.7.0";
+    private string appVersion = "1.7.1";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -71,6 +72,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private bool _ExpandedCubeEnabled = true;
     private bool _ExpandedMercEnabled = true;
     private readonly IConfigurationRoot _configuration;
+
 
     const int PROCESS_VM_READ = 0x0010;
     const int PROCESS_VM_WRITE = 0x0020;
@@ -136,9 +138,11 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             DiabloInstallDetected = true;
             HomeDrawerViewModel vm = new HomeDrawerViewModel();
             UserControl = new HomeDrawerView() {DataContext = vm};
+            //LootFilterViewModel = new LootFilterViewModel(this);
             Injector injector = new Injector(_gamePath);
         }
     }
+    //public LootFilterViewModel LootFilterViewModel { get; }
     public ShellViewModel(IWindowManager windowManager, IConfigurationRoot configuration) //Main Window Logger
     {
         _windowManager = windowManager;
@@ -161,6 +165,24 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         await ConfigureHudDesign();
         await ConfigureColorDyes();
         await ConfigureCinematicSubs();
+
+        // --- Check for loot filter auto updates if enabled ---
+        if (UserSettings.FilterUpdates)
+        {
+            try
+            {
+                _logger.Info("Checking for loot filter auto-updates...");
+                var lootFilterVM = new LootFilterViewModel(this);
+                await lootFilterVM.CheckForUpdatesAsync();
+                _logger.Info("Loot filter auto-update check completed.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error during loot filter auto-update: {ex.Message}");
+                // Continue with game launch even if update fails
+            }
+        }
+
 
         await ApplyTCPPatch();
     } //Apply User-Defined QoL Options

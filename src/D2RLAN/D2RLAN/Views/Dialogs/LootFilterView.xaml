@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
     Width="600"
-    Height="413"
+    Height="455"
     d:DataContext="{d:DesignInstance Type=dialogs:LootFilterViewModel,
                                  IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
@@ -58,35 +58,42 @@
                 </TextBlock>
 
                 <syncfusion:ButtonAdv Grid.Column="0" cm:Message.Attach="[Event Click] = [Action OnApplyFilter];" Background="#FF14381D" IconTemplate="{StaticResource AdditionIconTemplate}" Label="Apply Filter" Style="{StaticResource SfButtonAdvNormalStyle}" Height="30" MinHeight="30" Margin="10,0,0,0" />
-                <syncfusion:ButtonAdv Grid.Column="2" cm:Message.Attach="[Event Click] = [Action OnLoadFilter];" Background="#FF142138" IconTemplate="{StaticResource AdditionIconTemplate}" Label="Load Filter" Style="{StaticResource SfButtonAdvNormalStyle}" Height="30" MinHeight="30" Margin="10,0,0,0" />
+
+                <Button Grid.Column="2"
+                    Width="160"
+                    Height="40"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Cursor="Hand"
+                    cm:Message.Attach="[Event Click] = [Action OnOpenFilter]">
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="pack://application:,,,/Resources/Icons/Icon_Files.png"
+                            Width="20" Height="20" Margin="0,0,5,0"/>
+                        <TextBlock Text="Open Filter"
+                            Foreground="CornflowerBlue"
+                            VerticalAlignment="Center"
+                            FontSize="14"/>
+                    </StackPanel>
+                </Button>
             </Grid>
 
+            <Grid Grid.Row="6" Margin="30,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140" />
+                    <ColumnDefinition Width="230" />
+                    <ColumnDefinition Width="140" />
+                </Grid.ColumnDefinitions>
+                <syncfusion:ButtonAdv Grid.Column="0" cm:Message.Attach="[Event Click] = [Action OnLoadFilter];" Background="#FF142138" IconTemplate="{StaticResource AdditionIconTemplate}" Label="Load Filter" Style="{StaticResource SfButtonAdvNormalStyle}" Height="30" MinHeight="30" Margin="10,0,0,0" />
 
-            <Button Grid.Row="7"
-        Width="160"
-        Height="40"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Background="Transparent"
-        BorderBrush="Transparent"
-        Cursor="Hand"
-        cm:Message.Attach="[Event Click] = [Action OnOpenFilter]">
-
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Image Source="pack://application:,,,/Resources/Icons/Icon_Files.png"
-               Width="20" Height="20" Margin="0,0,5,0"/>
-                    <TextBlock Text="Open Filter"
-                   Foreground="CornflowerBlue"
-                   VerticalAlignment="Center"
-                   FontSize="14"/>
-                </StackPanel>
-            </Button>
-
-
-
-
-
+                <CheckBox Grid.Column="2"
+                    Content="Auto-Filter Updates"
+                    VerticalAlignment="Center"
+                    Margin="10,0,0,0"
+                    IsChecked="{Binding FilterUpdates, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
         </Grid>
-
     </Grid>
 </Window>
