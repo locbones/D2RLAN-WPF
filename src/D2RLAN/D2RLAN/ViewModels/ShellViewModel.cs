@@ -49,7 +49,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.7.1";
+    private string appVersion = "1.7.2";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4163,6 +4163,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             _logger.Error("Error checking HUD DLL: " + ex.Message);
         }
         
+        
 
         // --- Data integrity check ---
         if (UserSettings != null && newVersions[3] != UserSettings.DataHash)
@@ -4448,9 +4449,9 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             int waitTime = 0;
             while (process.MainModule == null && waitTime < 10000)
             {
-                await Task.Delay(500);
+                await Task.Delay(1000);
                 process.Refresh();
-                waitTime += 500;
+                waitTime += 1000;
             }
 
             if (process.MainModule == null)
@@ -4481,6 +4482,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     Process.Start(path);
                 }
             }
+
+            UserSettings.MapLayout = 0;
         }
 
         else

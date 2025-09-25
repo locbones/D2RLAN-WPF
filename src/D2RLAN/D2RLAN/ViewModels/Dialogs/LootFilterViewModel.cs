@@ -401,18 +401,48 @@ namespace D2RLAN.ViewModels.Dialogs
         {
             var path = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
 
-            if (File.Exists(path))
+            if (!File.Exists(path))
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                MessageBox.Show($"{ShellViewModel.SelectedModDataFolder} Directory does not exist!");
+                return;
+            }
+
+            // Common install locations for VS Code
+            string[] possiblePaths =
+            {
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Programs\Microsoft VS Code\Code.exe"),
+        @"C:\Program Files\Microsoft VS Code\Code.exe",
+        @"C:\Program Files (x86)\Microsoft VS Code\Code.exe"
+    };
+
+            string? codeExe = possiblePaths.FirstOrDefault(File.Exists);
+
+            ProcessStartInfo startInfo;
+
+            if (codeExe != null)
+            {
+                // Launch VS Code directly
+                startInfo = new ProcessStartInfo
                 {
-                    Arguments = path,
-                    FileName = "explorer.exe"
+                    FileName = codeExe,
+                    Arguments = $"\"{path}\"",
+                    UseShellExecute = false
                 };
-                Process.Start(startInfo);
             }
             else
-                MessageBox.Show($"{ShellViewModel.SelectedModDataFolder} Directory does not exist!");
+            {
+                // Fallback: open with default app (likely VS Code if user associated it)
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"\"{path}\"",
+                    UseShellExecute = true
+                };
+            }
+
+            Process.Start(startInfo);
         }
+
 
         private async Task UpdateSelectedFilterAsync()
         {

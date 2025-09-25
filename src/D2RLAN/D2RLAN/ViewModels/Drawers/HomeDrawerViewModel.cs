@@ -792,16 +792,16 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             int txtFileCount = Directory.GetFiles(excelDir, "*.txt").Length;
 
             if (binFileCount >= 81 && txtFileCount >= 10)
-                args = $"-mod {ShellViewModel.ModInfo.Name} -txt";
+                args = $"-mod {ShellViewModel.ModInfo.Name} -txt -minimumloglevel 2";
             else if (binFileCount >= 81 && txtFileCount < 10)
-                args = $"-mod {ShellViewModel.ModInfo.Name}";
+                args = $"-mod {ShellViewModel.ModInfo.Name} -minimumloglevel 2";
             else if (binFileCount < 81 && txtFileCount >= 1)
-                args = $"-mod {ShellViewModel.ModInfo.Name} -txt";
+                args = $"-mod {ShellViewModel.ModInfo.Name} -txt -minimumloglevel 2";
         }
         else
         {
             if (ShellViewModel.ModInfo != null)
-                args = $"-mod {ShellViewModel.ModInfo.Name} -txt";
+                args = $"-mod {ShellViewModel.ModInfo.Name} -txt -minimumloglevel 2";
             else
                 args = "";
         }
