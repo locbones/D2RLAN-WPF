@@ -158,19 +158,62 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
     {
         Mods.Clear();
 
-        if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.013") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.027"))
+        if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.003") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.008"))
         {
-            var tcpEntry = new KeyValuePair<string, string>("TCP Files (Install First)", "https://www.dropbox.com/scl/fi/dpl290hob5ruwajsige2l/0908_idx_p2.zip?rlkey=b3xzz7heip90arbfs14f2nmc3&st=v0d7eozb&dl=1");
+            var tcpEntry = new KeyValuePair<string, string>("TCP Files (Install First)", "https://www.dropbox.com/scl/fi/d0swzfshayfkvf077yw2c/0927_idx_p2.zip?rlkey=yx1w7ats6mie9a7nbj8rjcp6k&st=xymgblqq&dl=1");
             _logger.Info("TCP FILES: Part 1 files found in game folder, skipping to part 2");
 
             Mods.Add(tcpEntry);
             SelectedMod = tcpEntry;
             return;
         }
-        else if (!File.Exists($@"{ShellViewModel.GamePath}data\data\data.027"))
+        else if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.008") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.013"))
+        {
+            var tcpEntry = new KeyValuePair<string, string>("TCP Files (Install First)", "https://www.dropbox.com/scl/fi/kekirhb9iupq32yoxyyvi/0927_idx_p3.zip?rlkey=3ld3fegp5j6budwhx1vw6a14x&st=o9422biw&dl=1");
+            _logger.Info("TCP FILES: Parts 1&2 files found in game folder, skipping to part 3");
+
+            Mods.Add(tcpEntry);
+            SelectedMod = tcpEntry;
+            return;
+        }
+        else if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.013") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.018"))
+        {
+            var tcpEntry = new KeyValuePair<string, string>("TCP Files (Install First)", "https://www.dropbox.com/scl/fi/2sd571yc429h169fmjzwa/0927_idx_p4.zip?rlkey=ff8daf427acq0mk4wda01036y&st=f4moofu0&dl=1");
+            _logger.Info("TCP FILES: Parts 1-3 files found in game folder, skipping to part 4");
+
+            Mods.Add(tcpEntry);
+            SelectedMod = tcpEntry;
+            return;
+        }
+        else if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.018") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.023"))
+        {
+            var tcpEntry = new KeyValuePair<string, string>("TCP Files (Install First)", "https://www.dropbox.com/scl/fi/ixp1dizsevtl6b60cn8bw/0927_idx_p5.zip?rlkey=xai0pttu75qc9iu8iq1mwj74s&st=hb4zyml7&dl=1");
+            _logger.Info("TCP FILES: Parts 1-4 files found in game folder, skipping to part 5");
+
+            Mods.Add(tcpEntry);
+            SelectedMod = tcpEntry;
+            return;
+        }
+        else if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.023") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.027"))
+        {
+            var tcpEntry = new KeyValuePair<string, string>("TCP Files (Install First)", "https://www.dropbox.com/scl/fi/h6jgqqkdi2tg94ua4w8sk/0927_idx_p6.zip?rlkey=av43wdttqhiyu9orribogvff8&st=6cs4sji3&dl=1");
+            _logger.Info("TCP FILES: Parts 1-5 files found in game folder, skipping to part 6");
+
+            Mods.Add(tcpEntry);
+            SelectedMod = tcpEntry;
+            return;
+        }
+        else if (!File.Exists($@"{ShellViewModel.GamePath}data\data\data.001"))
         {
             var tcpEntry = new KeyValuePair<string, string>("TCP Files (Install First)", string.Join(",", new[]
-            {"https://www.dropbox.com/scl/fi/3mfcgfv0rck6iesobwnf6/0908_idx_p1.zip?rlkey=s2hucsvwbcboppji1zchxz82a&st=pus5rarg&dl=1", "https://www.dropbox.com/scl/fi/dpl290hob5ruwajsige2l/0908_idx_p2.zip?rlkey=b3xzz7heip90arbfs14f2nmc3&st=v0d7eozb&dl=1"}));
+            {
+                "https://www.dropbox.com/scl/fi/h8kj7w67d9wux1fqii1br/0927_idx_p1.zip?rlkey=02s8y2s3x2s2sdtqfx55ehg67&st=1qspfvqk&dl=1",
+                "https://www.dropbox.com/scl/fi/d0swzfshayfkvf077yw2c/0927_idx_p2.zip?rlkey=yx1w7ats6mie9a7nbj8rjcp6k&st=je9a3maa&dl=1",
+                "https://www.dropbox.com/scl/fi/kekirhb9iupq32yoxyyvi/0927_idx_p3.zip?rlkey=3ld3fegp5j6budwhx1vw6a14x&st=o9422biw&dl=1",
+                "https://www.dropbox.com/scl/fi/2sd571yc429h169fmjzwa/0927_idx_p4.zip?rlkey=ff8daf427acq0mk4wda01036y&st=f4moofu0&dl=1",
+                "https://www.dropbox.com/scl/fi/ixp1dizsevtl6b60cn8bw/0927_idx_p5.zip?rlkey=xai0pttu75qc9iu8iq1mwj74s&st=hb4zyml7&dl=1",
+                "https://www.dropbox.com/scl/fi/h6jgqqkdi2tg94ua4w8sk/0927_idx_p6.zip?rlkey=av43wdttqhiyu9orribogvff8&st=6cs4sji3&dl=1"
+            }));
             _logger.Info("TCP FILES: Part 1 files not found, downloading both parts...");
             Mods.Add(tcpEntry);
             SelectedMod = tcpEntry;
@@ -262,8 +305,16 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                 var links = SelectedMod.Value.Split(',', StringSplitOptions.RemoveEmptyEntries);
                 int fileIndex = 1;
 
-                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.013") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.027"))
+                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.003") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.008"))
                     fileIndex = 2;
+                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.008") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.013"))
+                    fileIndex = 3;
+                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.013") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.018"))
+                    fileIndex = 4;
+                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.018") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.023"))
+                    fileIndex = 5;
+                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.023") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.027"))
+                    fileIndex = 6;
 
                 foreach (var link in links)
                 {
@@ -271,7 +322,7 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
 
                     using (HttpClient client = new HttpClient())
                     {
-                        client.Timeout = TimeSpan.FromMinutes(30);
+                        client.Timeout = Timeout.InfiniteTimeSpan;
 
                         var response = await client.GetAsync(link.Trim(), HttpCompletionOption.ResponseHeadersRead);
                         response.EnsureSuccessStatusCode();
@@ -286,7 +337,7 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                         var sw = Stopwatch.StartNew();
 
                         ProgressBarIsIndeterminate = false;
-                        ProgressStatus = $"Downloading part {fileIndex}...";
+                        ProgressStatus = $"Downloading part {fileIndex} of 6...";
 
                         while ((read = await httpStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                         {
@@ -328,7 +379,7 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                         sw.Stop();
                     }
 
-                    ProgressStatus = $"Extracting part {fileIndex}...";
+                    ProgressStatus = $"Extracting part {fileIndex} of 6...";
                     ProgressBarIsIndeterminate = true;
 
                     // Special extraction: strip root folder
@@ -382,7 +433,7 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
 
                 using (HttpClient client = new HttpClient())
                 {
-                    client.Timeout = TimeSpan.FromMinutes(30);
+                    client.Timeout = Timeout.InfiniteTimeSpan;
 
                     var response = await client.GetAsync(SelectedMod.Value.Trim(), HttpCompletionOption.ResponseHeadersRead);
                     response.EnsureSuccessStatusCode();
@@ -552,8 +603,6 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
         }
     }
 
-
-
     [UsedImplicitly]
     public async void OnModInstallSelectionChanged()
     {
@@ -563,13 +612,6 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                 ModDownloadLink = SelectedMod.Value;
         }
             
-    }
-    void CleanupTempFiles(string filePath, string dirPath)
-    {
-        if (File.Exists(filePath))
-            File.Delete(filePath);
-        if (Directory.Exists(dirPath))
-            Directory.Delete(dirPath, true);
     }
 
     #endregion

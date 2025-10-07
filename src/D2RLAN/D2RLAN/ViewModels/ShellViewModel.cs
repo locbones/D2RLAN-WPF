@@ -49,7 +49,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.7.2";
+    private string appVersion = "1.7.5";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -1780,6 +1780,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                 }
             case eSkillIconPack.ReMoDDeD:
                 {
+                    /*
                     if (!File.Exists(profileHdJsonPath))
                         Helper.ExtractFileFromCasc(GamePath, cascProfileHdJsonFileName, SelectedModDataFolder, "data:data");
 
@@ -1827,6 +1828,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                         profileContents = profileContents.Replace("SoSkillicon\"", "SoSkillicon2\"").Replace("SoSkillicon3\"", "SoSkillicon2\"");
                         await File.WriteAllTextAsync(ControllerskillsTreePanelHdJsonPath, profileContents);
                     }
+                    */
                     break;
                 }
             case eSkillIconPack.Dize:
@@ -4146,7 +4148,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             LauncherHasUpdate = true;
         }
 
-        
+
         // --- Check HUD DLL ---
         try
         {
@@ -4162,8 +4164,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         {
             _logger.Error("Error checking HUD DLL: " + ex.Message);
         }
-        
-        
+
 
         // --- Data integrity check ---
         if (UserSettings != null && newVersions[3] != UserSettings.DataHash)

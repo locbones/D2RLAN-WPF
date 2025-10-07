@@ -36,35 +36,31 @@ namespace D2RLAN.ViewModels.Dialogs
     {
         public static FilterMetadata ParseFilterMetadata(string filePath)
         {
+            var metadata = new FilterMetadata
+            {
+                FilePath = filePath,
+                Title = Path.GetFileNameWithoutExtension(filePath)
+            };
+
             if (!File.Exists(filePath))
-                throw new FileNotFoundException("Lua file not found.", filePath);
+                return metadata;
 
-            string[] lines = File.ReadAllLines(filePath);
-            var metadata = new FilterMetadata();
-
-            foreach (var line in lines)
+            foreach (var line in File.ReadLines(filePath))
             {
                 if (line.StartsWith("--- Filter Title:"))
-                    metadata.Title = line.Substring(17).Trim();
+                    metadata.Title = line[17..].Trim();
                 else if (line.StartsWith("--- Filter Type:"))
-                    metadata.Type = line.Substring(16).Trim();
+                    metadata.Type = line[16..].Trim();
                 else if (line.StartsWith("--- Filter Description:"))
-                    metadata.Description = line.Substring(23).Trim();
+                    metadata.Description = line[23..].Trim();
                 else if (line.StartsWith("--- Filter Link:"))
-                    metadata.RepoPath = line.Substring(16).Trim();
-
-                if (!string.IsNullOrEmpty(metadata.Title) &&
-                    !string.IsNullOrEmpty(metadata.Type) &&
-                    !string.IsNullOrEmpty(metadata.Description) &&
-                    !string.IsNullOrEmpty(metadata.RepoPath))
-                {
-                    break;
-                }
+                    metadata.RepoPath = line[16..].Trim();
             }
 
             return metadata;
         }
     }
+
 
 
 
@@ -138,14 +134,27 @@ namespace D2RLAN.ViewModels.Dialogs
                 if (_filterUpdates != value)
                 {
                     _filterUpdates = value;
+                    ShellViewModel.UserSettings.FilterUpdates = value;
                     NotifyOfPropertyChange(() => FilterUpdates);
+                    SaveSettingsAsync();
                 }
             }
         }
 
-        private async void SaveSettingsAsync()
+        private Task _saveTask = Task.CompletedTask;
+        private void SaveSettingsAsync()
         {
-            await ShellViewModel.SaveUserSettings();
+            _saveTask = _saveTask.ContinueWith(async _ =>
+            {
+                try
+                {
+                    await ShellViewModel.SaveUserSettings();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("Error saving user settings", ex);
+                }
+            }).Unwrap();
         }
 
         #endregion
@@ -289,11 +298,16 @@ namespace D2RLAN.ViewModels.Dialogs
             catch { }
         }
 
-        private async Task DownloadFileAsync(HttpClient client, string url, string destinationPath)
+        private static async Task DownloadFileAsync(HttpClient client, string url, string destinationPath)
         {
-            var bytes = await client.GetByteArrayAsync(url);
-            await File.WriteAllBytesAsync(destinationPath, bytes);
+            var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            await using var file = File.Create(destinationPath);
+            await stream.CopyToAsync(file);
         }
+
 
         #endregion
 
@@ -446,73 +460,117 @@ namespace D2RLAN.ViewModels.Dialogs
 
         private async Task UpdateSelectedFilterAsync()
         {
-            if (SelectedFilter == null || string.IsNullOrWhiteSpace(SelectedFilter.RepoPath))
+            if (SelectedFilter == null)
+            {
+                _logger.Warn("Update skipped: SelectedFilter is null.");
                 return;
+            }
 
-            string filterFolder = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters");
-            Directory.CreateDirectory(filterFolder);
-            string localFilterPath = Path.Combine(filterFolder, Path.GetFileName(SelectedFilter.FilePath));
+            // Remember the old title
+            string oldFilterTitle = SelectedFilter.Title ?? "Unknown";
+            string repoUrl = SelectedFilter.RepoPath;
+            string localFilterPath = SelectedFilter.FilePath;
+
+            if (string.IsNullOrWhiteSpace(repoUrl))
+            {
+                _logger.Warn($"Skipped update for '{oldFilterTitle}' — no RepoPath defined.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(localFilterPath) || !File.Exists(localFilterPath))
+            {
+                string filterFolder = Path.Combine(ShellViewModel.SelectedModDataFolder, @"D2RLAN\Filters");
+                Directory.CreateDirectory(filterFolder);
+                localFilterPath = Path.Combine(filterFolder, Path.GetFileName(new Uri(repoUrl).LocalPath));
+                SelectedFilter.FilePath = localFilterPath; // fix lost mapping
+            }
+
             using var client = new HttpClient();
 
             try
             {
                 // Download remote filter to temp file
                 string tempPath = Path.GetTempFileName();
-                var remoteBytes = await client.GetByteArrayAsync(SelectedFilter.RepoPath);
-                await File.WriteAllBytesAsync(tempPath, remoteBytes);
+                await DownloadFileAsync(client, repoUrl, tempPath);
 
-                // Determine if replacement is needed
                 bool shouldReplace = true;
+
                 if (File.Exists(localFilterPath))
                 {
-                    if (ShellViewModel.UserSettings.FilterUpdates)
-                        localFilterPath = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
-
-                    var localBytes = await File.ReadAllBytesAsync(localFilterPath);
-                    if (localBytes.Length == remoteBytes.Length && localBytes.SequenceEqual(remoteBytes))
-                        shouldReplace = false;
+                    shouldReplace = !await FilesAreEqualAsync(localFilterPath, tempPath);
                 }
 
                 if (!shouldReplace)
                 {
                     File.Delete(tempPath);
-                    return; // No update needed
+                    _logger.Info($"'{oldFilterTitle}' is already up to date.");
+                    return;
                 }
 
-                // Replace local file with remote version
                 File.Copy(tempPath, localFilterPath, overwrite: true);
-                if (ShellViewModel.UserSettings.FilterUpdates)
-                    File.Copy(localFilterPath, Path.Combine(filterFolder, Path.GetFileName(SelectedFilter.FilePath)), overwrite: true);
                 File.Delete(tempPath);
 
-                _logger.Info($"{SelectedFilter.Title} has been updated from Github!");
-
-                // Remember previous selection
-                string previousTitle = SelectedFilter.Title;
-                LoadFilterTitlesFromFolder(filterFolder);
-
-                // Try to re-select the previous filter or the newly added one
-                var matchFilter = FilterList.FirstOrDefault(f => f?.Title.Equals(previousTitle, StringComparison.OrdinalIgnoreCase) == true);
-
-                if (matchFilter == null)
-                    matchFilter = FilterList.FirstOrDefault(f => f?.FilePath == localFilterPath);
-
-                if (matchFilter != null)
-                    SelectedFilter = matchFilter;
+                _logger.Info($"'{oldFilterTitle}' successfully updated from remote.");
 
                 if (ShellViewModel.UserSettings.FilterUpdates)
-                    File.Copy(SelectedFilter.FilePath, Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua"), true);
+                {
+                    string gameConfigPath = Path.Combine(ShellViewModel.GamePath, "lootfilter_config.lua");
+                    File.Copy(localFilterPath, gameConfigPath, overwrite: true);
+                    _logger.Info($"'{oldFilterTitle}' applied automatically to game folder.");
+                }
 
-                // Inform the player
+                // Refresh UI: reload all filters from folder
+                LoadFilterTitlesFromFolder(Path.GetDirectoryName(localFilterPath));
+
+                // Try exact match first
+                var matchFilter = FilterList.FirstOrDefault(f =>
+                    f?.Title?.Equals(oldFilterTitle, StringComparison.OrdinalIgnoreCase) == true);
+
+                if (matchFilter == null)
+                {
+                    // Fuzzy match
+                    string baseName = Regex.Replace(oldFilterTitle, @"[_\- ]?v?\d+(\.\d+)?[a-zA-Z]*$", "", RegexOptions.IgnoreCase);
+
+                    matchFilter = FilterList
+                        .OrderByDescending(f => f?.Title?.Length ?? 0) // pick longest matching name (usually newest)
+                        .FirstOrDefault(f => f?.Title?.IndexOf(baseName, StringComparison.OrdinalIgnoreCase) >= 0);
+                }
+
+                if (matchFilter != null)
+                {
+                    SelectedFilter = matchFilter;
+                    _logger.Info($"Reselected updated filter: {matchFilter.Title}");
+                }
+                else
+                {
+                    _logger.Warn($"Could not find updated filter similar to '{oldFilterTitle}' after update.");
+                }
+
                 if (!ShellViewModel.UserSettings.FilterUpdates)
-                    MessageBox.Show($"A more recent version of '{SelectedFilter.Title}' is available!\nPress the Apply button to use it.", "Filter Update Available", MessageBoxButton.OK, MessageBoxImage.Information);
+                {
+                    MessageBox.Show($"An update for '{oldFilterTitle}' was downloaded.\nPress Apply to activate it.", "Filter Update Available", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to update filter '{SelectedFilter?.Title ?? "Unknown"}':\n{ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _logger.Error($"Error updating filter '{oldFilterTitle}': {ex}");
+                MessageBox.Show($"Failed to update filter '{oldFilterTitle}':\n{ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+
+        private static async Task<bool> FilesAreEqualAsync(string path1, string path2)
+        {
+            using var hash = System.Security.Cryptography.SHA256.Create();
+
+            await using var fs1 = File.OpenRead(path1);
+            await using var fs2 = File.OpenRead(path2);
+
+            byte[] hash1 = await hash.ComputeHashAsync(fs1);
+            byte[] hash2 = await hash.ComputeHashAsync(fs2);
+
+            return hash1.SequenceEqual(hash2);
+        }
 
         public async Task CheckForUpdatesAsync()
         {

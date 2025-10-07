@@ -166,6 +166,12 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             ShellViewModel.UserSettings.CheatsActive = false;
             CheatsEnabled = false;
         }
+        else
+        {
+            ShellViewModel.UserSettings.CheatsActive = true;
+            CheatsEnabled = true;
+        }
+
 
 
     }
