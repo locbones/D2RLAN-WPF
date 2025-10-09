@@ -280,6 +280,7 @@
     <None Remove="Resources\Preview\Preview_RuneDisplay.gif" />
     <None Remove="Resources\Preview\Preview_SinIcons.gif" />
     <None Remove="Resources\Preview\Preview_SkillIcons.gif" />
+    <None Remove="Resources\Preview\Preview_StringColoring.png" />
     <None Remove="Resources\Preview\Preview_SuperTK.gif" />
     <None Remove="Resources\SharedStashHardCoreV2.d2i" />
     <None Remove="Resources\SharedStashSoftCoreV2.d2i" />
@@ -549,6 +550,7 @@
     <Resource Include="Resources\Preview\Preview_RuneDisplay.gif" />
     <Resource Include="Resources\Preview\Preview_SinIcons.gif" />
     <Resource Include="Resources\Preview\Preview_SkillIcons.gif" />
+    <Resource Include="Resources\Preview\Preview_StringColoring.png" />
     <Resource Include="Resources\Preview\Preview_SuperTK.gif" />
     <EmbeddedResource Include="Resources\SharedStashHardCoreV2.d2i" />
     <EmbeddedResource Include="Resources\SharedStashSoftCoreV2.d2i" />

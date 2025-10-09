@@ -158,22 +158,19 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         {
             ShellViewModel.UserSettings.MapSeed = "";
             ShellViewModel.UserSettings.MapSeedName = "An Evil Force's Seed: ";
+
+            if (SelectedMod == "RMD-MP")
+            {
+                ShellViewModel.UserSettings.Cheats = false;
+                ShellViewModel.UserSettings.CheatsActive = false;
+                CheatsEnabled = false;
+            }
+            else
+            {
+                ShellViewModel.UserSettings.CheatsActive = true;
+                CheatsEnabled = true;
+            }
         }
-
-        if (SelectedMod == "RMD-MP")
-        {
-            ShellViewModel.UserSettings.Cheats = false;
-            ShellViewModel.UserSettings.CheatsActive = false;
-            CheatsEnabled = false;
-        }
-        else
-        {
-            ShellViewModel.UserSettings.CheatsActive = true;
-            CheatsEnabled = true;
-        }
-
-
-
     }
     public async Task InitializeLanguage()
     {
@@ -788,6 +785,9 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         string respecArg = ShellViewModel?.UserSettings?.InfiniteRespec ?? false ? " -enablerespec" : string.Empty;
         string windowedArg = ShellViewModel?.UserSettings?.WindowMode >= 1 ? " -windowed" : string.Empty;
         string cheatsArg = ShellViewModel?.UserSettings?.Cheats ?? false ? " -cheats" : string.Empty;
+        string soundArg = ShellViewModel?.UserSettings?.NoSound ?? false ? " -ns" : string.Empty;
+        string logoArg = ShellViewModel?.UserSettings?.SkipLogos ?? false ? " -skiplogovideo" : string.Empty;
+        string lowendArg = ShellViewModel?.UserSettings?.ForceLowend ?? false ? " -lowendsprites" : string.Empty;
         string mapLayoutArg = GetMapLayoutArg();
 
         string excelDir = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "global/excel");
@@ -798,23 +798,23 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             int txtFileCount = Directory.GetFiles(excelDir, "*.txt").Length;
 
             if (binFileCount >= 81 && txtFileCount >= 10)
-                args = $"-mod {ShellViewModel.ModInfo.Name} -txt -minimumloglevel 2";
+                args = $"-mod {ShellViewModel.ModInfo.Name} -txt";
             else if (binFileCount >= 81 && txtFileCount < 10)
-                args = $"-mod {ShellViewModel.ModInfo.Name} -minimumloglevel 2";
+                args = $"-mod {ShellViewModel.ModInfo.Name}";
             else if (binFileCount < 81 && txtFileCount >= 1)
-                args = $"-mod {ShellViewModel.ModInfo.Name} -txt -minimumloglevel 2";
+                args = $"-mod {ShellViewModel.ModInfo.Name} -txt";
         }
         else
         {
             if (ShellViewModel.ModInfo != null)
-                args = $"-mod {ShellViewModel.ModInfo.Name} -txt -minimumloglevel 2";
+                args = $"-mod {ShellViewModel.ModInfo.Name} -txt";
             else
                 args = "";
         }
 
         string mArgs = args;
 
-        args = $"{mArgs}{regenArg}{respecArg}{mapLayoutArg}{windowedArg}{cheatsArg}";
+        args = $"{mArgs}{regenArg}{respecArg}{mapLayoutArg}{windowedArg}{cheatsArg}{soundArg}{logoArg}{lowendArg}";
 
         if (ShellViewModel?.UserSettings == null)
             return string.Empty;

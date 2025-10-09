@@ -14,6 +14,9 @@ public class UserSettings : INotifyPropertyChanged
     private int _autoBackups;
     private int _buffIcons;
     private bool _hdrFix;
+    private bool _noSound;
+    private bool _skipLogo;
+    private bool _forceLowend;
     private int _hideHelmets;
     private int _hudDesign;
     private bool _infiniteRespec;
@@ -60,6 +63,7 @@ public class UserSettings : INotifyPropertyChanged
     private bool _dataHashPass;
     private int _BeaconStartup;
     private bool _filterUpdates;
+    private int _stringColoring;
 
     #endregion
 
@@ -299,6 +303,48 @@ public class UserSettings : INotifyPropertyChanged
                 return;
             }
             _hdrFix = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool NoSound
+    {
+        get => _noSound;
+        set
+        {
+            if (value == _noSound)
+            {
+                return;
+            }
+            _noSound = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool SkipLogos
+    {
+        get => _skipLogo;
+        set
+        {
+            if (value == _skipLogo)
+            {
+                return;
+            }
+            _skipLogo = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool ForceLowend
+    {
+        get => _forceLowend;
+        set
+        {
+            if (value == _forceLowend)
+            {
+                return;
+            }
+            _forceLowend = value;
             OnPropertyChanged();
         }
     }
@@ -718,6 +764,20 @@ public class UserSettings : INotifyPropertyChanged
                 return;
             }
             _filterUpdates = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public int StringColoring
+    {
+        get => _stringColoring;
+        set
+        {
+            if (value == _stringColoring)
+            {
+                return;
+            }
+            _stringColoring = value;
             OnPropertyChanged();
         }
     }

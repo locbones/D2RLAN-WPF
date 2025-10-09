@@ -49,7 +49,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.7.5";
+    private string appVersion = "1.7.8";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -138,11 +138,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             DiabloInstallDetected = true;
             HomeDrawerViewModel vm = new HomeDrawerViewModel();
             UserControl = new HomeDrawerView() {DataContext = vm};
-            //LootFilterViewModel = new LootFilterViewModel(this);
             Injector injector = new Injector(_gamePath);
         }
     }
-    //public LootFilterViewModel LootFilterViewModel { get; }
+
     public ShellViewModel(IWindowManager windowManager, IConfigurationRoot configuration) //Main Window Logger
     {
         _windowManager = windowManager;
@@ -165,6 +164,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         await ConfigureHudDesign();
         await ConfigureColorDyes();
         await ConfigureCinematicSubs();
+        await ConfigureStringColoring();
 
         // --- Check for loot filter auto updates if enabled ---
         if (UserSettings.FilterUpdates)
@@ -1181,7 +1181,45 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     break;
                 }
         }
-    } 
+    }
+
+    private async Task ConfigureStringColoring() //Runeword Sorting
+    {
+        eStringColoring stringColoring = (eStringColoring)UserSettings.StringColoring;
+
+        if (ModInfo.Name != "RMD-MP")
+            return;
+
+        if (Directory.Exists(Path.Combine(SelectedModDataFolder, "D2RLAN/String Colors")))
+        {
+
+            switch (stringColoring)
+            {
+                case eStringColoring.Default:
+                    {
+                        File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/String Colors/Default/item-modifiers.json"), Path.Combine(SelectedModDataFolder, $"local/lng/strings/item-modifiers.json"), true);
+                        File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/String Colors/Default/skills.json"), Path.Combine(SelectedModDataFolder, $"local/lng/strings/skills.json"), true);
+
+                        break;
+                    }
+                case eStringColoring.Clarity:
+                    {
+                        File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/String Colors/L1/item-modifiers.json"), Path.Combine(SelectedModDataFolder, $"local/lng/strings/item-modifiers.json"), true);
+                        File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/String Colors/L1/skills.json"), Path.Combine(SelectedModDataFolder, $"local/lng/strings/skills.json"), true);
+
+                        break;
+                    }
+                case eStringColoring.ClarityElement:
+                    {
+                        File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/String Colors/L2/item-modifiers.json"), Path.Combine(SelectedModDataFolder, $"local/lng/strings/item-modifiers.json"), true);
+                        File.Copy(Path.Combine(SelectedModDataFolder, "D2RLAN/String Colors/L2/skills.json"), Path.Combine(SelectedModDataFolder, $"local/lng/strings/skills.json"), true);
+
+                        break;
+                    }
+            }
+        }
+    }
+
     private async Task ConfigureMonsterStatsDisplay() //Advanced Monster Stats
     {
         eMonsterHP monsterHP = (eMonsterHP)UserSettings.MonsterHP;
@@ -4148,7 +4186,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             LauncherHasUpdate = true;
         }
 
-
+        
         // --- Check HUD DLL ---
         try
         {
@@ -4164,6 +4202,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         {
             _logger.Error("Error checking HUD DLL: " + ex.Message);
         }
+        
 
 
         // --- Data integrity check ---
@@ -4408,6 +4447,44 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
     #region ---TCP/Memory Functions---
 
+    private async Task<ProcessModule> WaitForMainModuleAsync(Process process, int timeoutMs = 10000, int intervalMs = 250)
+    {
+        int waited = 0;
+        int attempts = 0;
+
+        while (waited < timeoutMs)
+        {
+            attempts++;
+            try
+            {
+                process.Refresh();
+                if (process.MainModule != null)
+                {
+                    _logger.Info($"D2R fully loaded after {attempts} attempt(s), {waited} ms elapsed.");
+                    return process.MainModule;
+                }
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                // D2R not ready yet, retry
+            }
+            catch (InvalidOperationException)
+            {
+                // D2R exited early
+                _logger.Error("D2R exited before fully loading.");
+                break;
+            }
+
+            await Task.Delay(intervalMs);
+            waited += intervalMs;
+        }
+
+        _logger.Warn($"Timed out waiting for D2R to fully load after {attempts} attempt(s), {waited} ms elapsed.");
+        return null;
+    }
+
+
+
     public async Task ApplyTCPPatch()
     {
         string configPath = "config.json";
@@ -4446,35 +4523,42 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         if (process != null)
         {
-            // Wait for main module to be ready
-            int waitTime = 0;
-            while (process.MainModule == null && waitTime < 10000)
-            {
-                await Task.Delay(1000);
-                process.Refresh();
-                waitTime += 1000;
-            }
-
-            if (process.MainModule == null)
+            var mainModule = await WaitForMainModuleAsync(process);
+            if (mainModule == null)
             {
                 _logger.Error("Process main module not available in time.");
                 return;
             }
 
-            // Inject all DLLs from config
+            if (process.HasExited)
+            {
+                _logger.Error("Process exited before D2RHUD could load");
+                return;
+            }
+
+            // Inject all DLLs from config.json
             if (config.DLLsToLoad != null)
             {
                 foreach (var dll in config.DLLsToLoad)
                 {
-                    InjectDLL(process.Id, dll);
-                    _logger.Info($"{dll} injection attempted");
+                    try
+                    {
+                        _logger.Info($"{dll} loading attempted");
+                        InjectDLL(process.Id, dll);
+                        
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error($"Loading failed for {dll}: {ex.Message}");
+                    }
                 }
             }
 
             int skillIndex = await CheckSkillIndexAsync();
+            _logger.Info($"Memory Editing tasks begun, SkillIndex: {skillIndex}");
             EditMemory(process.Id, config.MemoryConfigs, skillIndex);
-            _logger.Info("Memory Editing tasks begun");
 
+            // Restore MSI if needed
             if (UserSettings.MSIFix && MSIPath != null)
             {
                 foreach (var path in MSIPath)
@@ -4488,9 +4572,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         }
 
         else
-        {
             _logger.Error("Failed to launch the process.");
-        }
 
         if (debugLogging)
         {
@@ -4602,7 +4684,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             return null;
         }
     }
-    static void EditMemory(int processId, List<MemoryConfig> memoryConfigs, int skillIndex) //Apply needed memory adjustments to game
+    static void EditMemory(int processId, List<MemoryConfig> memoryConfigs, int skillIndex)
     {
         int desiredAccess = PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION | PROCESS_QUERY_INFORMATION;
         IntPtr hProcess = OpenProcess(desiredAccess, false, processId);
@@ -4616,116 +4698,138 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         Process process = Process.GetProcessById(processId);
         IntPtr baseAddress = process.MainModule.BaseAddress;
 
-        _logger.Info($"Memory Edits: Base Address of {process.ProcessName}: 0x{baseAddress.ToString("X")}");
+        _logger.Info($"Memory Edits: Base Address of {process.ProcessName}: 0x{baseAddress:X}");
 
+        int totalOperations = 0;
+        int successfulOperations = 0;
+        int totalAddresses = 0;
+        int successfulAddresses = 0;
+
+        bool CountedProcessAddress(string address, int length, string type, string values)
+        {
+            totalAddresses++;
+            bool ok = ProcessAddress(baseAddress, hProcess, address, length, type, values);
+            if (ok) successfulAddresses++;
+            return ok;
+        }
+
+        // Process entries found in the config.json file
         foreach (var entry in memoryConfigs)
         {
+            totalOperations++;
+            bool allSucceeded = true;
+
             try
             {
                 if (entry.Addresses != null && entry.Addresses.Count > 0)
                 {
                     foreach (var address in entry.Addresses)
                     {
-                        ProcessAddress(baseAddress, hProcess, address, entry.Length, entry.Type, entry.Values);
+                        if (!CountedProcessAddress(address, entry.Length, entry.Type, entry.Values))
+                            allSucceeded = false;
                     }
                 }
                 else if (!string.IsNullOrEmpty(entry.Address))
-                    ProcessAddress(baseAddress, hProcess, entry.Address, entry.Length, entry.Type, entry.Values);
+                {
+                    if (!CountedProcessAddress(entry.Address, entry.Length, entry.Type, entry.Values))
+                        allSucceeded = false;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Error editing memory: {ex.Message}");
+                allSucceeded = false;
             }
+
+            if (allSucceeded)
+                successfulOperations++;
         }
 
-        //Force-enable cheats for the below "QoL" functions
-        ProcessAddress(baseAddress, hProcess, "1803258", 1, "Hex", "01"); //Identify All
-        ProcessAddress(baseAddress, hProcess, "18034C8", 1, "Hex", "01"); //Reset Skills Only
-        ProcessAddress(baseAddress, hProcess, "18034F8", 1, "Hex", "01"); //Reset Stats Only
-        ProcessAddress(baseAddress, hProcess, "1803588", 1, "Hex", "01"); //Force Save
-        ProcessAddress(baseAddress, hProcess, "1803888", 1, "Hex", "01"); //Clear Ground Items
+        // Force-enable cheats for the below "QoL" functions
+        {
+            totalOperations++;
+            bool allSucceeded = true;
 
-        //Memory edits needed to hotfix controller crashing when viewing icons above the retail index range. This may not be all possible edits needed; but no known issues currently.
+            // Identify All, Reset Skills, Reset Stats, Force Save, Clear Ground Items
+            string[] qolAddresses = { "1803258", "18034C8", "18034F8", "1803588", "1803888" };
+
+            foreach (var addr in qolAddresses)
+            {
+                if (!CountedProcessAddress(addr, 1, "Hex", "01"))
+                    allSucceeded = false;
+            }
+
+            if (allSucceeded)
+                successfulOperations++;
+        }
+
+        // Memory edits needed to hotfix controller crashing when viewing icons above the retail index range. This may not be all possible edits needed; but no known issues currently.
         if (skillIndex != 369)
         {
-            ProcessAddress(baseAddress, hProcess, "B4CBB", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "CAEE3", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "CB7DF", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));           
-            ProcessAddress(baseAddress, hProcess, "CD2CD", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "CD642", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));           
-            ProcessAddress(baseAddress, hProcess, "111ED5", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", ""));           
-            ProcessAddress(baseAddress, hProcess, "111F39", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "111F9D", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", ""));
-            ProcessAddress(baseAddress, hProcess, "112002", 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", ""));
+            totalOperations++;
+            bool allSucceeded = true;
+
+            string[] skillAddrs = { "B4CBB", "CAEE3", "CB7DF", "CD2CD", "CD642", "111ED5" };
+            string[] skillAddrsPlusOne = { "111F39", "111F9D", "112002" };
+
+            foreach (var addr in skillAddrs)
+            {
+                if (!CountedProcessAddress(addr, 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex)).Replace("-", "")))
+                    allSucceeded = false;
+            }
+            foreach (var addr in skillAddrsPlusOne)
+            {
+                if (!CountedProcessAddress(addr, 2, "Hex", BitConverter.ToString(ConvertToLittleEndian(skillIndex + 1)).Replace("-", "")))
+                    allSucceeded = false;
+            }
+
+            if (allSucceeded)
+                successfulOperations++;
         }
+
         CloseHandle(hProcess);
+
+        _logger.Info($"Memory edits complete: {successfulOperations}/{totalOperations} Operations and {successfulAddresses}/{totalAddresses} Addresses.");
     }
-    static void ProcessAddress(IntPtr baseAddress, IntPtr hProcess, string address, int length, string type, string values)
+
+    static bool ProcessAddress(IntPtr baseAddress, IntPtr hProcess, string address, int length, string type, string values)
     {
-        // Convert the address string to a numeric offset
         long offset = Convert.ToInt64(address, 16);
         IntPtr effectiveAddress = IntPtr.Add(baseAddress, (int)offset);
 
         if (debugLogging)
-        {
-            Console.WriteLine($"Offset from config: 0x{offset:X}");
-            Console.WriteLine($"Calculated Effective Address: 0x{effectiveAddress.ToString("X")}");
-        }
+            Console.WriteLine($"Offset: 0x{offset:X}, Effective Address: 0x{effectiveAddress:X}");
 
-        // Read current bytes for debugging
-        byte[] currentBytes = new byte[length];
-        int bytesRead = 0;
-
-        if (ReadProcessMemory(hProcess, effectiveAddress, currentBytes, length, ref bytesRead))
-        {
-            if (debugLogging)
-                Console.WriteLine($"Current bytes at address 0x{effectiveAddress.ToString("X")}: {BitConverter.ToString(currentBytes)}");
-        }
-        else
-            Console.WriteLine($"Failed to read memory at address 0x{effectiveAddress.ToString("X")}");
-
-        // Convert values based on type
         byte[] valueBytes;
         if (type.Equals("Integer", StringComparison.OrdinalIgnoreCase))
         {
             if (!int.TryParse(values, out int intValue))
             {
-                MessageBox.Show($"Invalid integer value: {values}");
-                return;
+                _logger.Warn($"Invalid integer value: {values}");
+                return false;
             }
-
-            byte[] tempBytes = BitConverter.GetBytes(intValue);
-            // Only take the number of bytes specified by Length
-            valueBytes = tempBytes.Take(length).ToArray();
+            valueBytes = BitConverter.GetBytes(intValue).Take(length).ToArray();
         }
-
         else if (type.Equals("Hex", StringComparison.OrdinalIgnoreCase))
         {
-            try
-            {
-                valueBytes = Convert.FromHexString(values.Replace(" ", ""));
-            }
-            catch
-            {
-                MessageBox.Show($"Invalid hex string: {values}");
-                return;
-            }
+            try { valueBytes = Convert.FromHexString(values.Replace(" ", "")); }
+            catch { _logger.Warn($"Invalid hex string: {values}"); return false; }
         }
         else
         {
-            MessageBox.Show($"Unknown type: {type}. Expected 'Integer' or 'Hex'.");
-            return;
+            _logger.Warn($"Unknown type: {type}");
+            return false;
         }
 
-        // Write the bytes to memory
         int bytesWritten = 0;
-        if (WriteProcessMemory(hProcess, effectiveAddress, valueBytes, valueBytes.Length, ref bytesWritten))
-        {
-            if (debugLogging)
-                MessageBox.Show($"Written values {values} (type: {type}) to address 0x{effectiveAddress.ToString("X")}");
-        }
-        else
-            MessageBox.Show($"Failed to write to address 0x{effectiveAddress.ToString("X")}");
+        bool success = WriteProcessMemory(hProcess, effectiveAddress, valueBytes, valueBytes.Length, ref bytesWritten);
+
+        if (!success)
+            _logger.Warn($"Failed to write to 0x{effectiveAddress:X}");
+        else if (debugLogging)
+            Console.WriteLine($"Wrote {valueBytes.Length} bytes to 0x{effectiveAddress:X}");
+
+        return success;
     }
 
     public class MemoryConfig
@@ -4812,7 +4916,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     continue;
                 }
 
-                _logger.Info($"DLL injection successful on attempt {attempt}.");
+                _logger.Info($"Loading successful on attempt {attempt}.");
                 CloseHandle(hThread);
                 CloseHandle(hProcess);
                 return;

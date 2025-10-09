@@ -268,14 +268,11 @@
                         </Grid>
                     </Grid>
 
-                    <Grid
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="5">
+                    <Grid Grid.Row="0" Grid.Column="2" Margin="5">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="20" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -286,8 +283,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
+                        <!-- Existing controls -->
                         <syncfusion:ButtonAdv
-                            Grid.Row="0"
+                            Grid.Row="3"
                             Width="24"
                             Height="24"
                             cm:Message.Attach="[Event Click] = [Action OnMapsHelp];"
@@ -295,78 +293,114 @@
                             IconTemplate="{StaticResource QuestionMarkIconTemplate}"
                             Style="{StaticResource SfButtonAdvSmallStyle}" Margin="80,-10,5,5" />
                         <Label
-                            Grid.Row="0"
+                            Grid.Row="3"
                             Content="{Binding Path=Maps, Source={StaticResource Resources}}"
                             Style="{StaticResource LabelHeaderStyle}" Margin="0,-8,0,0" VerticalAlignment="Top" />
                         <ComboBox
+                            Grid.Row="3"
                             VerticalAlignment="Top"
                             cm:Message.Attach="[Event SelectionChanged] = [Action OnMapLayoutSelectionChanged];"
                             Background="#FF313030"
-                            BorderThickness="1,1,1,1"
+                            BorderThickness="1"
                             DisplayMemberPath="Key"
                             ItemsSource="{Binding MapLayouts}"
                             SelectedIndex="{Binding ShellViewModel.UserSettings.MapLayout}"
                             SelectedValuePath="Value"
                             Style="{StaticResource ComboBoxStyle}" Margin="5,19,5,0" Grid.RowSpan="2" />
-                        <Label
-                            Grid.Row="3"
-                            Content="Window Mode"
-                            Style="{StaticResource LabelHeaderStyle}" Margin="0,-4,0,0" VerticalAlignment="Top" />
+                        <Label Grid.Row="5" Content="Window Mode" Style="{StaticResource LabelHeaderStyle}" Margin="0,-4,0,0" VerticalAlignment="Top" />
                         <ComboBox
-                            Grid.Row="5"
+                            Grid.Row="6"
                             VerticalAlignment="Center"
                             cm:Message.Attach="[Event SelectionChanged] = [Action OnMapLayoutSelectionChanged];"
                             Background="#FF313030"
-                            BorderThickness="1,1,1,1"
+                            BorderThickness="1"
                             DisplayMemberPath="Key"
                             ItemsSource="{Binding WindowMode}"
                             SelectedIndex="{Binding ShellViewModel.UserSettings.WindowMode}"
                             SelectedValuePath="Value"
                             Style="{StaticResource ComboBoxStyle}" Margin="5,0,5,0" />
-                        <CheckBox
-                            Grid.Row="6"
-                            Content="{Binding Path=HDR, Source={StaticResource Resources}}"
-                            IsChecked="{Binding ShellViewModel.UserSettings.HdrFix}"
-                            Style="{StaticResource CheckBoxStyle}" Margin="5,0,5,5" />
-                        <CheckBox
-                            Grid.Row="7"
+
+                        <!-- Floating Options Panel -->
+                        <ToggleButton x:Name="OptionsToggle"
+                            Content="Launch Options"
+                            Grid.Row="1"
+                            Height="35"
+                            Width="120"
+                            Margin="0,0,0,0"
+                            VerticalAlignment="Top"
                             HorizontalAlignment="Center"
-                            cm:Message.Attach="[Event Checked] = [Action OnMapRegenChecked]; [Event Unchecked] = [Action OnMapRegenChecked];"
-                            Content="{Binding Path=Regen, Source={StaticResource Resources}}"
-                            IsChecked="{Binding ShellViewModel.UserSettings.ResetMaps}"
-                            Style="{StaticResource CheckBoxStyle}" Margin="5,-2,5,5" />
-                        <CheckBox
-                            Grid.Row="8"
-                            HorizontalAlignment="Center"
-                            cm:Message.Attach="[Event Checked] = [Action OnMapRegenChecked]; [Event Unchecked] = [Action OnMapRegenChecked];"
-                            Content="{Binding Path=Respec, Source={StaticResource Resources}}"
-                            IsChecked="{Binding ShellViewModel.UserSettings.InfiniteRespec}"
-                            Style="{StaticResource CheckBoxStyle}" Margin="5,-2,5,5" />
-                        <CheckBox
-                            Grid.Row="9"
-                            HorizontalAlignment="Center"
-                            cm:Message.Attach="[Event Checked] = [Action OnMapRegenChecked]; [Event Unchecked] = [Action OnMapRegenChecked];"
-                            Content="Cheats"
-                            IsChecked="{Binding ShellViewModel.UserSettings.Cheats}"
-                            IsEnabled="{Binding ShellViewModel.UserSettings.CheatsActive}"
-                            Style="{StaticResource CheckBoxStyle}" Margin="5,-2,5,5" />
-                        <CheckBox
-                            Grid.Row="10"
-                            HorizontalAlignment="Center"
-                            Content="Overlay Fix"
-                            IsChecked="{Binding ShellViewModel.UserSettings.MSIFix}"
-                            Style="{StaticResource CheckBoxStyle}" Margin="0,-12,0,0" />
-                        <syncfusion:ButtonAdv
-                            Grid.Row="10"
-                            Width="24"
-                            Height="24"
-                            cm:Message.Attach="[Event Click] = [Action OnMSIFixHelp];"
-                            Background="Transparent"
-                            IconTemplate="{StaticResource QuestionMarkIconTemplate}"
-                            Style="{StaticResource SfButtonAdvSmallStyle}" Margin="125,-5,5,5" />
+                            OverridesDefaultStyle="True" Background="#FF460202">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <!-- Default unchecked colors -->
+                                    <Setter Property="Background" Value="Red"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="Black"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="Padding" Value="2"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border x:Name="border"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="3"
+                                                    Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="border" Property="Background" Value="#FFAA0000"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter TargetName="border" Property="Background" Value="Silver"/>
+                                                        <Setter Property="Foreground" Value="Black"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="border" Property="Background" Value="#FF880000"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="border" Property="Background" Value="Gray"/>
+                                                        <Setter Property="Foreground" Value="LightGray"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                        <Popup
+                            IsOpen="{Binding IsChecked, ElementName=OptionsToggle}"
+                            PlacementTarget="{Binding ElementName=OptionsToggle}"
+                            Placement="Bottom"
+                            StaysOpen="False"
+                            AllowsTransparency="True"
+                            HorizontalOffset="-25"
+                            PopupAnimation="Slide">
+                            <Border Background="#FF2D2D30" BorderBrush="Silver" BorderThickness="1" CornerRadius="5">
+                                <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Margin="5">
+                                        <CheckBox Content="{Binding Path=HDR, Source={StaticResource Resources}}" IsChecked="{Binding ShellViewModel.UserSettings.HdrFix}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
+                                        <CheckBox HorizontalAlignment="Center" cm:Message.Attach="[Event Checked] = [Action OnMapRegenChecked]; [Event Unchecked] = [Action OnMapRegenChecked];" Content="{Binding Path=Regen, Source={StaticResource Resources}}" IsChecked="{Binding ShellViewModel.UserSettings.ResetMaps}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
+                                        <CheckBox HorizontalAlignment="Center" cm:Message.Attach="[Event Checked] = [Action OnMapRegenChecked]; [Event Unchecked] = [Action OnMapRegenChecked];" Content="{Binding Path=Respec, Source={StaticResource Resources}}" IsChecked="{Binding ShellViewModel.UserSettings.InfiniteRespec}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
+                                        <CheckBox HorizontalAlignment="Center" Content="Cheats" IsChecked="{Binding ShellViewModel.UserSettings.Cheats}" IsEnabled="{Binding ShellViewModel.UserSettings.CheatsActive}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
+                                        <CheckBox HorizontalAlignment="Center" Content="Overlay Fix" IsChecked="{Binding ShellViewModel.UserSettings.MSIFix}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
+                                        <syncfusion:ButtonAdv Width="24" Height="24" cm:Message.Attach="[Event Click] = [Action OnMSIFixHelp];" Background="Transparent" IconTemplate="{StaticResource QuestionMarkIconTemplate}" Style="{StaticResource SfButtonAdvSmallStyle}" Margin="125,-25,5,5" />
+
+                                        <CheckBox Content="No Sound" cm:Message.Attach="[Event Checked] = [Action OnMapRegenChecked]; [Event Unchecked] = [Action OnMapRegenChecked];" IsChecked="{Binding ShellViewModel.UserSettings.NoSound}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
+                                        <CheckBox Content="Skip Logo Videos" cm:Message.Attach="[Event Checked] = [Action OnMapRegenChecked]; [Event Unchecked] = [Action OnMapRegenChecked];" IsChecked="{Binding ShellViewModel.UserSettings.SkipLogos}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
+                                        <CheckBox Content="Use Lowend Sprites" cm:Message.Attach="[Event Checked] = [Action OnMapRegenChecked]; [Event Unchecked] = [Action OnMapRegenChecked];" IsChecked="{Binding ShellViewModel.UserSettings.ForceLowend}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
                     </Grid>
                 </Grid>
-
                 <Grid
                     Grid.Row="3"
                     Margin="5"

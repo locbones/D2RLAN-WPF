@@ -42,6 +42,7 @@ public class QoLOptionsDrawerViewModel : INotifyPropertyChanged
     private ObservableCollection<KeyValuePair<string, eCinematicSubs>> _cinematicSubs = new();
     private ObservableCollection<KeyValuePair<string, eEnabledDisabledModify>> _enabledDisabledModifyOptions = new();
     private ObservableCollection<KeyValuePair<string, eBeaconStartup>> _BeaconStartup = new();
+    private ObservableCollection<KeyValuePair<string, eStringColoring>> _stringColoring = new();
 
     #endregion
 
@@ -124,6 +125,11 @@ public class QoLOptionsDrawerViewModel : INotifyPropertyChanged
         foreach (eBeaconStartup beaconStartupSetting in Enum.GetValues<eBeaconStartup>())
         {
             BeaconStartup.Add(new KeyValuePair<string, eBeaconStartup>(beaconStartupSetting.GetAttributeOfType<DisplayAttribute>().Name, beaconStartupSetting));
+        }
+
+        foreach (eStringColoring stringColoringSetting in Enum.GetValues<eStringColoring>())
+        {
+            StringColoring.Add(new KeyValuePair<string, eStringColoring>(stringColoringSetting.GetAttributeOfType<DisplayAttribute>().Name, stringColoringSetting));
         }
     }
 
@@ -228,6 +234,16 @@ public class QoLOptionsDrawerViewModel : INotifyPropertyChanged
         {
             if (Equals(value, _backupsSettings)) return;
             _backupsSettings = value;
+            OnPropertyChanged();
+        }
+    }
+    public ObservableCollection<KeyValuePair<string, eStringColoring>> StringColoring
+    {
+        get => _stringColoring;
+        set
+        {
+            if (Equals(value, _stringColoring)) return;
+            _stringColoring = value;
             OnPropertyChanged();
         }
     }
@@ -346,6 +362,10 @@ public class QoLOptionsDrawerViewModel : INotifyPropertyChanged
     public async void OnSkillIconPreview()
     {
         await ShowPreviewImage("Preview_SkillIcons.gif", "Skill Icons Preview");
+    }
+    public async void OnPreviewStringColoring()
+    {
+        await ShowPreviewImage("Preview_StringColoring.png", "String Coloring Preview");
     }
 
     #endregion
