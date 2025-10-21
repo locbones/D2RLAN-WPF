@@ -68,6 +68,9 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
         Execute.OnUIThread(async () =>
         {
             await GetAvailableMods();
+
+            if (ShellViewModel.UserSettings.DataHashPass == false && SelectedMod.Key == "TCP Files (Install First)")
+                OnInstallMod();
         });
     }
 
@@ -217,6 +220,7 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
             _logger.Info("TCP FILES: Part 1 files not found, downloading both parts...");
             Mods.Add(tcpEntry);
             SelectedMod = tcpEntry;
+
             return;
         }
         else
@@ -305,17 +309,6 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                 var links = SelectedMod.Value.Split(',', StringSplitOptions.RemoveEmptyEntries);
                 int fileIndex = 1;
 
-                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.003") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.008"))
-                    fileIndex = 2;
-                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.008") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.013"))
-                    fileIndex = 3;
-                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.013") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.018"))
-                    fileIndex = 4;
-                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.018") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.023"))
-                    fileIndex = 5;
-                if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.023") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.027"))
-                    fileIndex = 6;
-
                 foreach (var link in links)
                 {
                     string tempFile = Path.Combine(ShellViewModel.GamePath, $"BaseTCPFiles_Part{fileIndex}.zip");
@@ -336,6 +329,17 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                         int read;
                         var sw = Stopwatch.StartNew();
 
+                        if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.003") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.008"))
+                            fileIndex = 2;
+                        if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.008") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.013"))
+                            fileIndex = 3;
+                        if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.013") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.018"))
+                            fileIndex = 4;
+                        if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.018") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.023"))
+                            fileIndex = 5;
+                        if (File.Exists($@"{ShellViewModel.GamePath}data\data\data.023") && !File.Exists($@"{ShellViewModel.GamePath}data\data\data.027"))
+                            fileIndex = 6;
+
                         ProgressBarIsIndeterminate = false;
                         ProgressStatus = $"Downloading part {fileIndex} of 6...";
 
@@ -351,17 +355,12 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                             {
                                 double progress = (double)totalRead / contentLength * 100.0;
                                 double remainingSeconds = (contentLength - totalRead) / Math.Max(1, speed);
-                                string timeRemaining = remainingSeconds > 0
-                                    ? $"{TimeSpan.FromSeconds(remainingSeconds):mm\\:ss}"
-                                    : "--:--";
+                                string timeRemaining = remainingSeconds > 0 ? $"{TimeSpan.FromSeconds(remainingSeconds):mm\\:ss}" : "--:--";
 
                                 Execute.OnUIThread(() =>
                                 {
                                     DownloadProgress = Math.Round(progress, MidpointRounding.AwayFromZero);
-                                    DownloadProgressString =
-                                        $"{DownloadProgress}%  " +
-                                        $"({totalRead / 1024d / 1024d:0} / {contentLength / 1024d / 1024d:0} MB)  " +
-                                        $"{speedStr}  ETA: {timeRemaining}";
+                                    DownloadProgressString = $"{DownloadProgress}%  " + $"({totalRead / 1024d / 1024d:0} / {contentLength / 1024d / 1024d:0} MB)  " + $"{speedStr}  ETA: {timeRemaining}";
                                 });
                             }
                             else
@@ -369,8 +368,7 @@ public class DownloadNewModViewModel : Caliburn.Micro.Screen
                                 // Unknown content-length: show bytes + speed
                                 Execute.OnUIThread(() =>
                                 {
-                                    DownloadProgressString =
-                                        $"{totalRead / 1024d / 1024d:0} MB downloaded  {speedStr}";
+                                    DownloadProgressString = $"{totalRead / 1024d / 1024d:0} MB downloaded  {speedStr}";
                                 });
                             }
                         }

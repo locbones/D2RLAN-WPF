@@ -49,7 +49,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.7.8";
+    private string appVersion = "1.7.9";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4186,16 +4186,17 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             LauncherHasUpdate = true;
         }
 
-        
         // --- Check HUD DLL ---
         try
         {
-            if (newVersions[2] != CalculateMD5("D2RHUD.dll"))
+            string hudMD5 = CalculateMD5("D2RHUD.dll");
+
+            if (newVersions[2] != hudMD5)
             {
                 string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
                 File.Delete("D2RHUD.dll");
                 webClient.DownloadFile(hudLink, "D2RHUD.dll");
-                _logger.Info("D2RHUD Out-Of-Date. Downloaded latest from Github.");
+                _logger.Info($"D2RHUD Out-Of-Date ({hudMD5}). Downloaded latest from Github.");
             }
         }
         catch (Exception ex)
@@ -4203,78 +4204,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             _logger.Error("Error checking HUD DLL: " + ex.Message);
         }
         
-
-
-        // --- Data integrity check ---
-        if (UserSettings != null && newVersions[3] != UserSettings.DataHash)
-        {
-            UserSettings.DataHashPass = false;
-
-            if (UserSettings.DataHash == null)
-                MessageBox.Show("Performing one-time data integrity check...");
-            else
-                MessageBox.Show("Game Data Integrity Check Failed!\nAttempting to re-validate installed files...");
-
-            string dataHash = GetFolderMd5("../D2R/data/data");
-            UserSettings.DataHash = dataHash;
-
-            _logger.Error($"DATA INTEGRITY: expected {newVersions[3]}, got {dataHash}");
-
-            if (newVersions[3] == dataHash)
-            {
-                UserSettings.DataHashPass = true;
-                MessageBox.Show("Game Data Integrity Check Succeeded!");
-            }
-            else
-            {
-                UserSettings.DataHashPass = false;
-                MessageBox.Show("Game Data Integrity Check Still Failed! Please reinstall base files.");
-            }
-        }
     }
-
-
-    public static string GetFolderMd5(string folderPath, bool recursive = true)
-    {
-        if (!Directory.Exists(folderPath))
-            throw new DirectoryNotFoundException($"The folder '{folderPath}' does not exist.");
-
-        var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-        var files = Directory.GetFiles(folderPath, "*", searchOption);
-        Array.Sort(files, StringComparer.OrdinalIgnoreCase);
-
-        using (var md5 = MD5.Create())
-        {
-            byte[] buffer = new byte[1024 * 1024]; // 1 MB buffer
-
-            foreach (var file in files)
-            {
-                // Skip file named "shmem" (case-insensitive)
-                if (string.Equals(Path.GetFileName(file), "shmem", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                // Include relative path in hash
-                string relativePath = Path.GetRelativePath(folderPath, file);
-                byte[] pathBytes = Encoding.UTF8.GetBytes(relativePath.ToLowerInvariant());
-                md5.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
-
-                // Stream file contents
-                using (var stream = new FileStream(
-                    file, FileMode.Open, FileAccess.Read, FileShare.Read, buffer.Length, FileOptions.SequentialScan))
-                {
-                    int bytesRead;
-                    while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        md5.TransformBlock(buffer, 0, bytesRead, buffer, 0);
-                    }
-                }
-            }
-
-            md5.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-            return BitConverter.ToString(md5.Hash).Replace("-", "").ToLowerInvariant();
-        }
-    }
-
 
     public static string CalculateMD5(string filePath)
     {
@@ -4544,7 +4474,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     try
                     {
                         _logger.Info($"{dll} loading attempted");
-                        InjectDLL(process.Id, dll);
+                        string dllCheck = $"./{dll}";
+                        InjectDLL(process.Id, dllCheck);
                         
                     }
                     catch (Exception ex)
@@ -4657,7 +4588,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             rowCount = lines.Length;
         }
         if (!File.Exists(filePath) && ModInfo.Name == "RMD-MP")
-            rowCount = 741;
+            rowCount = 748;
 
         return rowCount;
     }

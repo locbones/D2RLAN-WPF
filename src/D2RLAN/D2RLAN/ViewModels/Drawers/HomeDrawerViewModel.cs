@@ -736,9 +736,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                 }
 
                 string targetFontPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "hd/ui/fonts/exocetblizzardot-medium.otf");
-                byte[] fontBytes = ShellViewModel.UserSettings.TextLanguage == 6
-                    ? await Helper.GetResourceByteArray("Fonts.retail.otf")
-                    : await Helper.GetResourceByteArray("Fonts.0.otf");
+                byte[] fontBytes = ShellViewModel.UserSettings.TextLanguage == 6 ? await Helper.GetResourceByteArray("Fonts.retail.otf") : await Helper.GetResourceByteArray("Fonts.0.otf");
 
                 await File.WriteAllBytesAsync(targetFontPath, fontBytes);
                 _logger.Info("Localized Exocet font installed successfully.");
@@ -766,8 +764,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         catch (Exception ex)
         {
             _logger.Error($"Unexpected error in OnPlayModAsync: {ex.Message}");
-            MessageBox.Show($"An unexpected error occurred:\n{ex.Message}", "Error",
-                MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"An unexpected error occurred:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -1495,6 +1492,95 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     {
         MessageBox.Show("Use this feature if you meet these conditions:\n- Using either of the 'Advanced' Monster Stats Display Options\n- Using MSI Afterburner (Riva Tuner) for in-game overlays\n\nThis will restart the apps to avoid loading conflicts; requires:\n- D2RLAN must be ran as Administrator\n- Change MSI Settings to 'Start App Minimized' (for QoL purposes)");
     }
+    public async void OnVerifyData()
+    {
+        if (ShellViewModel.UserSettings == null)
+            return;
+
+        try
+        {
+            // --- Create and show the progress bar dialog ---
+            dynamic options = new ExpandoObject();
+            options.ResizeMode = ResizeMode.NoResize;
+            options.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            ProgressBarViewModel vm = new ProgressBarViewModel(ShellViewModel);
+            var dialogTask = _windowManager.ShowDialogAsync(vm, null, options);
+            await dialogTask;
+
+            // --- After verification completes, download version info file ---
+            string dataHash = ShellViewModel.UserSettings.DataHash;
+            string tempFile = @"..\MyVersions_Temp.txt";
+
+            if (File.Exists(tempFile))
+                File.Delete(tempFile);
+
+            string primaryLink = "https://drive.google.com/uc?export=download&id=1c6KaTa4V782rVX0jEa8I5HLxYdrhvl7q";
+            string backupLink = "https://d2filesdrop.s3.us-east-2.amazonaws.com/MyVersions-TCP.txt";
+
+            using HttpClient client = new();
+
+            try
+            {
+                await DownloadFileAsync(client, primaryLink, tempFile);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.Warn($"Primary download failed: {ex.Message}");
+                try
+                {
+                    await DownloadFileAsync(client, backupLink, tempFile);
+                }
+                catch (HttpRequestException backupEx)
+                {
+                    _logger.Error($"Backup download failed: {backupEx.Message}");
+                    MessageBox.Show("Both primary and backup downloads failed. Please try again later.");
+                    return;
+                }
+            }
+
+            if (!File.Exists(tempFile))
+            {
+                _logger.Error("MyVersions_Temp.txt not found after download.");
+                return;
+            }
+
+            string[] newVersions = await File.ReadAllLinesAsync(tempFile);
+
+            // --- Compare the results ---
+            if (newVersions.Length > 3 && newVersions[3] == dataHash)
+            {
+                ShellViewModel.UserSettings.DataHashPass = true;
+                MessageBox.Show("File data integrity scan has succeeded!");
+            }
+            else
+            {
+                ShellViewModel.UserSettings.DataHashPass = false;
+
+                var result = MessageBox.Show(
+                    "File data integrity scan has failed!\n\nDo you want to remove your old base files and re-download them?\n(This can be helpful if you're experiencing excessive game crashes)\n\nWARNING: This download is approximately 28GB in data.",
+                    "Data Validation Result",
+                    MessageBoxButton.YesNoCancel
+                );
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    ShellViewModel.UserSettings.DataHash = "Bonesy";
+                    string targetPath = "../D2R/data/data";
+                    if (Directory.Exists(targetPath))
+                        Directory.Delete(targetPath, true);
+
+                    await OnDownloadMod();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"Unexpected error during data integrity check: {ex}");
+            MessageBox.Show($"An unexpected error occurred:\n\n{ex.Message}");
+        }
+    }
+
+
     [UsedImplicitly]
     public async Task OnCheckForUpdates()
     {
@@ -1726,7 +1812,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     }
 
     [UsedImplicitly]
-    public async void OnDownloadMod()
+    public async Task OnDownloadMod()
     {
         dynamic options = new ExpandoObject();
         options.ResizeMode = ResizeMode.NoResize;
@@ -1740,6 +1826,18 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             Settings.Default.Save();
 
             await InitializeMods();
+        }
+    }
+    public async void OnVerifyDataWindow()
+    {
+        dynamic options = new ExpandoObject();
+        options.ResizeMode = ResizeMode.NoResize;
+        options.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+        ProgressBarViewModel vm = new ProgressBarViewModel(ShellViewModel);
+
+        if (await _windowManager.ShowDialogAsync(vm, null, options))
+        {
         }
     }
     [UsedImplicitly]
@@ -1943,6 +2041,10 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 
         GetD2RArgs();
     }
+
+    
+
+
 
     #endregion
 
