@@ -36,6 +36,9 @@ using MySqlX.XDevAPI;
 using System.Drawing;
 using System.Windows.Media;
 using System.Security.Cryptography;
+using static D2RLAN.ViewModels.ShellViewModel;
+using MemoryEditor;
+using System.Text.Json;
 
 namespace D2RLAN.ViewModels.Drawers;
 
@@ -1577,6 +1580,61 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         {
             _logger.Error($"Unexpected error during data integrity check: {ex}");
             MessageBox.Show($"An unexpected error occurred:\n\n{ex.Message}");
+        }
+    }
+
+    public async void OnForceHUD()
+    {     
+        Process[] processes = Process.GetProcesses();
+
+        foreach (var process in processes)
+        {
+            if (process.ProcessName == ("D2R"))
+            {
+                _logger.Info($"FORCE HUD: Found D2R process with PID: {process.Id}");
+
+                var config = LoadConfig("config.json");
+
+                if (config == null)
+                {
+                    _logger.Error("Failed to load configuration file");
+                    return;
+                }
+
+
+                ProcessStartInfo memProcess = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments = $"/C D2RHUD-Loader.exe D2R.exe",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                Process.Start(memProcess);
+
+                int skillIndex = await ShellViewModel.CheckSkillIndexAsync();
+                ShellViewModel.EditMemory(process.Id, config.MemoryConfigs, skillIndex);
+
+                break;
+            }
+        }  
+    }
+
+    static Config LoadConfig(string configPath)
+    {
+        try
+        {
+            string jsonContent = File.ReadAllText(configPath);
+            JsonSerializerOptions options = new JsonSerializerOptions();
+            options.ReadCommentHandling = JsonCommentHandling.Skip;
+            options.TypeInfoResolver = ConfigSourceGenerationContext.Default;
+            ConfigSourceGenerationContext ctx = new ConfigSourceGenerationContext(options);
+            return System.Text.Json.JsonSerializer.Deserialize(jsonContent, ctx.Config);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error loading config: {ex.Message}");
+            return null;
         }
     }
 

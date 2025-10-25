@@ -157,6 +157,7 @@
                     Style="{StaticResource NavigationItemGoldStyle}"
                     Tag="D2RYoutube" />
             </syncfusion:NavigationItem>
+            <!--
             <syncfusion:NavigationItem
                 Header="Special Events"
                 IsEnabled="{Binding DiabloInstallDetected}"
@@ -166,6 +167,7 @@
                     <Image Source="pack://application:,,,/Resources/Icons/Icon_Events.png" />
                 </syncfusion:NavigationItem.Icon>
             </syncfusion:NavigationItem>
+            -->
             <syncfusion:NavigationItem
                 Header="Beacon"
                 IsEnabled="true"

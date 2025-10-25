@@ -49,7 +49,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.7.9";
+    private string appVersion = "1.8.0";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4186,6 +4186,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             LauncherHasUpdate = true;
         }
 
+        
         // --- Check HUD DLL ---
         try
         {
@@ -4203,6 +4204,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         {
             _logger.Error("Error checking HUD DLL: " + ex.Message);
         }
+        
         
     }
 
@@ -4449,10 +4451,23 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             await Task.Delay(1000);
         }
 
+
         Process process = LaunchProcess(processName, arguments);
+
+
+        ProcessStartInfo memProcess = new ProcessStartInfo()
+        {
+            FileName = "cmd.exe",
+            Arguments = $"/C D2RHUD-Loader.exe D2R.exe",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+        Process.Start(memProcess);
 
         if (process != null)
         {
+            /*
             var mainModule = await WaitForMainModuleAsync(process);
             if (mainModule == null)
             {
@@ -4474,16 +4489,35 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     try
                     {
                         _logger.Info($"{dll} loading attempted");
-                        string dllCheck = $"./{dll}";
-                        InjectDLL(process.Id, dllCheck);
-                        
+
+                        // ensure relative path is normalized to an absolute path
+                        string relativePath = $"./{dll}";
+                        string dllFullPath = Path.GetFullPath(relativePath);
+
+                        if (!File.Exists(dllFullPath))
+                        {
+                            _logger.Error($"DLL not found: {dllFullPath}");
+                            continue;
+                        }
+
+                        // Run the (synchronous) Win32 injector on a worker thread so the UI isn't blocked.
+                        // Adjust maxRetries/retryDelay/ejectIfPresent as desired.
+                        //bool injected = await Task.Run(() =>
+                            //InjectorWin32.InjectDLL(process.Id, dllFullPath, maxRetries: 5, retryDelay: 1000, ejectIfPresent: true)
+                        //);
+
+                        //if (injected)
+                            //_logger.Info($"Successfully injected {dll} into PID {process.Id}");
+                        //else
+                            //_logger.Error($"Injection failed for {dll} into PID {process.Id}");
                     }
                     catch (Exception ex)
                     {
-                        _logger.Error($"Loading failed for {dll}: {ex.Message}");
+                        _logger.Error($"Loading failed for {dll}: {ex}");
                     }
                 }
             }
+            */
 
             int skillIndex = await CheckSkillIndexAsync();
             _logger.Info($"Memory Editing tasks begun, SkillIndex: {skillIndex}");
@@ -4615,7 +4649,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             return null;
         }
     }
-    static void EditMemory(int processId, List<MemoryConfig> memoryConfigs, int skillIndex)
+    public static void EditMemory(int processId, List<MemoryConfig> memoryConfigs, int skillIndex)
     {
         int desiredAccess = PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION | PROCESS_QUERY_INFORMATION;
         IntPtr hProcess = OpenProcess(desiredAccess, false, processId);
@@ -4782,86 +4816,295 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     #endregion
 
     #region ---Helper Functions---
+    /*
+
+       // Injection Class
+   public static class InjectorWin32
+   {
+       // Access Flags
+       private const uint PROCESS_CREATE_THREAD = 0x0002;
+       private const uint PROCESS_QUERY_INFORMATION = 0x0400;
+       private const uint PROCESS_VM_OPERATION = 0x0008;
+       private const uint PROCESS_VM_WRITE = 0x0020;
+       private const uint PROCESS_VM_READ = 0x0010;
+       private const uint PROCESS_ALL_ACCESS = 0x001F0FFF;
+
+       private const uint MEM_COMMIT = 0x1000;
+       private const uint MEM_RESERVE = 0x2000;
+       private const uint MEM_RELEASE = 0x8000;
+       private const uint PAGE_READWRITE = 0x04;
+       private const uint PAGE_EXECUTE_READWRITE = 0x40;
+
+       private const uint INFINITE = 0xFFFFFFFF;
+       private const uint WAIT_OBJECT_0 = 0x00000000;
+       private const uint WAIT_TIMEOUT = 0x00000102;
+
+       // PInvoke Declarations
+       [DllImport("kernel32", SetLastError = true)]
+       private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+
+       [DllImport("kernel32", SetLastError = true)]
+       private static extern bool CloseHandle(IntPtr hObject);
+
+       [DllImport("kernel32", SetLastError = true)]
+       private static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, UIntPtr dwSize, uint flAllocationType, uint flProtect);
+
+       [DllImport("kernel32", SetLastError = true)]
+       private static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, UIntPtr dwSize, uint dwFreeType);
+
+       [DllImport("kernel32", SetLastError = true)]
+       private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out UIntPtr lpNumberOfBytesWritten);
+
+       [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
+       private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+       [DllImport("kernel32", SetLastError = true)]
+       private static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+
+       [DllImport("kernel32", SetLastError = true)]
+       private static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, UIntPtr dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out uint lpThreadId);
+
+       [DllImport("kernel32", SetLastError = true)]
+       private static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+
+       [DllImport("kernel32", SetLastError = true)]
+       private static extern bool GetExitCodeThread(IntPtr hThread, out uint lpExitCode);
+
+       // Module Enumerator/Ejector
+       [DllImport("kernel32.dll", SetLastError = true)]
+       static extern IntPtr CreateToolhelp32Snapshot(uint dwFlags, uint th32ProcessID);
+       private const uint TH32CS_SNAPMODULE = 0x00000008;
+       private const uint TH32CS_SNAPMODULE32 = 0x00000010;
+
+       [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+       private struct MODULEENTRY32
+       {
+           internal uint dwSize;
+           internal uint th32ModuleID;
+           internal uint th32ProcessID;
+           internal uint GlblcntUsage;
+           internal uint ProccntUsage;
+           internal IntPtr modBaseAddr;
+           internal uint modBaseSize;
+           internal IntPtr hModule;
+           [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+           internal string szModule;
+           [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+           internal string szExePath;
+       }
+
+       [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+       static extern bool Module32First(IntPtr hSnapshot, ref MODULEENTRY32 lpme);
+
+       [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+       static extern bool Module32Next(IntPtr hSnapshot, ref MODULEENTRY32 lpme);
 
 
-    static void InjectDLL(int processId, string dllPath, int maxRetries = 5, int retryDelay = 1000)
-    {
-        if (!File.Exists(dllPath))
-        {
-            _logger.Error($"DLL file not found: {dllPath}");
-            return;
-        }
+       // Main Injection Logic
+       public static bool InjectDLL(int processId, string dllPath, int maxRetries = 5, int retryDelay = 1000, bool ejectIfPresent = true)
+       {
+           if (!File.Exists(dllPath))
+           {
+               Console.Error.WriteLine($"[!] DLL file not found: {dllPath}");
+               return false;
+           }
 
-        for (int attempt = 1; attempt <= maxRetries; attempt++)
-        {
-            try
-            {
-                IntPtr hProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_WRITE, false, processId);
+           for (int attempt = 1; attempt <= maxRetries; attempt++)
+           {
+               try
+               {
+                   if (ejectIfPresent)
+                   {
+                       // Attempt to clear any ghost copies loaded
+                       string moduleName = Path.GetFileName(dllPath);
+                       try
+                       {
+                           EjectRemoteModuleByName(processId, moduleName);
+                       }
+                       catch (Exception ex)
+                       {
+                           _logger.Error($"[!] Eject attempt failed (non-fatal): {ex.Message}");
+                       }
+                   }
 
-                if (hProcess == IntPtr.Zero)
-                {
-                    _logger.Warn($"Attempt {attempt}: Failed to open process.");
-                    Thread.Sleep(retryDelay);
-                    continue;
-                }
+                   // Open D2R with broader Access Flags
+                   IntPtr hProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false, processId);
+                   if (hProcess == IntPtr.Zero)
+                   {
+                       _logger.Info($"Attempt {attempt}: Failed to open process (PID {processId}). GLE={Marshal.GetLastWin32Error()}");
+                       Thread.Sleep(retryDelay);
+                       continue;
+                   }
 
-                IntPtr allocMemAddress = VirtualAllocEx(hProcess, IntPtr.Zero,
-                    (uint)((dllPath.Length + 1) * Marshal.SizeOf<char>()), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+                   // Use Unicode (W) version: write wide chars so LoadLibraryW can consume it
+                   byte[] dllBytes = Encoding.Unicode.GetBytes(dllPath + '\0');
+                   UIntPtr allocSize = new UIntPtr((uint)dllBytes.Length);
 
-                if (allocMemAddress == IntPtr.Zero)
-                {
-                    _logger.Warn($"Attempt {attempt}: Failed to allocate memory.");
-                    CloseHandle(hProcess);
-                    Thread.Sleep(retryDelay);
-                    continue;
-                }
+                   IntPtr allocMemAddress = VirtualAllocEx(hProcess, IntPtr.Zero, allocSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+                   if (allocMemAddress == IntPtr.Zero)
+                   {
+                       _logger.Info($"Attempt {attempt}: VirtualAllocEx failed. GLE={Marshal.GetLastWin32Error()}");
+                       CloseHandle(hProcess);
+                       Thread.Sleep(retryDelay);
+                       continue;
+                   }
 
-                int bytesWritten;
-                if (!WriteProcessMemory(hProcess, allocMemAddress, Encoding.Default.GetBytes(dllPath),
-                    (uint)(dllPath.Length + 1), out bytesWritten))
-                {
-                    _logger.Warn($"Attempt {attempt}: Failed to write to process memory.");
-                    CloseHandle(hProcess);
-                    Thread.Sleep(retryDelay);
-                    continue;
-                }
+                   bool wrote = WriteProcessMemory(hProcess, allocMemAddress, dllBytes, allocSize, out UIntPtr bytesWritten);
+                   if (!wrote || bytesWritten.ToUInt32() != dllBytes.Length)
+                   {
+                       _logger.Info($"Attempt {attempt}: WriteProcessMemory failed (wrote {bytesWritten}). GLE={Marshal.GetLastWin32Error()}");
+                       VirtualFreeEx(hProcess, allocMemAddress, UIntPtr.Zero, MEM_RELEASE);
+                       CloseHandle(hProcess);
+                       Thread.Sleep(retryDelay);
+                       continue;
+                   }
 
-                IntPtr hKernel32 = GetModuleHandle("kernel32.dll");
-                IntPtr hLoadLibrary = GetProcAddress(hKernel32, "LoadLibraryA");
+                   // Get address of LoadLibraryW in local kernel32
+                   IntPtr hKernel32 = GetModuleHandle("kernel32.dll");
+                   if (hKernel32 == IntPtr.Zero)
+                   {
+                       _logger.Info($"Attempt {attempt}: GetModuleHandle failed. GLE={Marshal.GetLastWin32Error()}");
+                       VirtualFreeEx(hProcess, allocMemAddress, UIntPtr.Zero, MEM_RELEASE);
+                       CloseHandle(hProcess);
+                       Thread.Sleep(retryDelay);
+                       continue;
+                   }
 
-                if (hLoadLibrary == IntPtr.Zero)
-                {
-                    _logger.Warn($"Attempt {attempt}: Failed to get LoadLibraryA.");
-                    CloseHandle(hProcess);
-                    Thread.Sleep(retryDelay);
-                    continue;
-                }
+                   IntPtr loadLibraryAddr = GetProcAddress(hKernel32, "LoadLibraryW");
+                   if (loadLibraryAddr == IntPtr.Zero)
+                   {
+                       _logger.Info($"Attempt {attempt}: GetProcAddress(LoadLibraryW) failed. GLE={Marshal.GetLastWin32Error()}");
+                       VirtualFreeEx(hProcess, allocMemAddress, UIntPtr.Zero, MEM_RELEASE);
+                       CloseHandle(hProcess);
+                       Thread.Sleep(retryDelay);
+                       continue;
+                   }
 
-                IntPtr hThread = CreateRemoteThread(hProcess, IntPtr.Zero, 0, hLoadLibrary, allocMemAddress, 0, out _);
+                   // Create remote thread to call LoadLibraryW(remote path)
+                   IntPtr hThread = CreateRemoteThread(hProcess, IntPtr.Zero, UIntPtr.Zero, loadLibraryAddr, allocMemAddress, 0, out uint threadId);
+                   if (hThread == IntPtr.Zero)
+                   {
+                       _logger.Info($"Attempt {attempt}: CreateRemoteThread failed. GLE={Marshal.GetLastWin32Error()}");
+                       VirtualFreeEx(hProcess, allocMemAddress, UIntPtr.Zero, MEM_RELEASE);
+                       CloseHandle(hProcess);
+                       Thread.Sleep(retryDelay);
+                       continue;
+                   }
 
-                if (hThread == IntPtr.Zero)
-                {
-                    _logger.Warn($"Attempt {attempt}: Failed to create remote thread.");
-                    CloseHandle(hProcess);
-                    Thread.Sleep(retryDelay);
-                    continue;
-                }
+                   // Wait (bounded) for completion
+                   uint waitResult = WaitForSingleObject(hThread, 10_000); // 10s timeout
+                   if (waitResult == WAIT_TIMEOUT)
+                   {
+                       _logger.Info($"Attempt {attempt}: Remote thread timed out.");
+                   }
 
-                _logger.Info($"Loading successful on attempt {attempt}.");
-                CloseHandle(hThread);
-                CloseHandle(hProcess);
-                return;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error($"Attempt {attempt}: Exception during injection - {ex.Message}");
-            }
+                   bool gotExit = GetExitCodeThread(hThread, out uint exitCode);
+                   if (!gotExit)
+                   {
+                       _logger.Info($"Attempt {attempt}: GetExitCodeThread failed. GLE={Marshal.GetLastWin32Error()}");
+                   }
+                   else
+                   {
+                       if (exitCode == 0)
+                       {
+                           _logger.Info($"Attempt {attempt}: LoadLibraryW returned NULL (load failed).");
+                       }
+                       else
+                       {
+                           _logger.Info($"Attempt {attempt}: DLL loaded at remote address 0x{exitCode:X}. Success!");
+                           // Cleanup
+                           VirtualFreeEx(hProcess, allocMemAddress, UIntPtr.Zero, MEM_RELEASE);
+                           CloseHandle(hThread);
+                           CloseHandle(hProcess);
+                           return true;
+                       }
+                   }
 
-            Thread.Sleep(retryDelay);
-        }
+                   // Cleanup Attempt
+                   VirtualFreeEx(hProcess, allocMemAddress, UIntPtr.Zero, MEM_RELEASE);
+                   CloseHandle(hThread);
+                   CloseHandle(hProcess);
+               }
+               catch (Exception ex)
+               {
+                   _logger.Info($"Attempt {attempt}: Exception during injection - {ex}");
+               }
 
-        _logger.Error($"DLL injection failed after {maxRetries} attempts.");
-    }
+               Thread.Sleep(retryDelay);
+           }
+
+           _logger.Error($"DLL injection failed after {maxRetries} attempts.");
+           return false;
+       }
+
+       // Eject FreeLibrary on loaded module(s)
+       public static void EjectRemoteModuleByName(int pid, string moduleName)
+       {
+           IntPtr snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, (uint)pid);
+           if (snapshot == IntPtr.Zero || snapshot == new IntPtr(-1))
+           {
+               throw new InvalidOperationException($"CreateToolhelp32Snapshot failed. GLE={Marshal.GetLastWin32Error()}");
+           }
+
+           MODULEENTRY32 me = new MODULEENTRY32();
+           me.dwSize = (uint)Marshal.SizeOf(typeof(MODULEENTRY32));
+
+           bool ok = Module32First(snapshot, ref me);
+           bool found = false;
+           IntPtr moduleBase = IntPtr.Zero;
+           string foundModule = null;
+
+           while (ok)
+           {
+               if (string.Equals(me.szModule, moduleName, StringComparison.OrdinalIgnoreCase))
+               {
+                   found = true;
+                   moduleBase = me.modBaseAddr;
+                   foundModule = me.szModule;
+                   break;
+               }
+               ok = Module32Next(snapshot, ref me);
+           }
+
+           CloseHandle(snapshot);
+
+           if (!found)
+               return;
+
+           // Open D2R and call FreeLibrary to load module base as parameter
+           IntPtr hProc = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION, false, pid);
+           if (hProc == IntPtr.Zero)
+               throw new InvalidOperationException($"OpenProcess for eject failed. GLE={Marshal.GetLastWin32Error()}");
+
+           IntPtr hKernel32 = GetModuleHandle("kernel32.dll");
+           if (hKernel32 == IntPtr.Zero)
+           {
+               CloseHandle(hProc);
+               throw new InvalidOperationException($"GetModuleHandle(kernel32) failed. GLE={Marshal.GetLastWin32Error()}");
+           }
+
+           IntPtr freeLibAddr = GetProcAddress(hKernel32, "FreeLibrary");
+           if (freeLibAddr == IntPtr.Zero)
+           {
+               CloseHandle(hProc);
+               throw new InvalidOperationException($"GetProcAddress(FreeLibrary) failed. GLE={Marshal.GetLastWin32Error()}");
+           }
+
+           IntPtr hThread = CreateRemoteThread(hProc, IntPtr.Zero, UIntPtr.Zero, freeLibAddr, moduleBase, 0, out uint tid);
+           if (hThread == IntPtr.Zero)
+           {
+               CloseHandle(hProc);
+               throw new InvalidOperationException($"CreateRemoteThread(FreeLibrary) failed. GLE={Marshal.GetLastWin32Error()}");
+           }
+
+           WaitForSingleObject(hThread, INFINITE);
+           CloseHandle(hThread);
+           CloseHandle(hProc);
+       }
+   }
+
+ */
+
 
     static Config LoadConfig(string configPath)
     {

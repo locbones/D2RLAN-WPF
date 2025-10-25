@@ -240,6 +240,7 @@
                             <RowDefinition Height="1*" />
                             <RowDefinition Height="1*" />
                             <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
                         </Grid.RowDefinitions>
 
                         <Label
@@ -257,13 +258,50 @@
                         <Image Grid.Row="2" Width="60" Height="60" Source="/Resources/Images/ChatGemBG.png" Grid.RowSpan="2" Margin="0,5,0,0"/>
                         <Image Grid.Row="2" Width="10" Height="10" Source="{Binding ImageSource}" Grid.RowSpan="2" Margin="0,5,0,0" cm:Message.Attach="[Event MouseLeftButtonDown] = [OnImageClick]"/>
                         <Label Grid.Row="4" Content="{Binding ImageHint}" Foreground ="#FFAE00FF" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Center" Height="24"/>
+
                         <StackPanel
-                            Grid.Row="5"
+    Grid.Row="5"
+    HorizontalAlignment="Center"
+    Orientation="Horizontal">
+                            <Label
+        VerticalContentAlignment="Center"
+        Content="{Binding ShellViewModel.UserSettings.MapSeedName}"
+        Foreground="Red" />
+                            <TextBox
+        x:Name="textBoxSeed"
+        Width="100"
+        Height="25"
+        VerticalAlignment="Top"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center"
+        Background="#FF313030"
+        FontSize="11"
+        Text="{Binding ShellViewModel.UserSettings.MapSeed}"
+        TextAlignment="Center" />
+                            <syncfusion:ButtonAdv
+        Width="33"
+        Margin="0,0,0,0"
+        cm:Message.Attach="[Event Click] = [Action OnCharSelect];"
+        Background="Transparent"
+        IconTemplate="{StaticResource CharactersIconTemplate}"
+        Style="{StaticResource SfButtonAdvSmallStyle}" />
+                            <syncfusion:ButtonAdv
+        Width="33"
+        Margin="0,0,0,0"
+        cm:Message.Attach="[Event Click] = [Action OnCharMapSeed];"
+        Background="Transparent"
+        IconTemplate="{StaticResource PreviewIconTemplate}"
+        Style="{StaticResource SfButtonAdvSmallStyle}" />
+                        </StackPanel>
+
+
+                        <StackPanel
+                            Grid.Row="6"
                             HorizontalAlignment="Center"
                             Orientation="Horizontal">
                             <Label Content="Launch Mode:" Foreground ="CornflowerBlue" VerticalContentAlignment="Bottom"/>
                         </StackPanel>
-                        <Grid Grid.Row="6" HorizontalAlignment="Stretch">
+                        <Grid Grid.Row="7" HorizontalAlignment="Stretch">
                             <TextBox x:Name="textBoxArgs" Text="{Binding ShellViewModel.UserSettings.CurrentD2RArgs}" TextAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="20" VerticalAlignment="Top" Background="#FF313030" FontSize="11"/>
                         </Grid>
                     </Grid>
@@ -319,23 +357,95 @@
                             SelectedIndex="{Binding ShellViewModel.UserSettings.WindowMode}"
                             SelectedValuePath="Value"
                             Style="{StaticResource ComboBoxStyle}" Margin="5,0,5,0" />
-                        <syncfusion:ButtonAdv
+
+                        <!-- Floating Options Panel -->
+                        <ToggleButton x:Name="DebugOptionsToggle"
+                            Content="Debug Options"
                             Grid.Row="7"
-                            Grid.Column="0"
-                            cm:Message.Attach="[Event Click] = [Action OnVerifyData];"
-                            Background="#1f0138"
-                            IconTemplate="{StaticResource AdditionIconTemplate}"
-                            Label="Integrity Check"
-                            Style="{StaticResource SfButtonAdvNormalStyle}" VerticalAlignment="Center" Margin="5,10,5,5"  FontSize="14" />
+                            Height="35"
+                            Width="120"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            OverridesDefaultStyle="True" Background="#230140" Margin="0,20,0,0">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <!-- Default unchecked colors -->
+                                    <Setter Property="Background" Value="Red"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="Black"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="Padding" Value="2"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border x:Name="border"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="3"
+                                                    Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="border" Property="Background" Value="#FFAA0000"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter TargetName="border" Property="Background" Value="Silver"/>
+                                                        <Setter Property="Foreground" Value="Black"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="border" Property="Background" Value="#FF880000"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="border" Property="Background" Value="Gray"/>
+                                                        <Setter Property="Foreground" Value="LightGray"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                        <Popup
+                            IsOpen="{Binding IsChecked, ElementName=DebugOptionsToggle}"
+                            PlacementTarget="{Binding ElementName=DebugOptionsToggle}"
+                            Placement="Bottom"
+                            StaysOpen="False"
+                            AllowsTransparency="True"
+                            HorizontalOffset="-26"
+                            PopupAnimation="Slide">
+                            <Border Background="#FF2D2D30" BorderBrush="Silver" BorderThickness="1" CornerRadius="5">
+                                <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Margin="5">
+
+                                        <syncfusion:ButtonAdv
+                                            cm:Message.Attach="[Event Click] = [Action OnVerifyData];"
+                                            Background="#FF142138"
+                                            IconTemplate="{StaticResource AdditionIconTemplate}"
+                                            Label="Verify Game Files" HorizontalAlignment="Left" Width="160" HorizontalContentAlignment="Left" />
+                                        <syncfusion:ButtonAdv
+                                            cm:Message.Attach="[Event Click] = [Action OnForceHUD];"
+                                            Background="#FF142138"
+                                            Margin="0,5,0,0"
+                                            IconTemplate="{StaticResource AdditionIconTemplate}"
+                                            Label="Force Load D2RHUD" HorizontalAlignment="Left" Width="160" HorizontalContentAlignment="Left" />
+
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
 
                         <!-- Floating Options Panel -->
                         <ToggleButton x:Name="OptionsToggle"
                             Content="Launch Options"
-                            Grid.Row="0"
                             Height="35"
                             Width="120"
-                            Margin="0,0,0,0"
-                            VerticalAlignment="Top"
+                            VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             OverridesDefaultStyle="True" Background="#FF460202">
                             <ToggleButton.Style>
