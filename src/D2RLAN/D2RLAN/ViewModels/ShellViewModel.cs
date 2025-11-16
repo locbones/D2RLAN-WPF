@@ -49,7 +49,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.8.0";
+    private string appVersion = "1.8.3";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -1231,6 +1231,9 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         string outputPath = SelectedModDataFolder + "/D2RLAN/Monster Stats/MS_Assets.zip";
         string ConfigFilePath = "config.json";
 
+        if (File.Exists(SelectedModDataFolder + "/D2RLAN/config_override.json"))
+            File.Copy(SelectedModDataFolder + "/D2RLAN/config_override.json", "config.json", true);
+
         if (!Directory.Exists(uiLayoutsPath))
             Directory.CreateDirectory(uiLayoutsPath);
 
@@ -1255,7 +1258,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                         File.Move(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json", SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd_disabled.json", true);
 
                     string configFile = File.ReadAllText(ConfigFilePath);
-                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": true", "\"MonsterStatsDisplay\": false");
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": true,", "\"MonsterStatsDisplay\": false,");
                     File.WriteAllText(ConfigFilePath, configFile2);
 
                     break;
@@ -1283,7 +1286,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     }
 
                     string configFile = File.ReadAllText(ConfigFilePath);
-                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": true", "\"MonsterStatsDisplay\": false");
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": true,", "\"MonsterStatsDisplay\": false,");
                     File.WriteAllText(ConfigFilePath, configFile2);
 
                     break;
@@ -1308,7 +1311,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     File.WriteAllText(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json", hudContents);
 
                     string configFile = File.ReadAllText(ConfigFilePath);
-                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": true", "\"MonsterStatsDisplay\": false");
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": true,", "\"MonsterStatsDisplay\": false,");
                     File.WriteAllText(ConfigFilePath, configFile2);
 
                     break;
@@ -1333,7 +1336,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     File.WriteAllText(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json", hudContents);
 
                     string configFile = File.ReadAllText(ConfigFilePath);
-                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": false", "\"MonsterStatsDisplay\": true");
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": false,", "\"MonsterStatsDisplay\": true,");
                     File.WriteAllText(ConfigFilePath, configFile2);
 
                     break;
@@ -1358,7 +1361,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     File.WriteAllText(SelectedModDataFolder + "/global/ui/layouts/hudmonsterhealthhd.json", hudContents);
 
                     string configFile = File.ReadAllText(ConfigFilePath);
-                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": false", "\"MonsterStatsDisplay\": true");
+                    string configFile2 = configFile.Replace("\"MonsterStatsDisplay\": false,", "\"MonsterStatsDisplay\": true,");
                     File.WriteAllText(ConfigFilePath, configFile2);
 
                     break;
@@ -4191,20 +4194,18 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         try
         {
             string hudMD5 = CalculateMD5("D2RHUD.dll");
-
             if (newVersions[2] != hudMD5)
             {
                 string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
                 File.Delete("D2RHUD.dll");
                 webClient.DownloadFile(hudLink, "D2RHUD.dll");
-                _logger.Info($"D2RHUD Out-Of-Date ({hudMD5}). Downloaded latest from Github.");
+                _logger.Info($"D2RHUD Out-Of-Date! (MD5 Hash: {hudMD5}, Expected: {newVersions[2]}). Downloaded latest from Github.");
             }
         }
         catch (Exception ex)
         {
             _logger.Error("Error checking HUD DLL: " + ex.Message);
-        }
-        
+        } 
         
     }
 
@@ -4420,10 +4421,6 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     public async Task ApplyTCPPatch()
     {
         string configPath = "config.json";
-
-        if (File.Exists(SelectedModDataFolder + "/D2RLAN/config_override.json"))
-            File.Copy(SelectedModDataFolder + "/D2RLAN/config_override.json", "config.json", true);
-
         var config = LoadConfig(configPath);
 
         if (config == null)

@@ -18,8 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <Grid>
+        <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
@@ -561,6 +560,5 @@
                         Foreground="DodgerBlue" />
                 </Grid>
             </Grid>
-        </ScrollViewer>
     </Grid>
 </UserControl>
