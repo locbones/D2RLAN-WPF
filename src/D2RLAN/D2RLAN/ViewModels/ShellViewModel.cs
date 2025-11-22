@@ -37,7 +37,7 @@ using System.Threading;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using D2RLAN.Views.Dialogs;
-
+using WMPLib;
 
 namespace D2RLAN.ViewModels;
 
@@ -49,7 +49,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.8.3";
+    private string appVersion = "1.8.4";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4205,7 +4205,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         catch (Exception ex)
         {
             _logger.Error("Error checking HUD DLL: " + ex.Message);
-        } 
+        }
+        
         
     }
 
@@ -4542,6 +4543,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             Console.ReadKey();
         }
 
+        TTS_Service.Start(this);
+
         _logger.Info($"\n\n--------------------\nMod Name: {ModInfo.Name}\nGame Path: {GamePath}\nSave Path: {SaveFilesFilePath}\nLaunch Arguments: {UserSettings.CurrentD2RArgs}\n\nAudio Language: {UserSettings.AudioLanguage}\nText Language: {UserSettings.TextLanguage}\nUI Theme: {UserSettings.UiTheme}\nWindow Mode: {UserSettings.WindowMode}\nHDR Fix: {UserSettings.HdrFix}\n\nFont: {UserSettings.Font}\nBackups: {UserSettings.AutoBackups}\nPersonalized Tabs: {UserSettings.PersonalizedStashTabs}\nExpanded Cube: {UserSettings.ExpandedCube}\nExpanded Inventory: {UserSettings.ExpandedInventory}\nExpanded Merc: {UserSettings.ExpandedMerc}\nExpanded Stash: {UserSettings.ExpandedStash}\nBuff Icons: {UserSettings.BuffIcons}\nMonster Display: {UserSettings.MonsterStatsDisplay}\nSkill Icons: {UserSettings.SkillIcons}\nMerc Identifier: {UserSettings.MercIcons}\nItem Levels: {UserSettings.ItemIlvls}\nRune Display: {UserSettings.RuneDisplay}\nHide Helmets: {UserSettings.HideHelmets}\nItem Display: {UserSettings.ItemIcons}\nSuper Telekinesis: {UserSettings.SuperTelekinesis}\nColor Dyes: {UserSettings.ColorDye}\nCinematic Subtitles: {UserSettings.CinematicSubs}\nRuneword Sorting: {UserSettings.RunewordSorting}\nMerged HUD: {UserSettings.HudDesign}\nData Integrity: {UserSettings.DataHashPass}\n--------------------");
     }
 
@@ -4712,8 +4715,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             totalOperations++;
             bool allSucceeded = true;
 
-            // Identify All, Reset Skills, Reset Stats, Force Save, Clear Ground Items
-            string[] qolAddresses = { "1803258", "18034C8", "18034F8", "1803588", "1803888" };
+            // Identify All, Reset Skills, Reset Stats, Force Save, Clear Ground Items, Attack Info
+            string[] qolAddresses = { "1803258", "18034C8", "18034F8", "1803588", "1803888", "18037F8" };
 
             foreach (var addr in qolAddresses)
             {

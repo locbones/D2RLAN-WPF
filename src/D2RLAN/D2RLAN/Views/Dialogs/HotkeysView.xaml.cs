@@ -131,6 +131,53 @@ namespace D2RLAN.Views.Dialogs
             if (textBoxIndex == -1) return;
             currentTextBox.Clear();
 
+            // --- CLEAR HOTKEY WITH DELETE ---
+            if (e.Key == Key.Delete)
+            {
+                currentTextBox.Text = "NaN";
+
+                if (textBoxIndex != -1)
+                {
+                    // Basic entries
+                    if (textBoxIndex <= 5 || (textBoxIndex >= 12 && textBoxIndex <= 16))
+                    {
+                        lines[textBoxIndex] = $"{lines[textBoxIndex].Split(':')[0]}: NaN";
+                    }
+                    // Custom commands
+                    else if (textBoxIndex >= 6 && textBoxIndex <= 11)
+                    {
+                        var parts = lines[textBoxIndex].Split(new[] { ':' }, 2);
+                        if (parts.Length > 1)
+                        {
+                            var commandParts = parts[1].Split(new[] { ',' }, 2);
+                            string commandName = commandParts.Length > 1 ? commandParts[1].Trim() : "";
+                            lines[textBoxIndex] = $"{parts[0].Trim()}: NaN, {commandName}";
+                        }
+                    }
+                    // Toggle stat adjust panel
+                    else if (textBoxIndex == 17)
+                    {
+                        var parts = lines[textBoxIndex].Split(new[] { ':' }, 2);
+                        if (parts.Length > 1)
+                        {
+                            string left = parts[0].Trim();
+                            string right = parts[1].Trim();
+                            int commaIndex = right.IndexOf(',');
+                            if (commaIndex >= 0)
+                            {
+                                string boolPart = right[..commaIndex].Trim();
+                                lines[textBoxIndex] = $"{left}: {boolPart}, NaN";
+                            }
+                        }
+                    }
+                }
+
+                File.WriteAllLines(filePath, lines);
+                e.Handled = true;
+                return; // IMPORTANT: do NOT continue processing as a VK code
+            }
+
+
             // Build modifiers
             List<string> modifiers = new List<string>();
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) modifiers.Add("CTRL");
@@ -193,9 +240,6 @@ namespace D2RLAN.Views.Dialogs
             File.WriteAllLines(filePath, lines);
             e.Handled = true;
         }
-
-
-
 
         private void kbBox_TextChanged(object sender, TextChangedEventArgs e)
         {

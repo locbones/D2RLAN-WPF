@@ -105,6 +105,10 @@ namespace D2RLAN.ViewModels.Dialogs
                 var key = match.Groups["key"].Value;
                 var command = match.Groups["command"].Value;
 
+                // If VK_DELETE is read from config, treat it as a cleared hotkey
+                if (key.Equals("VK_DELETE", StringComparison.OrdinalIgnoreCase))
+                    key = "NaN";
+
                 // Assign multi-key or NaN to properties
                 key = string.IsNullOrWhiteSpace(key) ? "NaN" : key;
 
