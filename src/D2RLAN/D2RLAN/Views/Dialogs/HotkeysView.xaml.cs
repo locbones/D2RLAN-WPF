@@ -115,79 +115,43 @@ namespace D2RLAN.Views.Dialogs
 
         private void kbBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (sender is not System.Windows.Controls.TextBox currentTextBox) return;
+            if (sender is not System.Windows.Controls.TextBox tb) return;
 
             string filePath = "D2RLAN_Config.txt";
-            List<string> lines = new List<string>(File.ReadAllLines(filePath));
-            int textBoxIndex = -1;
+            var lines = File.ReadAllLines(filePath).ToList();
 
-            // Map TextBox name → index
-            if (currentTextBox.Name.StartsWith("kbBox") &&
-                int.TryParse(currentTextBox.Name["kbBox".Length..], out int idx))
-            {
-                textBoxIndex = idx - 1;
-            }
+            // Extract numeric index from the TextBox name
+            if (!tb.Name.StartsWith("kbBox") ||
+                !int.TryParse(tb.Name.Substring(5), out int textBoxIndex))
+                return;
 
-            if (textBoxIndex == -1) return;
-            currentTextBox.Clear();
+            textBoxIndex--; // convert 1-based → 0-based
+            if (textBoxIndex < 0 || textBoxIndex >= lines.Count) return;
 
-            // --- CLEAR HOTKEY WITH DELETE ---
+            tb.Clear(); // Always clear so user sees fresh captured keys
+
+            // ===============================================================
+            //  CLEAR HOTKEY (DELETE KEY)
+            // ===============================================================
             if (e.Key == Key.Delete)
             {
-                currentTextBox.Text = "NaN";
-
-                if (textBoxIndex != -1)
-                {
-                    // Basic entries
-                    if (textBoxIndex <= 5 || (textBoxIndex >= 12 && textBoxIndex <= 16))
-                    {
-                        lines[textBoxIndex] = $"{lines[textBoxIndex].Split(':')[0]}: NaN";
-                    }
-                    // Custom commands
-                    else if (textBoxIndex >= 6 && textBoxIndex <= 11)
-                    {
-                        var parts = lines[textBoxIndex].Split(new[] { ':' }, 2);
-                        if (parts.Length > 1)
-                        {
-                            var commandParts = parts[1].Split(new[] { ',' }, 2);
-                            string commandName = commandParts.Length > 1 ? commandParts[1].Trim() : "";
-                            lines[textBoxIndex] = $"{parts[0].Trim()}: NaN, {commandName}";
-                        }
-                    }
-                    // Toggle stat adjust panel
-                    else if (textBoxIndex == 17)
-                    {
-                        var parts = lines[textBoxIndex].Split(new[] { ':' }, 2);
-                        if (parts.Length > 1)
-                        {
-                            string left = parts[0].Trim();
-                            string right = parts[1].Trim();
-                            int commaIndex = right.IndexOf(',');
-                            if (commaIndex >= 0)
-                            {
-                                string boolPart = right[..commaIndex].Trim();
-                                lines[textBoxIndex] = $"{left}: {boolPart}, NaN";
-                            }
-                        }
-                    }
-                }
-
+                ApplyDeleteReplacement(lines, textBoxIndex);
+                tb.Text = "NaN";
                 File.WriteAllLines(filePath, lines);
                 e.Handled = true;
-                return; // IMPORTANT: do NOT continue processing as a VK code
+                return;
             }
 
+            // ===============================================================
+            //  BUILD KEY + MODIFIERS → "VK_CTRL + VK_SHIFT + VK_X"
+            // ===============================================================
+            var mods = new List<string>();
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control)) mods.Add("CTRL");
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt)) mods.Add("ALT");
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)) mods.Add("SHIFT");
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Windows)) mods.Add("WIN");
 
-            // Build modifiers
-            List<string> modifiers = new List<string>();
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) modifiers.Add("CTRL");
-            if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt) modifiers.Add("ALT");
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift) modifiers.Add("SHIFT");
-            if ((Keyboard.Modifiers & ModifierKeys.Windows) == ModifierKeys.Windows) modifiers.Add("WIN");
-
-            // Get main key
-            string mainKey = e.Key.ToString().ToUpper();
-            mainKey = e.Key switch
+            string mainKey = e.Key switch
             {
                 Key.Insert => "INSERT",
                 Key.Delete => "DELETE",
@@ -195,103 +159,169 @@ namespace D2RLAN.Views.Dialogs
                 Key.PageUp => "PRIOR",
                 Key.PageDown => "NEXT",
                 Key.End => "END",
-                _ => mainKey
+                _ => e.Key.ToString().ToUpper(),
             };
 
-            string virtualKeyCode = "VK_" + string.Join(" + VK_", modifiers.Append(mainKey));
+            string vkCode = "VK_" + string.Join(" + VK_", mods.Append(mainKey));
 
-            // Update lines based on index
-            if (textBoxIndex <= 5 || (textBoxIndex >= 12 && textBoxIndex <= 16))
-            {
-                // Simple VK keys
-                lines[textBoxIndex] = $"{lines[textBoxIndex].Split(':')[0]}: {virtualKeyCode}";
-            }
-            else if (textBoxIndex >= 6 && textBoxIndex <= 11)
-            {
-                // Custom commands
-                var parts = lines[textBoxIndex].Split(new[] { ':' }, 2);
-                if (parts.Length > 1)
-                {
-                    var commandParts = parts[1].Split(new[] { ',' }, 2);
-                    string commandName = commandParts.Length > 1 ? commandParts[1].Trim() : "";
-                    lines[textBoxIndex] = $"{parts[0].Trim()}: {virtualKeyCode}, {commandName}";
-                }
-            }
-            else if (textBoxIndex == 17)
-            {
-                // Toggle Stat Adjustments Display (boolean + key)
-                var parts = lines[textBoxIndex].Split(new[] { ':' }, 2);
-                if (parts.Length > 1)
-                {
-                    string left = parts[0].Trim();
-                    string right = parts[1].Trim();
-                    int commaIndex = right.IndexOf(',');
-                    if (commaIndex >= 0)
-                    {
-                        string boolPart = right[..commaIndex].Trim();
-                        lines[textBoxIndex] = $"{left}: {boolPart}, {virtualKeyCode}";
-                    }
-                }
-            }
+            // ===============================================================
+            //  APPLY REPLACEMENT BACK INTO LINES[]
+            // ===============================================================
+            ApplyKeyReplacement(lines, textBoxIndex, vkCode);
 
-            currentTextBox.Text = virtualKeyCode;
-            currentTextBox.SelectionStart = currentTextBox.Text.Length;
+            tb.Text = vkCode;
+            tb.SelectionStart = tb.Text.Length;
 
             File.WriteAllLines(filePath, lines);
             e.Handled = true;
         }
 
+
         private void kbBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var currentTextBox = sender as System.Windows.Controls.TextBox;
-            if (currentTextBox == null) return;
+            if (sender is not System.Windows.Controls.TextBox tb)
+                return;
 
             string filePath = "D2RLAN_Config.txt";
-            List<string> lines = new List<string>(File.ReadAllLines(filePath));
-            int textBoxIndex = -1;
+            var lines = File.ReadAllLines(filePath).ToList();
 
-            // Determine the index in the file based on the TextBox name
-            if (currentTextBox.Name == "kbBoxC7") textBoxIndex = 6;
-            else if (currentTextBox.Name == "kbBoxC8") textBoxIndex = 7;
-            else if (currentTextBox.Name == "kbBoxC9") textBoxIndex = 8;
-            else if (currentTextBox.Name == "kbBoxC10") textBoxIndex = 9;
-            else if (currentTextBox.Name == "kbBoxC11") textBoxIndex = 10;
-            else if (currentTextBox.Name == "kbBoxC12") textBoxIndex = 11;
-
-            if (textBoxIndex != -1)
+            // ------------------------------------------------------
+            //  Detect which TextBox this is
+            // ------------------------------------------------------
+            int? customIndex = tb.Name switch
             {
-                // Update the specific command entry with quotes around newCommandName
-                var existingLine = lines[textBoxIndex];
-                var parts = existingLine.Split(new[] { ':' }, 2);
+                "kbBoxC7" => 6,
+                "kbBoxC8" => 7,
+                "kbBoxC9" => 8,
+                "kbBoxC10" => 9,
+                "kbBoxC11" => 10,
+                "kbBoxC12" => 11,
+                _ => null
+            };
 
-                if (parts.Length > 1)
+            string newText = tb.Text.Trim();
+
+            // ------------------------------------------------------
+            //  CASE A: Custom Command TextBoxes (C7 – C12)
+            // ------------------------------------------------------
+            if (customIndex is int idx)
+            {
+                if (idx < 0 || idx >= lines.Count)
+                    return;
+
+                var line = lines[idx];
+                var parts = line.Split(':', 2);
+                if (parts.Length != 2)
+                    return;
+
+                string left = parts[0].Trim(); // "Custom Command X"
+                string right = parts[1].Trim();
+
+                // Right-hand side: "VK_..., commandName"
+                var commaParts = right.Split(',', 2);
+                if (commaParts.Length != 2)
+                    return;
+
+                string vkPart = commaParts[0].Trim();     // VK_XXXX
+                string currentCmd = commaParts[1].Trim(); // "old command"
+
+                // Only update if different
+                if (!currentCmd.Equals($"\"{newText}\"", StringComparison.Ordinal))
                 {
-                    string commandId = parts[0].Trim();
-                    string newCommandName = currentTextBox.Text.Trim();
-
-                    // Only update if the new command name differs
-                    if (!existingLine.Contains(newCommandName))
-                        lines[textBoxIndex] = $"{commandId}: {parts[1].Split(',')[0].Trim()}, \"{newCommandName}\"";
+                    lines[idx] = $"{left}: {vkPart}, \"{newText}\"";
                 }
             }
             else
             {
-                // Update the Startup Commands line without adding quotes around newCommands
-                string newCommands = currentTextBox.Text.Trim();
+                // ------------------------------------------------------
+                //  CASE B: Startup Commands TextBox (any other TextBox)
+                // ------------------------------------------------------
 
-                for (int i = 0; i < lines.Count; i++)
-                {
-                    if (lines[i].StartsWith("Startup Commands:"))
-                    {
-                        lines.RemoveAt(i);
-                        break;
-                    }
-                }
-                lines.Add($"Startup Commands: {newCommands}");
+                // remove previous "Startup Commands:" line (if any)
+                lines.RemoveAll(l => l.StartsWith("Startup Commands:", StringComparison.OrdinalIgnoreCase));
+
+                // append updated one (no quotes)
+                lines.Add($"Startup Commands: {newText}");
             }
 
-            // Write updated lines back to the file
             File.WriteAllLines(filePath, lines);
         }
+
+
+        private static void ApplyDeleteReplacement(List<string> lines, int index)
+        {
+            string line = lines[index];
+            var split = line.Split(':', 2);
+            if (split.Length < 2) return;
+
+            string left = split[0].Trim();
+            string right = split[1].Trim();
+
+            // BASIC ENTRIES
+            if (index <= 5 || index == 18 || (index >= 12 && index <= 16))
+            {
+                lines[index] = $"{left}: NaN";
+                return;
+            }
+
+            // CUSTOM COMMANDS (key, commandText)
+            if (index >= 6 && index <= 11)
+            {
+                var cmdSplit = right.Split(',', 2);
+                string cmd = cmdSplit.Length > 1 ? cmdSplit[1].Trim() : "";
+                lines[index] = $"{left}: NaN, {cmd}";
+                return;
+            }
+
+            // TOGGLE STAT PANEL (bool, key)
+            if (index == 17)
+            {
+                int comma = right.IndexOf(',');
+                if (comma > 0)
+                {
+                    string boolPart = right[..comma].Trim();
+                    lines[index] = $"{left}: {boolPart}, NaN";
+                }
+            }
+        }
+
+        private static void ApplyKeyReplacement(List<string> lines, int index, string vkCode)
+        {
+            string line = lines[index];
+            var split = line.Split(':', 2);
+            if (split.Length < 2) return;
+
+            string left = split[0].Trim();
+            string right = split[1].Trim();
+
+            // BASIC VK ENTRIES
+            if (index <= 5 || index == 18 || (index >= 12 && index <= 16))
+            {
+                lines[index] = $"{left}: {vkCode}";
+                return;
+            }
+
+            // CUSTOM COMMANDS
+            if (index >= 6 && index <= 11)
+            {
+                var cmdSplit = right.Split(',', 2);
+                string cmd = cmdSplit.Length > 1 ? cmdSplit[1].Trim() : "";
+                lines[index] = $"{left}: {vkCode}, {cmd}";
+                return;
+            }
+
+            // TOGGLE STAT ADJUSTMENT PANEL
+            if (index == 17)
+            {
+                int comma = right.IndexOf(',');
+                if (comma > 0)
+                {
+                    string boolPart = right[..comma].Trim();
+                    lines[index] = $"{left}: {boolPart}, {vkCode}";
+                }
+            }
+        }
+
+
     }
 }

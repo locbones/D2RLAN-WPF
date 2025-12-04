@@ -36,6 +36,7 @@ namespace D2RLAN.ViewModels.Dialogs
         public string CustomCommandC5 { get; set; }
         public string CustomCommandC6 { get; set; }
         public string StartupCommands { get; set; }
+        public string OpenHUDCCMenu { get; set; }
         public ICommand SaveCommand { get; private set; }
         public ShellViewModel ShellViewModel { get; }
 
@@ -131,6 +132,7 @@ namespace D2RLAN.ViewModels.Dialogs
                     case "Cycle TZ Backward": TZBackwardPanel = key; break;
                     case "Reload Game or Filter": ReloadGameFilter = key; break;
                     case "Cycle Filter Level": CycleFilterLevel = key; break;
+                    case "Open HUDCC Menu": OpenHUDCCMenu = key; break;
                 }
             }
 

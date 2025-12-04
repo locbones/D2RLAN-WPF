@@ -49,7 +49,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.8.4";
+    private string appVersion = "1.8.6";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -1638,10 +1638,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     {
         string filterFile = $@"{GamePath}lootfilter_config.lua";
         string filterBlankPath = Path.Combine(Path.Combine(SelectedModDataFolder, @"D2RLAN\Filters"), "lootfilter_config_blank.lua");
-        string filterILvlsOn = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\n            suffix = \" {white}({ilvl})\",";
-        string filterILvlsOn2 = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" {white}({ilvl})\",";
-        string filterILvlsOff = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\n            --Disabled by D2RLAN suffix = \" {white}({ilvl})\",";
-        string filterILvlsNew = "        { --Display item levels for weapons, armors, charms, jewels, rings and amulets in white, to the right of item name, (x)\r\n            codes = \"allitems\",\r\n            location = { \"onground\", \"onplayer\", \"equipped\", \"atvendor\" },\r\n            itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" {white}({ilvl})\",\r\n        },";
+        string filterILvlsOn = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\n            suffix = \" ({ilvl})\",";
+        string filterILvlsOn2 = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" ({ilvl})\",";
+        string filterILvlsOff = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\n            --Disabled by D2RLAN suffix = \" ({ilvl})\",";
+        string filterILvlsNew = "        { --Display item levels for weapons, armors, charms, jewels, rings and amulets in white, to the right of item name, (x)\r\n            codes = \"allitems\",\r\n            location = { \"onground\", \"onplayer\", \"equipped\", \"atvendor\" },\r\n            itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" ({ilvl})\",\r\n        },";
 
         if (!File.Exists(filterFile))
             await File.WriteAllBytesAsync(filterBlankPath, Helper.GetResourceByteArray2("lootfilter_config_blank.lua"));
@@ -4417,8 +4417,6 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         return null;
     }
 
-
-
     public async Task ApplyTCPPatch()
     {
         string configPath = "config.json";
@@ -4449,9 +4447,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             await Task.Delay(1000);
         }
 
-
         Process process = LaunchProcess(processName, arguments);
-
+        Thread.Sleep(1500);
 
         ProcessStartInfo memProcess = new ProcessStartInfo()
         {
@@ -4465,58 +4462,6 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
         if (process != null)
         {
-            /*
-            var mainModule = await WaitForMainModuleAsync(process);
-            if (mainModule == null)
-            {
-                _logger.Error("Process main module not available in time.");
-                return;
-            }
-
-            if (process.HasExited)
-            {
-                _logger.Error("Process exited before D2RHUD could load");
-                return;
-            }
-
-            // Inject all DLLs from config.json
-            if (config.DLLsToLoad != null)
-            {
-                foreach (var dll in config.DLLsToLoad)
-                {
-                    try
-                    {
-                        _logger.Info($"{dll} loading attempted");
-
-                        // ensure relative path is normalized to an absolute path
-                        string relativePath = $"./{dll}";
-                        string dllFullPath = Path.GetFullPath(relativePath);
-
-                        if (!File.Exists(dllFullPath))
-                        {
-                            _logger.Error($"DLL not found: {dllFullPath}");
-                            continue;
-                        }
-
-                        // Run the (synchronous) Win32 injector on a worker thread so the UI isn't blocked.
-                        // Adjust maxRetries/retryDelay/ejectIfPresent as desired.
-                        //bool injected = await Task.Run(() =>
-                            //InjectorWin32.InjectDLL(process.Id, dllFullPath, maxRetries: 5, retryDelay: 1000, ejectIfPresent: true)
-                        //);
-
-                        //if (injected)
-                            //_logger.Info($"Successfully injected {dll} into PID {process.Id}");
-                        //else
-                            //_logger.Error($"Injection failed for {dll} into PID {process.Id}");
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error($"Loading failed for {dll}: {ex}");
-                    }
-                }
-            }
-            */
-
             int skillIndex = await CheckSkillIndexAsync();
             _logger.Info($"Memory Editing tasks begun, SkillIndex: {skillIndex}");
             EditMemory(process.Id, config.MemoryConfigs, skillIndex);
