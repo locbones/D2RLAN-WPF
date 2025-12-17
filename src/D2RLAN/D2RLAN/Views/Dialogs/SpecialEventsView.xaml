@@ -167,8 +167,10 @@
         </Hyperlink>
     </Span>
         </TextBlock>
-        <Button Content="Join the Event!" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="10" Background="#FF02580B" Padding="3,3,3,3" FontSize="16" Width="175" Height="33" Margin="0,0,0,12" cm:Message.Attach="[Event Click] = [Action OnJoinEvent];"/>
-
+        <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,12">
+            <Button Content="Join the Event!" Background="#FF02580B" Padding="3,3,3,3" FontSize="16" Width="175" Height="33" Margin="0,0,10,0" cm:Message.Attach="[Event Click] = [Action OnJoinEvent];"/>
+            <Button Content="Leave Event" Background="#FF800202" Padding="3,3,3,3" FontSize="16" Width="175" Height="33" Margin="10,0,0,0" cm:Message.Attach="[Event Click] = [Action OnLeaveEvent];"/>
+        </StackPanel>
     </Grid>
 
 </Window>

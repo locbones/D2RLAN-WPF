@@ -449,14 +449,56 @@ public class SpecialEventsViewModel : Screen
         MessageBox.Show("Please allow the launcher a few moments to make file changes:\n- Backup Non-Event Files\n- Install Event Files\n\nThe launcher will notify you when it is finished");
         CloneDirectory(ShellViewModel.SelectedModDataFolder, System.IO.Path.Combine(Path.GetDirectoryName(ShellViewModel.SelectedModDataFolder), "data_noevent"));
         await CopyDirectoryAndOverwrite(System.IO.Path.Combine(System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN/Events/"), eventNameStr), ShellViewModel.SelectedModDataFolder);
-        GetCurrentEvents();
+        await GetCurrentEvents();
     }
     public async void OnLeaveEvent()
     {
-        Directory.Delete(ShellViewModel.SelectedModDataFolder, true);
-        Directory.Move(System.IO.Path.Combine(Path.GetDirectoryName(ShellViewModel.SelectedModDataFolder), "data_noevent"), ShellViewModel.SelectedModDataFolder);
-        MessageBox.Show("Event Left!");
+        string eventFolder = Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN/Events/");
+        string TZFile = Path.Combine(eventFolder, eventNameStr, "hd/global/excel/desecratedzones.json");
+        string TZFileContents = "";
+
+        if (File.Exists(TZFile))
+            TZFileContents = File.ReadAllText(TZFile);
+
+        if (TZFileContents.Contains("Event Name:"))
+        {
+            eventJoined = false;
+
+            string backupFolder = Path.Combine(Path.GetDirectoryName(ShellViewModel.SelectedModDataFolder), "data_noevent");
+            if (!Directory.Exists(backupFolder))
+            {
+                MessageBox.Show("Backup folder not found!");
+                return;
+            }
+
+            // Copy all files from backup to mod folder
+            CopyAllFiles(backupFolder, ShellViewModel.SelectedModDataFolder);
+
+            MessageBox.Show("You have left the Event!");
+        }
+        else
+        {
+            MessageBox.Show("You have not joined an Event yet!");
+        }
     }
+
+    // Recursive file copy method
+    private void CopyAllFiles(string sourceDir, string targetDir)
+    {
+        foreach (string dirPath in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
+        {
+            string subDir = dirPath.Replace(sourceDir, targetDir);
+            if (!Directory.Exists(subDir))
+                Directory.CreateDirectory(subDir);
+        }
+
+        foreach (string filePath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            string destFile = filePath.Replace(sourceDir, targetDir);
+            File.Copy(filePath, destFile, true); // overwrite existing files
+        }
+    }
+
 
     #endregion
 

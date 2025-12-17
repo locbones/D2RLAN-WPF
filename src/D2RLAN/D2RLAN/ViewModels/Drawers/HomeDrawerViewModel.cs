@@ -727,27 +727,32 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                 return;
             }
 
+            string targetFontPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "hd/ui/fonts/exocetblizzardot-medium.otf");
+
             // --- Install Exocet font ---
-            try
+            if (!File.Exists(targetFontPath))
             {
-                string fontPath = Path.Combine(ShellViewModel.GamePath, "Exocet.otf");
-                if (!File.Exists(fontPath))
+                try
                 {
-                    _logger.Info("Installing Exocet.otf font into game folder...");
-                    byte[] font = await Helper.GetResourceByteArray("Fonts.0.otf");
-                    await File.WriteAllBytesAsync(fontPath, font);
+                    string fontPath = Path.Combine(ShellViewModel.GamePath, "Exocet.otf");
+                    if (!File.Exists(fontPath))
+                    {
+                        _logger.Info("Installing Exocet.otf font into game folder...");
+                        byte[] font = await Helper.GetResourceByteArray("Fonts.0.otf");
+                        await File.WriteAllBytesAsync(fontPath, font);
+                    }
+
+                    byte[] fontBytes = ShellViewModel.UserSettings.TextLanguage == 6 ? await Helper.GetResourceByteArray("Fonts.retail.otf") : await Helper.GetResourceByteArray("Fonts.0.otf");
+
+                    await File.WriteAllBytesAsync(targetFontPath, fontBytes);
+                    _logger.Info("Localized Exocet font installed successfully.");
                 }
-
-                string targetFontPath = Path.Combine(ShellViewModel.SelectedModDataFolder, "hd/ui/fonts/exocetblizzardot-medium.otf");
-                byte[] fontBytes = ShellViewModel.UserSettings.TextLanguage == 6 ? await Helper.GetResourceByteArray("Fonts.retail.otf") : await Helper.GetResourceByteArray("Fonts.0.otf");
-
-                await File.WriteAllBytesAsync(targetFontPath, fontBytes);
-                _logger.Info("Localized Exocet font installed successfully.");
+                catch (Exception ex)
+                {
+                    _logger.Error($"Failed to install Exocet fonts: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.Error($"Failed to install Exocet fonts: {ex.Message}");
-            }
+            
 
             //Beacon Startup
             if (ShellViewModel.UserSettings.BeaconStartup == 0)
@@ -1593,7 +1598,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             {
                 _logger.Info($"FORCE HUD: Found D2R process with PID: {process.Id}");
 
-                var config = LoadConfig("config.json");
+                var config = LoadConfig("../D2R/HUDConfig_" + ShellViewModel.ModInfo.Name + ".json");
 
                 if (config == null)
                 {

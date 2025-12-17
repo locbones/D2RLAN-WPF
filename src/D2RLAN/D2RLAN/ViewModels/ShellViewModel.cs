@@ -38,6 +38,7 @@ using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using D2RLAN.Views.Dialogs;
 using WMPLib;
+using System.ComponentModel;
 
 namespace D2RLAN.ViewModels;
 
@@ -49,7 +50,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.8.6";
+    private string appVersion = "1.8.7";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -95,6 +96,11 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     public string SaveFilesFilePath => System.IO.Path.Combine(GetSavePath(), @$"Diablo II Resurrected\Mods\{Settings.Default.SelectedMod}");
     public string BackupFolder => System.IO.Path.Combine(SaveFilesFilePath, "Backups");
     public string StasherPath => $@"..\Stasher";
+
+    private readonly ModOverrideService _modOverrides;
+    public ModBoundControl SkillRespec { get; }
+    public ModBoundControl DifficultySelector { get; }
+    public ModBoundControl AutoGoldPickup { get; }
 
     #endregion
 
@@ -247,32 +253,34 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
                     UserControl = new CustomizationsDrawerView() { DataContext = vm };
                     break;
                 }
-            case "HOTKEYS":
+            /*
+        case "HOTKEYS":
+            {
+                dynamic options = new ExpandoObject();
+                options.ResizeMode = ResizeMode.NoResize;
+                options.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+                HotkeysViewModel vm = new HotkeysViewModel(this);
+
+                if (await _windowManager.ShowDialogAsync(vm, null, options))
                 {
-                    dynamic options = new ExpandoObject();
-                    options.ResizeMode = ResizeMode.NoResize;
-                    options.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
-                    HotkeysViewModel vm = new HotkeysViewModel(this);
-
-                    if (await _windowManager.ShowDialogAsync(vm, null, options))
-                    {
-                    }
-                    break;
                 }
-            case "CHAT":
+                break;
+            }
+        case "CHAT":
+            {
+                dynamic options = new ExpandoObject();
+                options.ResizeMode = ResizeMode.NoResize;
+                options.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+                ChatSettingsViewModel vm = new ChatSettingsViewModel(this);
+
+                if (await _windowManager.ShowDialogAsync(vm, null, options))
                 {
-                    dynamic options = new ExpandoObject();
-                    options.ResizeMode = ResizeMode.NoResize;
-                    options.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
-                    ChatSettingsViewModel vm = new ChatSettingsViewModel(this);
-
-                    if (await _windowManager.ShowDialogAsync(vm, null, options))
-                    {
-                    }
-                    break;
                 }
+                break;
+            }
+            */
             case "RENAME CHARACTER":
                 {
                     if (ModInfo == null || UserSettings == null)
@@ -1229,11 +1237,12 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         string hudMonsterHealthHdDisabledJsonFilePath = Path.Combine(uiLayoutsPath, "hudmonsterhealthhd_disabled.json");
         string monsterStatsPath = Path.Combine(SelectedModDataFolder, "D2RLAN/Monster Stats");
         string outputPath = SelectedModDataFolder + "/D2RLAN/Monster Stats/MS_Assets.zip";
-        string ConfigFilePath = "config.json";
-
-        if (File.Exists(SelectedModDataFolder + "/D2RLAN/config_override.json"))
-            File.Copy(SelectedModDataFolder + "/D2RLAN/config_override.json", "config.json", true);
-
+        string freshConfigFilePath = "HUDConfig_Template.json";
+        string ConfigFilePath = "../D2R/HUDConfig_" + ModInfo.Name + ".json";
+      
+        if (File.Exists(freshConfigFilePath))
+            File.Move(freshConfigFilePath, ConfigFilePath, true);
+        
         if (!Directory.Exists(uiLayoutsPath))
             Directory.CreateDirectory(uiLayoutsPath);
 
@@ -1638,10 +1647,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     {
         string filterFile = $@"{GamePath}lootfilter_config.lua";
         string filterBlankPath = Path.Combine(Path.Combine(SelectedModDataFolder, @"D2RLAN\Filters"), "lootfilter_config_blank.lua");
-        string filterILvlsOn = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\n            suffix = \" ({ilvl})\",";
-        string filterILvlsOn2 = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" ({ilvl})\",";
-        string filterILvlsOff = "itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\n            --Disabled by D2RLAN suffix = \" ({ilvl})\",";
-        string filterILvlsNew = "        { --Display item levels for weapons, armors, charms, jewels, rings and amulets in white, to the right of item name, (x)\r\n            codes = \"allitems\",\r\n            location = { \"onground\", \"onplayer\", \"equipped\", \"atvendor\" },\r\n            itype = { 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" ({ilvl})\",\r\n        },";
+        string filterILvlsOn = "itype = { 5, 6, 10, 12, 45, 50, 58, 82, 83, 84 },\n            suffix = \" ({ilvl})\",";
+        string filterILvlsOn2 = "itype = { 5, 6, 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" ({ilvl})\",";
+        string filterILvlsOff = "itype = { 5, 6, 10, 12, 45, 50, 58, 82, 83, 84 },\n            --Disabled by D2RLAN suffix = \" ({ilvl})\",";
+        string filterILvlsNew = "        { --Display item levels for weapons, armors, charms, jewels, rings, amulets and arrows/bolts, to the right of item name, (x)\r\n            codes = \"allitems\",\r\n            location = { \"onground\", \"onplayer\", \"equipped\", \"atvendor\" },\r\n            itype = { 5, 6, 10, 12, 45, 50, 58, 82, 83, 84 },\r\n            suffix = \" ({ilvl})\",\r\n        },";
 
         if (!File.Exists(filterFile))
             await File.WriteAllBytesAsync(filterBlankPath, Helper.GetResourceByteArray2("lootfilter_config_blank.lua"));
@@ -1664,7 +1673,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             else
             {
                 //Entry doesn't exist yet
-                if (!luaText.Contains("--Display item levels for weapons, armors, charms, jewels, rings and amulets in white, to the right of item name"))
+                if (!luaText.Contains("--Display item levels for weapons, armors, charms, jewels, rings, amulets and arrows/bolts, to the right of item name, (x)"))
                 {
                     int rulesIndex = luaText.IndexOf("rules = {");
                     if (rulesIndex != -1)
@@ -4419,13 +4428,60 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
     public async Task ApplyTCPPatch()
     {
-        string configPath = "config.json";
+        string configPath = "../D2R/HUDConfig_" + ModInfo.Name + ".json";
         var config = LoadConfig(configPath);
 
         if (config == null)
         {
             _logger.Error("Failed to load configuration file");
             return;
+        }
+
+        // --- Load override config ---
+        string overridePath = $"../D2R/Mods/{ModInfo.Name}/{ModInfo.Name}.mpq/data/D2RLAN/memory_overrides.json";
+        if (File.Exists(overridePath))
+        {
+            try
+            {
+                string overrideJson = File.ReadAllText(overridePath);
+                var options = new JsonSerializerOptions
+                {
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    TypeInfoResolver = ConfigSourceGenerationContext.Default
+                };
+
+                var overrideConfig = System.Text.Json.JsonSerializer.Deserialize<Config>(overrideJson, options);
+
+                if (overrideConfig != null && overrideConfig.MemoryConfigs != null)
+                {
+                    foreach (var overrideEntry in overrideConfig.MemoryConfigs)
+                    {
+                        // Check if entry already exists in main config
+                        bool exists = config.MemoryConfigs.Any(mc =>
+                            (!string.IsNullOrEmpty(mc.Address) && mc.Address == overrideEntry.Address) ||
+                            (mc.Addresses != null && overrideEntry.Addresses != null && mc.Addresses.SequenceEqual(overrideEntry.Addresses))
+                        );
+
+                        if (!exists)
+                        {
+                            config.MemoryConfigs.Add(overrideEntry);
+                            _logger.Info($"Added override entry: {overrideEntry.Name} @ {overrideEntry.Address}");
+                        }
+                        else
+                        {
+                            _logger.Info($"Skipped existing entry: {overrideEntry.Name} @ {overrideEntry.Address}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Failed to load override config: {ex.Message}");
+            }
+        }
+        else
+        {
+            _logger.Info($"Override config not found: {overridePath}");
         }
 
         string processName = "../D2R/d2r.exe";
@@ -4744,6 +4800,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
     public class MemoryConfig
     {
+        public string Name { get; set; }
         public string Description { get; set; }
         public string Address { get; set; }
         public List<string> Addresses { get; set; }
@@ -5056,11 +5113,12 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         try
         {
             string jsonContent = File.ReadAllText(configPath);
-            JsonSerializerOptions options = new JsonSerializerOptions();
-            options.ReadCommentHandling = JsonCommentHandling.Skip;
-            options.TypeInfoResolver = ConfigSourceGenerationContext.Default;
-            ConfigSourceGenerationContext ctx = new ConfigSourceGenerationContext(options);
-            return System.Text.Json.JsonSerializer.Deserialize(jsonContent, ctx.Config);
+            var options = new JsonSerializerOptions
+            {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                TypeInfoResolver = ConfigSourceGenerationContext.Default
+            };
+            return System.Text.Json.JsonSerializer.Deserialize<Config>(jsonContent, options);
         }
         catch (Exception ex)
         {
@@ -5068,6 +5126,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             return null;
         }
     }
+
     static byte[] ConvertToLittleEndian(int value)
     {
         byte[] bytes = BitConverter.GetBytes(value);
@@ -5103,4 +5162,72 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     }
 
     #endregion 
+
+    public sealed class ModOverrideRule
+    {
+        public string ControlKey { get; init; } = "";   // UI control identifier
+        public string ModName { get; init; } = "";      // Name of the mod
+        public string Reason { get; init; } = "";       // Tooltip / explanation
+        public Func<bool> IsActive { get; init; } = () => false; // Returns true if the mod is active
+    }
+
+    public sealed class ModOverrideService
+    {
+        private readonly List<ModOverrideRule> _rules = new();
+
+        public void Register(ModOverrideRule rule)
+            => _rules.Add(rule);
+
+        public ModOverrideResult Evaluate(string controlKey)
+        {
+            var activeRule = _rules.FirstOrDefault(r => r.ControlKey == controlKey && r.IsActive());
+
+            if (activeRule == null)
+                return ModOverrideResult.Enabled;
+
+            return new ModOverrideResult(
+                false,
+                $"Disabled by {activeRule.ModName}: {activeRule.Reason}",
+                activeRule.ModName
+            );
+        }
+    }
+
+
+    public readonly record struct ModOverrideResult(
+    bool IsEnabled,
+    string? Reason,
+    string? ModName)
+    {
+        public static ModOverrideResult Enabled =>
+            new(true, null, null);
+    }
+
+    public sealed class ModBoundControl : INotifyPropertyChanged
+    {
+        private readonly ModOverrideService _service;
+        private readonly string _controlKey;
+
+        public ModBoundControl(ModOverrideService service, string controlKey)
+        {
+            _service = service;
+            _controlKey = controlKey;
+            Refresh();
+        }
+
+        private ModOverrideResult _state;
+        public bool IsEnabled => _state.IsEnabled;
+        public string? Tooltip => _state.Reason;
+
+        public void Refresh()
+        {
+            _state = _service.Evaluate(_controlKey);
+            OnPropertyChanged(nameof(IsEnabled));
+            OnPropertyChanged(nameof(Tooltip));
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged(string prop)
+            => PropertyChanged?.Invoke(this, new(prop));
+    }
 }
