@@ -64,6 +64,8 @@ public class UserSettings : INotifyPropertyChanged
     private int _BeaconStartup;
     private bool _filterUpdates;
     private int _stringColoring;
+    private bool _HUDDebug;
+    private bool _LANOffline;
 
     #endregion
 
@@ -778,6 +780,34 @@ public class UserSettings : INotifyPropertyChanged
                 return;
             }
             _stringColoring = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool HUDDebug
+    {
+        get => _HUDDebug;
+        set
+        {
+            if (value == _HUDDebug)
+            {
+                return;
+            }
+            _HUDDebug = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool LANOffline
+    {
+        get => _LANOffline;
+        set
+        {
+            if (value == _LANOffline)
+            {
+                return;
+            }
+            _LANOffline = value;
             OnPropertyChanged();
         }
     }

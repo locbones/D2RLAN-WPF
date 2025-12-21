@@ -286,7 +286,6 @@
     <None Remove="Resources\SharedStashSoftCoreV2.d2i" />
     <None Remove="RMD_Logo_New.ico" />
     <None Remove="Views\Dialogs\AITest1.png" />
-    <None Remove="Views\Dialogs\ChatBG.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -584,7 +583,6 @@
     <Resource Include="Resources\Images\D2RL_Logo.png" />
     <Resource Include="RMD_Logo_New.ico" />
     <Resource Include="Views\Dialogs\AITest1.png" />
-    <Resource Include="Views\Dialogs\ChatBG.png" />
   </ItemGroup>
 
   <ItemGroup>

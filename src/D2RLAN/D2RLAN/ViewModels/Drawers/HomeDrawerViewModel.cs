@@ -717,7 +717,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
                 await ShellViewModel.ApplyModSettings();
                 _logger.Info("Generating D2R launch arguments...");
                 GetD2RArgs();
-                await StashMigration();
+                //await StashMigration();
                 _logger.Info("Disabling Battle.net connection...");
                 ShellViewModel.DisableBNetConnection();
             }
@@ -940,11 +940,15 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
         string prefixSC = Path.Combine(savePath, "Stash_SC");
         string prefixHC = Path.Combine(savePath, "Stash_HC");
 
+
+        if (!Directory.Exists(savePath))
+            Directory.CreateDirectory(savePath);
+
         if (!File.Exists(saveFileSC))
             await File.WriteAllBytesAsync(saveFileSC, Helper.GetResourceByteArray2("SharedStashSoftCoreV2.d2i"));
         if (!File.Exists(saveFileHC))
             await File.WriteAllBytesAsync(saveFileHC, Helper.GetResourceByteArray2("SharedStashHardCoreV2.d2i"));
-        
+
         //Unlock / create SharedStash
         int tabsToAdd = 0;
 
@@ -1652,6 +1656,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             ShowError("Please select a mod first.");
             return;
         }
+
         if (Settings.Default.SelectedMod == "TCP" || Settings.Default.SelectedMod == "MyCustomMod")
         {
             ShowError("This mod is user-controlled and does not update.");
@@ -1660,56 +1665,62 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 
         SetStatus("Checking for updates...", true);
 
-        string tempPath = Path.GetTempPath();
-        string tempModInfoPath = Path.Combine(tempPath, "modinfo.json");
-
-        string version = await GetCurrentVersion();
-        if (version == null)
+        try
         {
-            SetStatus(null, false);
-            return;
-        }
+            string tempPath = Path.GetTempPath();
+            string tempModInfoPath = Path.Combine(tempPath, "modinfo.json");
 
-        if (!await TryDownloadFile(ShellViewModel.ModInfo.ModConfigDownloadLink, tempModInfoPath))
+            string version = await GetCurrentVersion();
+            if (version == null)
+                return;
+
+            if (!await TryDownloadFile(ShellViewModel.ModInfo.ModConfigDownloadLink, tempModInfoPath))
+                return;
+
+            ModInfo tempModInfo = await Helper.ParseModInfo(tempModInfoPath);
+            File.Delete(tempModInfoPath);
+
+            if (tempModInfo == null || SelectedMod == "MyCustomMod")
+            {
+                MessageBox.Show("Mod Author hasn't added support for auto-updates yet!");
+                return;
+            }
+
+            if (version == tempModInfo.ModVersion)
+            {
+                MessageBox.Show("No updates available.", "Update", MessageBoxButton.OK);
+                return;
+            }
+
+            MessageBox.Show(
+                $"{Helper.GetCultureString("Version1")} {version}\n" +
+                $"{Helper.GetCultureString("Version2")} {tempModInfo.ModVersion}",
+                Resources.ResourceManager.GetString("VersionRdy"),
+                MessageBoxButton.OK
+            );
+
+            // 🔴 IMPORTANT FIX
+            if (!await HandleBackup())
+                return;
+
+            string tempUpdatePath = Path.Combine(tempPath, "Update.zip");
+            SetStatus(Helper.GetCultureString("UpdateBegin"), false);
+
+            if (!await DownloadUpdate(tempModInfo.ModDownloadLink, tempUpdatePath))
+                return;
+
+            await ApplyUpdate(tempUpdatePath, tempModInfo);
+
+            MessageBox.Show(Helper.GetCultureString("UpdateProgressDone"), "Update", MessageBoxButton.OK);
+            await InitializeMods();
+        }
+        finally
         {
+            // ✅ ALWAYS reset UI state, no matter how we exit
             SetStatus(null, false);
-            return;
         }
-
-        ModInfo tempModInfo = await Helper.ParseModInfo(tempModInfoPath);
-        File.Delete(tempModInfoPath);
-
-        if (tempModInfo == null || SelectedMod == "MyCustomMod")
-        {
-            MessageBox.Show("Mod Author hasn't added support for auto-updates yet!");
-            SetStatus(null, false);
-            return;
-        }
-
-        if (version == tempModInfo.ModVersion)
-        {
-            MessageBox.Show("No updates available.", "Update", MessageBoxButton.OK);
-            SetStatus(null, false);
-            return;
-        }
-
-        MessageBox.Show($"{Helper.GetCultureString("Version1")} {version}\n{Helper.GetCultureString("Version2")} {tempModInfo.ModVersion}",
-                        Resources.ResourceManager.GetString("VersionRdy"), MessageBoxButton.OK);
-
-        if (!await HandleBackup()) return;
-
-        string tempUpdatePath = Path.Combine(tempPath, "Update.zip");
-        SetStatus(Helper.GetCultureString("UpdateBegin"), false);
-
-        if (!await DownloadUpdate(tempModInfo.ModDownloadLink, tempUpdatePath)) return;
-
-        await ApplyUpdate(tempUpdatePath, tempModInfo);
-
-        MessageBox.Show(Helper.GetCultureString("UpdateProgressDone"), "Update", MessageBoxButton.OK);
-        await InitializeMods();
-
-        SetStatus(null, false);
     }
+
 
     private void ShowError(string message) =>
     MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -1754,17 +1765,33 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 
     private async Task<bool> HandleBackup()
     {
-        if (MessageBox.Show(Helper.GetCultureString("ModUpdateRdy").Replace("\\n", Environment.NewLine), "Backup Option", MessageBoxButton.YesNoCancel) != MessageBoxResult.Yes)
+        var result = MessageBox.Show(
+            Helper.GetCultureString("ModUpdateRdy").Replace("\\n", Environment.NewLine),
+            "Backup Option",
+            MessageBoxButton.YesNoCancel
+        );
+
+        // Cancel = abort entire update
+        if (result == MessageBoxResult.Cancel)
+            return false;
+
+        // No = continue without backup
+        if (result == MessageBoxResult.No)
             return true;
 
+        // Yes = perform backup
         SetStatus(Helper.GetCultureString("UpdateBackup"), true);
 
         try
         {
-            string backupPath = Path.Combine(ShellViewModel.BaseModsFolder,
-                $"{Settings.Default.SelectedMod}(Backup-{ShellViewModel.ModInfo.ModVersion.Replace(".", "-")})");
+            string backupPath = Path.Combine(
+                ShellViewModel.BaseModsFolder,
+                $"{Settings.Default.SelectedMod}(Backup-{ShellViewModel.ModInfo.ModVersion.Replace(".", "-")})"
+            );
 
-            if (Directory.Exists(backupPath)) Directory.Delete(backupPath, true);
+            if (Directory.Exists(backupPath))
+                Directory.Delete(backupPath, true);
+
             await Helper.CloneDirectory(ShellViewModel.BaseSelectedModFolder, backupPath);
         }
         catch (Exception ex)
@@ -1776,6 +1803,7 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
 
         return true;
     }
+
 
     private async Task<bool> DownloadUpdate(string downloadUrl, string outputPath)
     {
@@ -2008,6 +2036,58 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
     public async void OnMapRegenChecked()
     {
         GetD2RArgs();
+    }
+    public async void OnForceHUDDebug()
+    {
+        string debugLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Debug/d2rhud.dll";
+        string releaseLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
+
+        if (!File.Exists("D2RHUD_DEBUG.dll"))
+        {
+            using WebClient webClient = new();
+
+            try
+            {
+                webClient.DownloadFile(debugLink, "D2RHUD_DEBUG.dll");
+            }
+            catch (WebException ex)
+            {
+                _logger.Error(ex.Message);
+                _logger.Error("An error occurred during the download.");
+                return;
+            }
+        }
+
+        if (!File.Exists("D2RHUD_RELEASE.dll"))
+        {
+            using WebClient webClient = new();
+
+            try
+            {
+                webClient.DownloadFile(releaseLink, "D2RHUD_RELEASE.dll");
+            }
+            catch (WebException ex)
+            {
+                _logger.Error(ex.Message);
+                _logger.Error("An error occurred during the download.");
+                return;
+            }
+        }
+
+        if (ShellViewModel.UserSettings.HUDDebug == true)
+        {
+            File.Delete("D2RHUD.dll");
+            File.Copy("D2RHUD_DEBUG.dll","D2RHUD.DLL", true);
+        }
+        else
+        {
+            File.Delete("D2RHUD.dll");
+            File.Copy("D2RHUD_RELEASE.dll", "D2RHUD.DLL", true);
+        }
+    }
+    public async void OnForceLANOffline()
+    {
+        
     }
     public void OnImageClick() //Chat Gem RNG
     {

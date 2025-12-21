@@ -39,6 +39,7 @@ using System.Security.Cryptography;
 using D2RLAN.Views.Dialogs;
 using WMPLib;
 using System.ComponentModel;
+using System.Text.Json.Nodes;
 
 namespace D2RLAN.ViewModels;
 
@@ -50,7 +51,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.8.7";
+    private string appVersion = "1.9.0";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -212,7 +213,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         UserControl = new HomeDrawerView() { DataContext = vm };
         await SaveUserSettings();
 
-        await Task.Run(CheckForLauncherUpdates);
+        if (UserSettings.LANOffline == false)
+            await Task.Run(CheckForLauncherUpdates);
+
+        vm.OnForceHUDDebug();
     }
     [UsedImplicitly]
     public async void OnItemClicked(NavigationItemClickedEventArgs args) //Side Menu Controls
@@ -1241,8 +1245,11 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         string ConfigFilePath = "../D2R/HUDConfig_" + ModInfo.Name + ".json";
       
         if (File.Exists(freshConfigFilePath))
-            File.Move(freshConfigFilePath, ConfigFilePath, true);
-        
+        {
+            if (!File.Exists(ConfigFilePath))
+                File.Copy(freshConfigFilePath, ConfigFilePath);
+        }
+
         if (!Directory.Exists(uiLayoutsPath))
             Directory.CreateDirectory(uiLayoutsPath);
 
@@ -4198,14 +4205,25 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             LauncherHasUpdate = true;
         }
 
-        
+        string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
+        string hudLinkD = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
+
         // --- Check HUD DLL ---
+        if (!File.Exists("D2RHUD.dll"))
+        {
+            if (UserSettings.HUDDebug == true)
+                webClient.DownloadFile(hudLinkD, "D2RHUD.dll");
+            else
+                webClient.DownloadFile(hudLink, "D2RHUD.dll");
+
+            _logger.Info($"D2RHUD Missing! Downloaded latest from Github.");
+        }
+
         try
         {
             string hudMD5 = CalculateMD5("D2RHUD.dll");
-            if (newVersions[2] != hudMD5)
-            {
-                string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
+            if (newVersions[2] != hudMD5 && UserSettings.HUDDebug == false)
+            { 
                 File.Delete("D2RHUD.dll");
                 webClient.DownloadFile(hudLink, "D2RHUD.dll");
                 _logger.Info($"D2RHUD Out-Of-Date! (MD5 Hash: {hudMD5}, Expected: {newVersions[2]}). Downloaded latest from Github.");
@@ -4441,43 +4459,62 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         string overridePath = $"../D2R/Mods/{ModInfo.Name}/{ModInfo.Name}.mpq/data/D2RLAN/memory_overrides.json";
         if (File.Exists(overridePath))
         {
+
+            // ---------------- Apply memory overrides safely ----------------
             try
             {
-                string overrideJson = File.ReadAllText(overridePath);
-                var options = new JsonSerializerOptions
-                {
-                    ReadCommentHandling = JsonCommentHandling.Skip,
-                    TypeInfoResolver = ConfigSourceGenerationContext.Default
-                };
+                var root = JsonNode.Parse(File.ReadAllText(configPath))!.AsObject();
+                var overrides = JsonNode.Parse(File.ReadAllText(overridePath))!.AsObject();
 
-                var overrideConfig = System.Text.Json.JsonSerializer.Deserialize<Config>(overrideJson, options);
+                if (root["MemoryConfigs"] is not JsonArray mainMem)
+                    throw new Exception("Main config has no MemoryConfigs section");
 
-                if (overrideConfig != null && overrideConfig.MemoryConfigs != null)
+                if (overrides["MemoryConfigs"] is not JsonArray overrideMem)
                 {
-                    foreach (var overrideEntry in overrideConfig.MemoryConfigs)
+                    _logger.Info("Override file has no MemoryConfigs section");
+                    return;
+                }
+
+                foreach (var overrideNode in overrideMem.OfType<JsonObject>())
+                {
+                    var existing = mainMem
+                        .OfType<JsonObject>()
+                        .FirstOrDefault(m => SameTarget(m, overrideNode));
+
+                    if (existing == null)
                     {
-                        // Check if entry already exists in main config
-                        bool exists = config.MemoryConfigs.Any(mc =>
-                            (!string.IsNullOrEmpty(mc.Address) && mc.Address == overrideEntry.Address) ||
-                            (mc.Addresses != null && overrideEntry.Addresses != null && mc.Addresses.SequenceEqual(overrideEntry.Addresses))
-                        );
+                        // NEW entry
+                        mainMem.Add(overrideNode.DeepClone());
+                        _logger.Info($"Added memory entry: {overrideNode["Name"]}");
+                        continue;
+                    }
 
-                        if (!exists)
-                        {
-                            config.MemoryConfigs.Add(overrideEntry);
-                            _logger.Info($"Added override entry: {overrideEntry.Name} @ {overrideEntry.Address}");
-                        }
-                        else
-                        {
-                            _logger.Info($"Skipped existing entry: {overrideEntry.Name} @ {overrideEntry.Address}");
-                        }
+                    // Compare full JSON (field-by-field)
+                    if (!JsonNode.DeepEquals(existing, overrideNode))
+                    {
+                        int index = mainMem.IndexOf(existing);
+                        mainMem[index] = overrideNode.DeepClone();
+
+                        _logger.Info($"Updated memory entry: {overrideNode["Name"]}");
+                    }
+                    else
+                    {
+                        _logger.Info($"Memory entry unchanged: {overrideNode["Name"]}");
                     }
                 }
+
+                File.WriteAllText(
+                    configPath,
+                    root.ToJsonString(new JsonSerializerOptions { WriteIndented = true })
+                );
+
+                _logger.Info("Memory overrides applied without affecting other config sections");
             }
             catch (Exception ex)
             {
-                _logger.Error($"Failed to load override config: {ex.Message}");
+                _logger.Error($"Failed to merge memory overrides: {ex}");
             }
+
         }
         else
         {
@@ -4549,6 +4586,17 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         _logger.Info($"\n\n--------------------\nMod Name: {ModInfo.Name}\nGame Path: {GamePath}\nSave Path: {SaveFilesFilePath}\nLaunch Arguments: {UserSettings.CurrentD2RArgs}\n\nAudio Language: {UserSettings.AudioLanguage}\nText Language: {UserSettings.TextLanguage}\nUI Theme: {UserSettings.UiTheme}\nWindow Mode: {UserSettings.WindowMode}\nHDR Fix: {UserSettings.HdrFix}\n\nFont: {UserSettings.Font}\nBackups: {UserSettings.AutoBackups}\nPersonalized Tabs: {UserSettings.PersonalizedStashTabs}\nExpanded Cube: {UserSettings.ExpandedCube}\nExpanded Inventory: {UserSettings.ExpandedInventory}\nExpanded Merc: {UserSettings.ExpandedMerc}\nExpanded Stash: {UserSettings.ExpandedStash}\nBuff Icons: {UserSettings.BuffIcons}\nMonster Display: {UserSettings.MonsterStatsDisplay}\nSkill Icons: {UserSettings.SkillIcons}\nMerc Identifier: {UserSettings.MercIcons}\nItem Levels: {UserSettings.ItemIlvls}\nRune Display: {UserSettings.RuneDisplay}\nHide Helmets: {UserSettings.HideHelmets}\nItem Display: {UserSettings.ItemIcons}\nSuper Telekinesis: {UserSettings.SuperTelekinesis}\nColor Dyes: {UserSettings.ColorDye}\nCinematic Subtitles: {UserSettings.CinematicSubs}\nRuneword Sorting: {UserSettings.RunewordSorting}\nMerged HUD: {UserSettings.HudDesign}\nData Integrity: {UserSettings.DataHashPass}\n--------------------");
     }
 
+    static bool SameTarget(JsonObject a, JsonObject b)
+    {
+        if (a["Address"] != null && b["Address"] != null)
+            return a["Address"]!.ToString() == b["Address"]!.ToString();
+
+        if (a["Addresses"] is JsonArray aa && b["Addresses"] is JsonArray ba)
+            return aa.Select(x => x!.ToString())
+                     .SequenceEqual(ba.Select(x => x!.ToString()));
+
+        return false;
+    }
 
     public List<string> CloseMSIAfterburner(string processName) //Used to find path info and close MSI Afterburner
     {
@@ -4802,11 +4850,14 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Category { get; set; }
         public string Address { get; set; }
         public List<string> Addresses { get; set; }
         public int Length { get; set; }
         public string Type { get; set; }
         public string Values { get; set; }
+        public string OriginalValues { get; set; }
+        public string ModdedValues { get; set; }
     }
     public class Config
     {

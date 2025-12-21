@@ -77,14 +77,6 @@
                     Style="{StaticResource NavigationItemGoldStyle}"
                     Tag="Customizations" />
                 <syncfusion:NavigationItem
-                    Header="Hotkeys"
-                    Style="{StaticResource NavigationItemGoldStyle}"
-                    Tag="Hotkeys" />
-                <syncfusion:NavigationItem
-                    Header="Chat Colors"
-                    Style="{StaticResource NavigationItemGoldStyle}"
-                    Tag="Chat" />
-                <syncfusion:NavigationItem
                     Header="{Binding Path=Rename, Source={StaticResource Resources}}"
                     Style="{StaticResource NavigationItemGoldStyle}"
                     Tag="Rename Character" />

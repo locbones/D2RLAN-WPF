@@ -426,15 +426,18 @@
                                             cm:Message.Attach="[Event Click] = [Action OnVerifyData];"
                                             Background="#FF142138"
                                             IconTemplate="{StaticResource AdditionIconTemplate}"
-                                            Label="Verify Game Files" HorizontalAlignment="Left" Width="160" HorizontalContentAlignment="Left" />
+                                            Label="Verify Game Files" HorizontalAlignment="Center" Width="160" HorizontalContentAlignment="Center" />
                                         <syncfusion:ButtonAdv
                                             cm:Message.Attach="[Event Click] = [Action OnForceHUD];"
                                             Background="#FF142138"
                                             Margin="0,5,0,0"
                                             IconTemplate="{StaticResource AdditionIconTemplate}"
-                                            Label="Force Load D2RHUD" HorizontalAlignment="Left" Width="160" HorizontalContentAlignment="Left" />
+                                            Label="Force Load D2RHUD" HorizontalAlignment="Center" Width="160" HorizontalContentAlignment="Center" />
+                                    <CheckBox HorizontalAlignment="Center" cm:Message.Attach="[Event Checked] = [Action OnForceHUDDebug]; [Event Unchecked] = [Action OnForceHUDDebug];" Content="D2RHUD Debug" IsChecked="{Binding ShellViewModel.UserSettings.HUDDebug}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
+                                    <CheckBox HorizontalAlignment="Center" cm:Message.Attach="[Event Checked] = [Action OnForceLANOffline]; [Event Unchecked] = [Action OnForceLANOffline];" Content="Disable Update Checks" IsChecked="{Binding ShellViewModel.UserSettings.LANOffline}" Style="{StaticResource CheckBoxStyle}" Margin="5,2"/>
 
-                                    </StackPanel>
+
+                                </StackPanel>
                                 </ScrollViewer>
                             </Border>
                         </Popup>
