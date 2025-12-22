@@ -51,7 +51,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.9.0";
+    private string appVersion = "1.9.1";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4225,7 +4225,13 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             if (newVersions[2] != hudMD5 && UserSettings.HUDDebug == false)
             { 
                 File.Delete("D2RHUD.dll");
+
+                if (File.Exists("D2RHUD_RELEASE.dll"))
+                    File.Delete("D2RHUD_RELEASE.dll");
+
                 webClient.DownloadFile(hudLink, "D2RHUD.dll");
+                File.Copy("D2RHUD.dll", "D2RHUD_RELEASE.dll");
+
                 _logger.Info($"D2RHUD Out-Of-Date! (MD5 Hash: {hudMD5}, Expected: {newVersions[2]}). Downloaded latest from Github.");
             }
         }
