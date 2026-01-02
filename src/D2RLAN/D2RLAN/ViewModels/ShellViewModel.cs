@@ -51,7 +51,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.9.1";
+    private string appVersion = "1.9.2";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4206,7 +4206,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         }
 
         string hudLink = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
-        string hudLinkD = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Release/d2rhud.dll";
+        string hudLinkD = "https://github.com/locbones/D2RHUD-2.4/raw/refs/heads/main/x64/Debug/d2rhud.dll";
 
         // --- Check HUD DLL ---
         if (!File.Exists("D2RHUD.dll"))
@@ -4222,16 +4222,31 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         try
         {
             string hudMD5 = CalculateMD5("D2RHUD.dll");
-            if (newVersions[2] != hudMD5 && UserSettings.HUDDebug == false)
-            { 
-                File.Delete("D2RHUD.dll");
+            if (newVersions[2] != hudMD5)
+            {
+                if (File.Exists("D2RHUD.dll"))
+                    File.Delete("D2RHUD.dll");
 
-                if (File.Exists("D2RHUD_RELEASE.dll"))
-                    File.Delete("D2RHUD_RELEASE.dll");
+                if (File.Exists("D2RHUDB.dll"))
+                    File.Delete("D2RHUDB.dll");
 
                 webClient.DownloadFile(hudLink, "D2RHUD.dll");
-                File.Copy("D2RHUD.dll", "D2RHUD_RELEASE.dll");
 
+                if (UserSettings.HUDDebug == true)
+                {
+                    if (File.Exists("D2RHUD_DEBUG.dll"))
+                        File.Delete("D2RHUD_DEBUG.dll");
+
+                    File.Copy("D2RHUD.dll", "D2RHUD_DEBUG.dll");
+                }                
+                else
+                {
+                    if (File.Exists("D2RHUD_RELEASE.dll"))
+                        File.Delete("D2RHUD_RELEASE.dll");
+
+                    File.Copy("D2RHUD.dll", "D2RHUD_RELEASE.dll");
+                }
+                    
                 _logger.Info($"D2RHUD Out-Of-Date! (MD5 Hash: {hudMD5}, Expected: {newVersions[2]}). Downloaded latest from Github.");
             }
         }

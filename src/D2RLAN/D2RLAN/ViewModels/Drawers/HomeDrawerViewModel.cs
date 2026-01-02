@@ -2074,16 +2074,16 @@ public class HomeDrawerViewModel : INotifyPropertyChanged
             }
         }
 
+        if (File.Exists("D2RHUD.dll"))
+            File.Delete("D2RHUD.dll");
+
+        if (File.Exists("D2RHUDB.dll"))
+            File.Delete("D2RHUDB.dll");
+
         if (ShellViewModel.UserSettings.HUDDebug == true)
-        {
-            File.Delete("D2RHUD.dll");
             File.Copy("D2RHUD_DEBUG.dll","D2RHUD.DLL", true);
-        }
         else
-        {
-            File.Delete("D2RHUD.dll");
             File.Copy("D2RHUD_RELEASE.dll", "D2RHUD.DLL", true);
-        }
     }
     public async void OnForceLANOffline()
     {
