@@ -66,6 +66,7 @@ public class UserSettings : INotifyPropertyChanged
     private int _stringColoring;
     private bool _HUDDebug;
     private bool _LANOffline;
+    private bool _closeMinimized;
 
     #endregion
 
@@ -808,6 +809,20 @@ public class UserSettings : INotifyPropertyChanged
                 return;
             }
             _LANOffline = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool CloseMinimized
+    {
+        get => _closeMinimized;
+        set
+        {
+            if (value == _closeMinimized)
+            {
+                return;
+            }
+            _closeMinimized = value;
             OnPropertyChanged();
         }
     }

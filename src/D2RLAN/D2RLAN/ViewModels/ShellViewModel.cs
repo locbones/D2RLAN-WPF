@@ -51,7 +51,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.9.2";
+    private string appVersion = "1.9.4";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -4480,67 +4480,97 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         string overridePath = $"../D2R/Mods/{ModInfo.Name}/{ModInfo.Name}.mpq/data/D2RLAN/memory_overrides.json";
         if (File.Exists(overridePath))
         {
-
-            // ---------------- Apply memory overrides safely ----------------
             try
             {
-                var root = JsonNode.Parse(File.ReadAllText(configPath))!.AsObject();
-                var overrides = JsonNode.Parse(File.ReadAllText(overridePath))!.AsObject();
+                var rootJson = StripJsonComments(File.ReadAllText(configPath));
+                var overrideJson = StripJsonComments(File.ReadAllText(overridePath));
 
+                var root = JsonNode.Parse(rootJson)!.AsObject();
+                var overrides = JsonNode.Parse(overrideJson)!.AsObject();
+
+                // ---------------- MemoryConfigs merge ----------------
                 if (root["MemoryConfigs"] is not JsonArray mainMem)
                     throw new Exception("Main config has no MemoryConfigs section");
 
-                if (overrides["MemoryConfigs"] is not JsonArray overrideMem)
+                if (overrides["MemoryConfigs"] is JsonArray overrideMem)
+                {
+                    foreach (var overrideNode in overrideMem.OfType<JsonObject>())
+                    {
+                        var existing = mainMem
+                            .OfType<JsonObject>()
+                            .FirstOrDefault(m => SameTarget(m, overrideNode));
+
+                        if (existing == null)
+                        {
+                            mainMem.Add(overrideNode.DeepClone());
+                            _logger.Info($"Added memory entry: {overrideNode["Name"]}");
+                            continue;
+                        }
+
+                        if (!JsonNode.DeepEquals(existing, overrideNode))
+                        {
+                            int index = mainMem.IndexOf(existing);
+                            mainMem[index] = overrideNode.DeepClone();
+                            _logger.Info($"Updated memory entry: {overrideNode["Name"]}");
+                        }
+                        else
+                        {
+                            _logger.Info($"Memory entry unchanged: {overrideNode["Name"]}");
+                        }
+                    }
+                }
+                else
                 {
                     _logger.Info("Override file has no MemoryConfigs section");
-                    return;
                 }
 
-                foreach (var overrideNode in overrideMem.OfType<JsonObject>())
+                // ---------------- Top-level override merge ----------------
+                foreach (var kvp in overrides)
                 {
-                    var existing = mainMem
-                        .OfType<JsonObject>()
-                        .FirstOrDefault(m => SameTarget(m, overrideNode));
+                    string key = kvp.Key;
 
-                    if (existing == null)
-                    {
-                        // NEW entry
-                        mainMem.Add(overrideNode.DeepClone());
-                        _logger.Info($"Added memory entry: {overrideNode["Name"]}");
+                    // Skip MemoryConfigs (already handled)
+                    if (key.Equals("MemoryConfigs", StringComparison.OrdinalIgnoreCase))
                         continue;
-                    }
 
-                    // Compare full JSON (field-by-field)
-                    if (!JsonNode.DeepEquals(existing, overrideNode))
+                    JsonNode? overrideValue = kvp.Value;
+                    JsonNode? existingValue = root[key];
+
+                    if (existingValue == null)
                     {
-                        int index = mainMem.IndexOf(existing);
-                        mainMem[index] = overrideNode.DeepClone();
-
-                        _logger.Info($"Updated memory entry: {overrideNode["Name"]}");
+                        root[key] = overrideValue?.DeepClone();
+                        _logger.Info($"Added config option: {key}");
+                    }
+                    else if (!JsonNode.DeepEquals(existingValue, overrideValue))
+                    {
+                        root[key] = overrideValue?.DeepClone();
+                        _logger.Info($"Updated config option: {key}");
                     }
                     else
                     {
-                        _logger.Info($"Memory entry unchanged: {overrideNode["Name"]}");
+                        _logger.Info($"Config option unchanged: {key}");
                     }
                 }
 
+                // ---------------- Write result ----------------
                 File.WriteAllText(
                     configPath,
                     root.ToJsonString(new JsonSerializerOptions { WriteIndented = true })
                 );
 
-                _logger.Info("Memory overrides applied without affecting other config sections");
+                _logger.Info("Overrides applied successfully without affecting unrelated sections");
             }
             catch (Exception ex)
             {
-                _logger.Error($"Failed to merge memory overrides: {ex}");
+                _logger.Error($"Failed to merge overrides: {ex}");
             }
-
         }
         else
         {
             _logger.Info($"Override config not found: {overridePath}");
         }
+
+
 
         string processName = "../D2R/d2r.exe";
         string arguments = UserSettings.CurrentD2RArgs;
@@ -4890,6 +4920,56 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     #endregion
 
     #region ---Helper Functions---
+
+    private static string StripJsonComments(string json)
+    {
+        var sb = new StringBuilder(json.Length);
+        bool inString = false;
+        bool escape = false;
+
+        for (int i = 0; i < json.Length; i++)
+        {
+            char c = json[i];
+
+            if (escape)
+            {
+                sb.Append(c);
+                escape = false;
+                continue;
+            }
+
+            if (c == '\\')
+            {
+                sb.Append(c);
+                escape = true;
+                continue;
+            }
+
+            if (c == '"')
+            {
+                inString = !inString;
+                sb.Append(c);
+                continue;
+            }
+
+            // Strip // comments when NOT inside a string
+            if (!inString && c == '/' && i + 1 < json.Length && json[i + 1] == '/')
+            {
+                // Skip until end of line
+                while (i < json.Length && json[i] != '\n')
+                    i++;
+
+                sb.Append('\n');
+                continue;
+            }
+
+            sb.Append(c);
+        }
+
+        return sb.ToString();
+    }
+
+
     /*
 
        // Injection Class
