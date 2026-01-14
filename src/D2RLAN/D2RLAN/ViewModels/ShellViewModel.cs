@@ -51,7 +51,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private UserControl _userControl;
     private IWindowManager _windowManager;
     private string _title = "D2RLAN";
-    private string appVersion = "1.9.4";
+    private string appVersion = "1.9.5";
     private string _gamePath;
     private bool _diabloInstallDetected;
     private bool _customizationsEnabled;
@@ -74,6 +74,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     private bool _ExpandedCubeEnabled = true;
     private bool _ExpandedMercEnabled = true;
     private readonly IConfigurationRoot _configuration;
+    
 
 
     const int PROCESS_VM_READ = 0x0010;
@@ -136,6 +137,8 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
     #region ---Window/Loaded Handlers---
 
+    public SpecialEventsViewModel SpecialEventsVM { get; private set; }
+
     public ShellViewModel() //Main Window
     {
         if (Execute.InDesignMode)
@@ -154,6 +157,7 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         _windowManager = windowManager;
         _configuration = configuration;
         _logger.Info("Shell view model being created..");
+        SpecialEventsVM = new SpecialEventsViewModel(this);
     }
     public async Task ApplyModSettings()
     {
@@ -194,10 +198,10 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         await ApplyTCPPatch();
     } //Apply User-Defined QoL Options
     [UsedImplicitly]
-    public async void OnLoaded(object args) //Functions to perform after UI has been loaded
+    public async Task OnLoaded(object args)
     {
         eLanguage appLanguage = ((eLanguage)Settings.Default.AppLanguage);
-        CultureInfo culture = new CultureInfo(appLanguage.GetAttributeOfType<DisplayAttribute>().Name.Split(' ')[1].Trim(new[] { '(', ')' })/*.Insert(2, "-")*/);
+        CultureInfo culture = new CultureInfo(appLanguage.GetAttributeOfType<DisplayAttribute>().Name.Split(' ')[1].Trim(new[] { '(', ')' }));
         CultureResources.ChangeCulture(culture);
 
         GamePath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName + @"\D2R\";
@@ -213,11 +217,54 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         UserControl = new HomeDrawerView() { DataContext = vm };
         await SaveUserSettings();
 
-        if (UserSettings.LANOffline == false)
+        if (!UserSettings.LANOffline)
             await Task.Run(CheckForLauncherUpdates);
 
         vm.OnForceHUDDebug();
+
+        // Event Checker
+        string eventPath = Path.Combine(GamePath, "Mods", ModInfo.Name, ModInfo.Name + ".mpq", "data_noevent");
+        if (Directory.Exists(eventPath))
+        {
+            bool eventActive = false;
+
+            try
+            {
+                eventActive = await SpecialEventsVM.GetCurrentEvents();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("EXCEPTION from GetCurrentEvents:\n" + ex);
+                return;
+            }
+
+            if (!eventActive)
+            {
+                string backupFolder = SelectedModDataFolder + "data_noevent";
+                CopyAllFiles(backupFolder, SelectedModDataFolder);
+
+                _logger.Info("Event is over, leaving event...");
+            }
+        }
     }
+
+    // Recursive file copy method
+    private void CopyAllFiles(string sourceDir, string targetDir)
+    {
+        foreach (string dirPath in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
+        {
+            string subDir = dirPath.Replace(sourceDir, targetDir);
+            if (!Directory.Exists(subDir))
+                Directory.CreateDirectory(subDir);
+        }
+
+        foreach (string filePath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            string destFile = filePath.Replace(sourceDir, targetDir);
+            File.Copy(filePath, destFile, true); // overwrite existing files
+        }
+    }
+
     [UsedImplicitly]
     public async void OnItemClicked(NavigationItemClickedEventArgs args) //Side Menu Controls
     {

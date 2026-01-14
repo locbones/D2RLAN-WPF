@@ -283,7 +283,7 @@ public class SpecialEventsViewModel : Screen
 
     #region ---Special Event Functions---
 
-    private async Task GetCurrentEvents()
+    public async Task<bool> GetCurrentEvents()
     {
         string eventScheduleFile = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN/Events/EventSchedule.txt");
         string eventFolder = System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN/Events/");
@@ -393,14 +393,14 @@ public class SpecialEventsViewModel : Screen
                                         }
                                         //MessageBox.Show($"Current Event\n{eventNameStr}\n{startTime}\n{endTime}");
                                         eventFound = true;
-                                        return;
+                                        return true;
                                     }
                                 }
                                 catch (Exception ex)
                                 {
                                     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                     _logger.Error(ex);
-                                    return;
+                                    return false;
                                 }
                             }
                         }
@@ -422,9 +422,16 @@ public class SpecialEventsViewModel : Screen
                     Directory.Delete(ShellViewModel.SelectedModDataFolder, true);
                     Directory.Move(System.IO.Path.Combine(Path.GetDirectoryName(ShellViewModel.SelectedModDataFolder), "data_noevent"), ShellViewModel.SelectedModDataFolder);
                 }
+
+                return false;
             }
+
+            return true;
         }
+        else
+            return false;
     }
+
     public void ChangeText(string eventName, string eventType, string eventLoc, string eventDur1, string eventDur2, string eventDesc1, string eventDesc2, string eventDesc3, string eventDesc4, string eventLink, string eventImage, string eventMLvl, string eventPLvl, string eventPDiff, string eventPExp)
     {
         EventNameText = eventName.Replace("\\n", "\n");
@@ -445,11 +452,16 @@ public class SpecialEventsViewModel : Screen
     }
     public async void OnJoinEvent()
     {
-        eventJoined = true;
-        MessageBox.Show("Please allow the launcher a few moments to make file changes:\n- Backup Non-Event Files\n- Install Event Files\n\nThe launcher will notify you when it is finished");
-        CloneDirectory(ShellViewModel.SelectedModDataFolder, System.IO.Path.Combine(Path.GetDirectoryName(ShellViewModel.SelectedModDataFolder), "data_noevent"));
-        await CopyDirectoryAndOverwrite(System.IO.Path.Combine(System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN/Events/"), eventNameStr), ShellViewModel.SelectedModDataFolder);
-        await GetCurrentEvents();
+        if (!Directory.Exists(System.IO.Path.Combine(Path.GetDirectoryName(ShellViewModel.SelectedModDataFolder), "data_noevent")))
+        {
+            eventJoined = true;
+            MessageBox.Show("Please allow the launcher a few moments to make file changes:\n- Backup Non-Event Files\n- Install Event Files\n\nThe launcher will notify you when it is finished");
+            CloneDirectory(ShellViewModel.SelectedModDataFolder, System.IO.Path.Combine(Path.GetDirectoryName(ShellViewModel.SelectedModDataFolder), "data_noevent"));
+            await CopyDirectoryAndOverwrite(System.IO.Path.Combine(System.IO.Path.Combine(ShellViewModel.SelectedModDataFolder, "D2RLAN/Events/"), eventNameStr), ShellViewModel.SelectedModDataFolder);
+            await GetCurrentEvents();
+        }
+        else
+            MessageBox.Show("You have already joined the event!");
     }
     public async void OnLeaveEvent()
     {
@@ -561,30 +573,34 @@ public class SpecialEventsViewModel : Screen
     {
         return TimeZoneInfo.ConvertTimeFromUtc(utcTime, TimeZoneInfo.Local);
     }
-    static async Task CopyDirectoryAndOverwrite(string sourceDir, string destDir)
+    static Task CopyDirectoryAndOverwrite(string sourceDir, string destDir)
     {
-        if (!Directory.Exists(destDir))
-            Directory.CreateDirectory(destDir);
-
-        foreach (string filePath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+        return Task.Run(() =>
         {
-            string destFilePath = filePath.Replace(sourceDir, destDir);
-            string destFileDir = Path.GetDirectoryName(destFilePath);
+            if (!Directory.Exists(destDir))
+                Directory.CreateDirectory(destDir);
 
-            if (!Directory.Exists(destFileDir))
-                Directory.CreateDirectory(destFileDir);
+            foreach (string filePath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+            {
+                string destFilePath = filePath.Replace(sourceDir, destDir);
+                string destFileDir = Path.GetDirectoryName(destFilePath)!;
 
-            File.Copy(filePath, destFilePath, true);
-        }
+                if (!Directory.Exists(destFileDir))
+                    Directory.CreateDirectory(destFileDir);
 
-        foreach (string dirPath in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
-        {
-            string destDirPath = dirPath.Replace(sourceDir, destDir);
+                File.Copy(filePath, destFilePath, true);
+            }
 
-            if (!Directory.Exists(destDirPath))
-                Directory.CreateDirectory(destDirPath);
-        }
+            foreach (string dirPath in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
+            {
+                string destDirPath = dirPath.Replace(sourceDir, destDir);
+
+                if (!Directory.Exists(destDirPath))
+                    Directory.CreateDirectory(destDirPath);
+            }
+        });
     }
+
     public static void CloneDirectory(string sourceDirName, string destDirName)
     {
         if (Directory.Exists(destDirName))
