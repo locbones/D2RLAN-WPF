@@ -4512,13 +4512,6 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
     public async Task ApplyTCPPatch()
     {
         string configPath = "../D2R/HUDConfig_" + ModInfo.Name + ".json";
-        var config = LoadConfig(configPath);
-
-        if (config == null)
-        {
-            _logger.Error("Failed to load configuration file");
-            return;
-        }
 
         // --- Load override config ---
         string overridePath = $"../D2R/Mods/{ModInfo.Name}/{ModInfo.Name}.mpq/data/D2RLAN/memory_overrides.json";
@@ -4630,6 +4623,12 @@ public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
             _logger.Warn($"Failed to pre-merge HUD template into config before ApplyTCPPatch: {ex.Message}");
         }
 
+        var config = LoadConfig(configPath);
+        if (config == null)
+        {
+            _logger.Error("Failed to load configuration file");
+            return;
+        }
         string processName = "../D2R/d2r.exe";
         string arguments = UserSettings.CurrentD2RArgs;
 
